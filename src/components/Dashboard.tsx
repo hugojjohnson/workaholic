@@ -36,15 +36,17 @@ export default function Dashboard({ timer }: { timer: TimerInterface}): React.Re
     const sendLog = async () => {
         const newLog = {
             project: user?.project || "Undefined",
-            duration: user?.duration || 30,
+            duration: user?.duration || -1,
             description: description,
             timeStarted: timer.timeStarted,
             timeFinished: new Date()
         }
+        
+        timer.resetClock(user?.duration || 0)
+
         const response = await post<Log>("add-log", { token: user?.token }, { log: newLog })
 
         if (typeof response.data !== "string") {
-            timer.resetClock(user?.duration || 0)
             setDescription("")
             setConfetti(true)
             setTimeout(() => {

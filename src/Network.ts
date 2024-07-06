@@ -2,8 +2,8 @@ import axios, { AxiosError } from "axios";
 import { requestResponse } from "./Interfaces";
 
 const apiClient = axios.create({
-    baseURL: "http://localhost:3001/",
-    // baseURL: "your_backend_here"
+    // baseURL: "http://localhost:3001/",
+    baseURL: "https://44.220.164.141.nip.io/",
     timeout: 10000,
     headers: { 'Content-Type': 'application/json' }
 });

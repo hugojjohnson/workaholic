@@ -6,6 +6,7 @@ import annotationPlugin from 'chartjs-plugin-annotation';
 import { PieChart } from 'react-minimal-pie-chart';
 import { MatrixController, MatrixElement } from 'chartjs-chart-matrix';
 import Heatmap2 from './Heatmap2';
+import { useLocation } from 'react-router-dom';
 
 
 
@@ -13,6 +14,8 @@ export default function Reports(): React.ReactElement {
     const [user] = useContext(UserContext)
     const [labels, setLabels] = useState<Date[]>([])
     const [semesterLabels] = useState<Date[]>([])
+
+    const [userlessVar, setUselessVar] = useState(0)
 
     ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, Colors, annotationPlugin);
     ChartJS.register(...registerables);
@@ -38,7 +41,8 @@ export default function Reports(): React.ReactElement {
             semesterLabels.push(new Date(monday))
             monday = new Date(monday.getTime() + 86400000)
         }
-    }, [labels])
+        setUselessVar(userlessVar + 1)
+    }, [labels, user?.logs, semesterLabels, userlessVar])
 
     function changeWeek(forward: boolean) {
         const tempWindow: Date[] = []

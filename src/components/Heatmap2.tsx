@@ -16,10 +16,6 @@ export function Heatmap2({ chart, logs }: { chart: any, logs: Log[] }) {
 
 
     useEffect(() => {
-        const logs2 = [logs[0]]
-        console.log(logs2)
-        const myTest = new Date(logs2[0].timeStarted)
-        console.log((myTest.getHours() + (myTest.getMinutes() / 60) + 16) % 24,)
         if (canvasRef.current) {
             if (chartRef.current) {
                 chartRef.current.destroy();

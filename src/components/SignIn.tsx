@@ -98,7 +98,7 @@ export default function SignIn(): React.ReactElement {
                 projects: response.data.projects,
                 duration: response.data.duration,
                 project: response.data.projects[0] || "Undefined",
-                logs: response.data.logs
+                logs: response.data.logs || []
             });
             navigate('/');
         }

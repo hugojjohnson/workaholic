@@ -30,10 +30,9 @@ export default function Settings({ timer }: { timer: TimerInterface }) {
 
     const addProject = async () => {
         const timeFinished = new Date(new Date(newTimeStarted).getTime() + 11 * 60_000 * 60 + duration * 60_000)
-        const response = await post<string>("/add-log", { token: user?.token }, { log: {
+        await post<string>("/add-log", { token: user?.token }, { log: {
             project: newProject, duration: newDuration, description: newDescription, timeStarted: new Date(new Date(newTimeStarted).getTime() + 11 * 60_000 * 60), timeFinished: timeFinished
         }})
-        console.log(response)
     }
 
 
@@ -91,7 +90,6 @@ export default function Settings({ timer }: { timer: TimerInterface }) {
         <p className="mt-2">Duration</p>
         <select className="w-80 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" value={newDuration + " minutes"} onChange={(e) => {
             const myMins = parseInt(e.target.value.substring(0, e.target.value.indexOf(" minutes"))) || -1
-            console.log(myMins)
             setNewDuration(myMins)
         }}>
             { possibleDurations.map((duration, index) => <option key={index}>{duration} minutes</option>) }
