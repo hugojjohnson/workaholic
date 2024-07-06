@@ -5,7 +5,6 @@ import { Bar } from 'react-chartjs-2';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { PieChart } from 'react-minimal-pie-chart';
 import { MatrixController, MatrixElement } from 'chartjs-chart-matrix';
-import { Heatmap } from './Heatmap';
 import Heatmap2 from './Heatmap2';
 
 
@@ -185,13 +184,6 @@ export default function Reports(): React.ReactElement {
             }
         }
     };
-    const options_pie = {
-        plugins: {
-            colors: {
-                enabled: false
-            }
-        }
-    };
 
     return <div className='px-7 md:px-32 pt-10'>
         <h1 className="text-4xl mb-5">Reports</h1>
@@ -208,19 +200,18 @@ export default function Reports(): React.ReactElement {
             <Bar options={options} data={data} />
 
             <PieChart
-                data={dataPie}
+                data={dataPie || []}
                 label={({ dataEntry }) => dataEntry.title}
                 labelStyle={{
                     fontSize: '5px',
                     fontFamily: 'sans-serif',
                 }}
-                options={options_pie}
                 viewBoxSize={[100, 100]}
             />
 
             <Bar options={options} data={data_semester} />
 
-           <Heatmap2 Chart={ChartJS} logs={user?.logs} />
+           <Heatmap2 chart={ChartJS} logs={user?.logs || []} />
         </div>
     </div>
 }

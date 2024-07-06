@@ -13,7 +13,7 @@ export default function Dashboard({ timer }: { timer: TimerInterface}): React.Re
         idk.timeStarted = new Date(idk.timeStarted)
         idk.timeFinished = new Date(idk.timeFinished)
         return idk
-    })
+    }) || []
     const logsForToday = test.filter(log =>
         log.timeStarted.getFullYear() === today.getFullYear() &&
         log.timeStarted.getMonth() === today.getMonth() &&
@@ -24,7 +24,7 @@ export default function Dashboard({ timer }: { timer: TimerInterface}): React.Re
 
 
     useEffect(() => {
-        timer.resetClock(user?.duration)
+        timer.resetClock(user?.duration || 0)
     }, [user])
 
     useEffect(() => {
@@ -44,7 +44,7 @@ export default function Dashboard({ timer }: { timer: TimerInterface}): React.Re
         const response = await post<Log>("add-log", { token: user?.token }, { log: newLog })
 
         if (typeof response.data !== "string") {
-            timer.resetClock(user?.duration)
+            timer.resetClock(user?.duration || 0)
             setDescription("")
             setConfetti(true)
             setTimeout(() => {
