@@ -6,7 +6,6 @@ import annotationPlugin from 'chartjs-plugin-annotation';
 import { PieChart } from 'react-minimal-pie-chart';
 import { MatrixController, MatrixElement } from 'chartjs-chart-matrix';
 import Heatmap2 from './Heatmap2';
-import { useLocation } from 'react-router-dom';
 
 
 
