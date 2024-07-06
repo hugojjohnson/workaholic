@@ -38,7 +38,7 @@ export default function useTimerBetter() {
         setPaused(true)
         setFinished(false)
         settimeStarted(undefined)
-        setDeadline(new Date(new Date().setTime(new Date().getTime() + time * 1_000 + 1000)))
+        setDeadline(new Date(new Date().setTime(new Date().getTime() + time * 60_000 + 1000)))
     }
 
     const pressPause = () => {
