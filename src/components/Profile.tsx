@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { UserContext } from "../Context";
 import { useNavigate } from "react-router-dom";
+import { post } from "../Network";
 
 
 export default function Profile(): React.ReactElement {
@@ -8,14 +9,8 @@ export default function Profile(): React.ReactElement {
 
     const navigate = useNavigate()
 
-    return <div className="max-w-screen-lg mx-auto pt-40 flex flex-col items-start gap-5">
-        <h1 className="text-4xl mb-10">Profile</h1>
-        <div className="flex flex-row gap-5">
-            <img className="w-40 h-40" src="./media/japanese.png" alt="japanese" />
-            <div className="relative">
-                <p className="text-2xl">{user?.username}</p>
-            </div>
-        </div>
+    return <div className='px-7 md:px-32 pt-10'>
+        <h1 className="text-4xl mb-5">Profile</h1>
 
         <h3 className="text-3xl mt-16">Personal information</h3>
         <div className="w-full border-[1px] border-gray-300"></div>
@@ -39,11 +34,20 @@ export default function Profile(): React.ReactElement {
             {/* <Input placeholder="••••••••••" /> */}
         </div>
         <button>Change password</button>
-        <button className="rounded-md border-2 border-black px-3 py-1 hover:cursor-pointer" onClick={() => {
+
+
+
+        <button className="text-lg p-3 mt-10 border-[1px] border-white rounded-md block" onClick={async () => {
+            try {
+                await post<unknown>("users/sign-out", {}, { token: user?.token })
+            } catch (err) {
+                console.error(err)
+            }
             setUser(null)
             navigate("/")
-        }}>Sign out</button>
 
+        }}>Sign out</button>
+        
 
 
         <h3 className="text-3xl mt-16">Danger</h3>

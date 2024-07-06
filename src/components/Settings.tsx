@@ -1,5 +1,4 @@
 import { useContext, useState } from "react"
-import { useNavigate } from "react-router-dom"
 import { UserContext } from "../Context"
 import { TimerInterface } from "../Interfaces"
 import { post } from "../Network"
@@ -12,19 +11,28 @@ export default function Settings({ timer }: { timer: TimerInterface }) {
     const [user, setUser] = useContext(UserContext)
     const [projects, setProjects] = useState(user?.projects || [])
     const [uselessVar, setUselessVar] = useState(0) // Just here so I can trigger re-renders safely.
-    const navigate = useNavigate()
+
+    const [newProject, setNewProject] = useState(projects[0] || "undefined")
+    const [newDuration, setNewDuration] = useState(30)
+    const [newDescription, setNewDescription] = useState("")
+    const [newTimeStarted, setNewTimeStarted] = useState(new Date().toUTCString())
 
     const updateUser = async (myMins: number | null = null) => {
         let actualMins = duration // Updating the UI and the user doesn't happen the same frame so this is why we have this.
         if (myMins) {
             actualMins = myMins
         }
-        console.log("updating user")
-        console.log("updating at " + duration + " minutes")
         if (user !== undefined && user !== null) {
             setUser({ ...user, duration: actualMins, projects: projects })
         }
-        const response = await post<unknown>("users/update-user", {}, { token: user?.token, projects: projects, duration: actualMins })
+        await post<unknown>("/update-projects-duration", { token: user?.token }, { projects: projects, duration: actualMins })
+    }
+
+    const addProject = async () => {
+        const timeFinished = new Date(new Date(newTimeStarted).getTime() + 11 * 60_000 * 60 + duration * 60_000)
+        const response = await post<string>("/add-log", { token: user?.token }, { log: {
+            project: newProject, duration: newDuration, description: newDescription, timeStarted: new Date(new Date(newTimeStarted).getTime() + 11 * 60_000 * 60), timeFinished: timeFinished
+        }})
         console.log(response)
     }
 
@@ -71,16 +79,31 @@ export default function Settings({ timer }: { timer: TimerInterface }) {
             }
         </select>
 
-        <button className="text-lg p-3 mt-10 border-[1px] border-white rounded-md" onClick={async () => {
-            try {
-                const response = await post<unknown>("users/sign-out", {}, { token: user?.token })
-                console.log(response)
-            } catch (err) {
-                console.log(err)
-            }
-            setUser(null)
-            navigate("/")
+        <h3 className="text-2xl mb-3 mt-6">Add log</h3>
 
-        }}>Sign out</button>
+        <p className="mt-2">Project</p>
+        <select className="w-80 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" value={newProject} onChange={(e) => setNewProject(e.target.value)}>
+        {
+            projects.map((_, index) => <option key={index}>{projects[index]}</option>)
+        }
+        </select>
+
+        <p className="mt-2">Duration</p>
+        <select className="w-80 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" value={newDuration + " minutes"} onChange={(e) => {
+            const myMins = parseInt(e.target.value.substring(0, e.target.value.indexOf(" minutes"))) || -1
+            console.log(myMins)
+            setNewDuration(myMins)
+        }}>
+            { possibleDurations.map((duration, index) => <option key={index}>{duration} minutes</option>) }
+        </select>
+
+        <p className="mt-2">Description</p>
+        <input className="w-80 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" value={newDescription} onChange={e => setNewDescription(e.target.value)} />
+
+        <p className="mt-2">Time started</p>
+        <input className="w-80 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" type="datetime-local" value={newTimeStarted} onChange={e => setNewTimeStarted(e.target.value)} />
+
+
+        <button className="border-2 border-white rounded-md py-1 px-2 mt-5" onClick={addProject}>Add</button>
     </div>
 }

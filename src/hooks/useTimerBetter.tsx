@@ -5,8 +5,8 @@ import alarm from "/alarm.wav";
 const SECOND = 1_000;
 const interval = SECOND;
 const MINUTE = SECOND * 60;
-const HOUR = MINUTE * 60;
-const DAY = HOUR * 24;
+// const HOUR = MINUTE * 60;
+// const DAY = HOUR * 24;
 
 export default function useTimerBetter() {
     const [playSound] = useSound(alarm)
@@ -15,30 +15,30 @@ export default function useTimerBetter() {
 
     const [paused, setPaused] = useState(true)
     const [finished, setFinished] = useState(false)
-    const [timeStarted, settimeStarted] = useState(undefined)
+    const [timeStarted, settimeStarted] = useState<Date | undefined>(undefined)
 
     useEffect(() => {
-        let intervalId;
+        let intervalId: number;
         if (!paused && !finished) {
             intervalId = setInterval(() => {
-                setTimeLeft((new Date(deadline) - new Date()));
+                setTimeLeft((new Date(deadline).getTime() - new Date().getTime()));
             }, interval);
         }
         return () => {
             clearInterval(intervalId);
         };
-    }, [interval, paused, finished]);
+    }, [paused, finished, deadline]);
 
     /* If the initial deadline value changes */
     useEffect(() => {
-        setTimeLeft((new Date(deadline) - new Date()));
+        setTimeLeft((new Date(deadline).getTime() - new Date().getTime()));
     }, [deadline]);
 
-    const resetClock = (time) => {
+    const resetClock = (time: number) => {
         setPaused(true)
         setFinished(false)
         settimeStarted(undefined)
-        setDeadline(new Date().setTime(new Date().getTime() + time * 60_000 + 1000))
+        setDeadline(new Date(new Date().setTime(new Date().getTime() + time * 1_000 + 1000)))
     }
 
     const pressPause = () => {
@@ -46,7 +46,7 @@ export default function useTimerBetter() {
             settimeStarted(new Date())
         }
         if (paused) {
-            setDeadline(new Date().setTime(new Date().getTime() + timeLeft))
+            setDeadline(new Date(new Date().setTime(new Date().getTime() + timeLeft)))
         }
         setPaused(!paused)
     }
@@ -63,7 +63,7 @@ export default function useTimerBetter() {
             Notification.requestPermission()
             const img = "/vite.svg";
             const text = `HEY! Your task is now overdue.`;
-            const notification = new Notification("To do list", { body: text, icon: img });
+            new Notification("To do list", { body: text, icon: img });
         }
     }, [timeLeft])
 

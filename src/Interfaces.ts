@@ -4,10 +4,10 @@ export interface TimerInterface {
     minutes: number;
     seconds: number;
     paused: boolean;
-    timeStarted: undefined;
+    timeStarted: Date | undefined;
     finished: boolean;
     pressPause: () => void;
-    resetClock: (time: unknown) => void;
+    resetClock: (time: number) => void;
 }
 
 export interface Log {

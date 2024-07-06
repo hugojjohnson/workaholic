@@ -9,7 +9,12 @@ export default function Dashboard({ timer }: { timer: TimerInterface}): React.Re
     const [confetti, setConfetti] = useState(false)
 
     const today = new Date()
-    const logsForToday = user?.logs.filter(log =>
+    const test: Log[] = user?.logs.map(idk => {
+        idk.timeStarted = new Date(idk.timeStarted)
+        idk.timeFinished = new Date(idk.timeFinished)
+        return idk
+    })
+    const logsForToday = test.filter(log =>
         log.timeStarted.getFullYear() === today.getFullYear() &&
         log.timeStarted.getMonth() === today.getMonth() &&
         log.timeStarted.getDate() === today.getDate()
@@ -36,8 +41,7 @@ export default function Dashboard({ timer }: { timer: TimerInterface}): React.Re
             timeStarted: timer.timeStarted,
             timeFinished: new Date()
         }
-        const response = await post<Log>("add-log", {}, { token: user?.token, log: newLog})
-        console.log(response)
+        const response = await post<Log>("add-log", { token: user?.token }, { log: newLog })
 
         if (typeof response.data !== "string") {
             timer.resetClock(user?.duration)

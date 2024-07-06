@@ -14,6 +14,7 @@ export default function Header(): React.ReactElement {
                 <Link className={location.pathname === "/" ? "text-white" : ""} to="/">Timer</Link>
                 <Link className={location.pathname === "/settings" ? "text-white" : ""} to="/settings">Settings</Link>
                 <Link className={location.pathname === "/reports" ? "text-white" : ""} to="/reports">Reports</Link>
+                <Link className={location.pathname === "/profile" ? "text-white" : ""} to="/profile">Profile</Link>
             </div>
             : <p></p>
             

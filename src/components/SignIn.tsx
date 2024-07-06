@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { UserContext } from "../Context";
-import { get } from "../Network";
+import { post } from "../Network";
 
 import { Log, User, requestResponse } from "../Interfaces";
 import { Link, useNavigate } from "react-router-dom";
@@ -36,7 +36,7 @@ export default function SignIn(): React.ReactElement {
                 <input className="bg-transparent p-3 rounded-md border-[1px] border-white w-full" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
 
-            <button className="bg-transparent p-3 border-[1px] border-white rounded-md" onClick={async () => (await requestLogin())}>Sign In</button>
+            <button className="bg-transparent p-3 border-[1px] border-white rounded-md" onClick={async () => (await requestLogin())}>Sign In..</button>
 
             <p>{errorText}</p>
         </div></>
@@ -87,12 +87,11 @@ export default function SignIn(): React.ReactElement {
         }
 
         const salt = await saltify(email + password)
-        const response = await get<responseType>("auth/sign-in", {
+        const response = await post<responseType>("users/sign-in/email", {}, {
                 email: email,
                 hash: salt
         })
         if (response.success && typeof response.data !== "string") {
-            console.log(response)
             setUser({
                 username: response.data.username,
                 token: response.data.token,
@@ -103,7 +102,6 @@ export default function SignIn(): React.ReactElement {
             });
             navigate('/');
         }
-        console.log(response)
         setErrorText("An unknown error occurred.")
         return {
             success: false,

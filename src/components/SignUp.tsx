@@ -43,7 +43,7 @@ export default function SignUp(): React.ReactElement {
                 <input className="bg-transparent p-3 rounded-md border-[1px] border-white w-full" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
             </div>
 
-            <button className="bg-transparent p-3 border-[1px] border-white rounded-md" onClick={async () => await requestSignUp()}>Sign In</button>
+            <button className="bg-transparent p-3 border-[1px] border-white rounded-md" onClick={async () => await requestSignUp()}>Sign Up</button>
 
             {/* <p>{errorText}</p> */}
         </div></>
@@ -88,16 +88,15 @@ export default function SignUp(): React.ReactElement {
         }
 
         const salt = await saltify(email + password)
-        const response = await post("auth/sign-up", {}, {
-            username: username,
+        const response = await post("users/sign-up/email", {}, {
             email: email,
-            hash: salt,
+            username: username,
+            hash: salt
         })
         if (response.success) {
-            navigate("/log-in")
+            navigate("/sign-in")
             return response
         }
-        console.log(response)
         return response
     }
 }

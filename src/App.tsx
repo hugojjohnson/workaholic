@@ -25,7 +25,6 @@ function App(): React.ReactElement {
 
   useEffect(() => {
     const tempUser = JSON.parse(localStorage.getItem("workaholicUser") || "{}")
-    console.log(tempUser)
     if (!tempUser.token) {
       setUser(null)
       return
@@ -34,19 +33,15 @@ function App(): React.ReactElement {
     setUser(tempUser)
     updateUser(tempUser)
 
-    // Update user
-    interface responseType {
-      logs: Log[],
-    }
+
     async function updateUser(tempUser: UserData): Promise<void> {
-      const response: requestResponse<responseType> = await get("get-logs", { token: tempUser?.token })
+      const response: requestResponse<Log[]> = await get("/get-updates", { token: tempUser?.token })
       if (typeof response.data !== "string" && tempUser?.username) {
         setUser({
           ...tempUser,
-          logs: response.data.logs,
+          logs: response.data
         })
       }
-      console.log(response)
     }
   }, [])
 
@@ -56,10 +51,8 @@ function App(): React.ReactElement {
     }
     if (user?.token) {
       localStorage.setItem("workaholicUser", JSON.stringify(user))
-      console.log("User changed.")
     } else {
       localStorage.removeItem("workaholicUser")
-      console.log("Signed out.")
     }
   }, [user])
 
@@ -70,8 +63,8 @@ function App(): React.ReactElement {
           <Routes>
             <Route path="/" element={<Header />}>
               <Route index element={<Welcome />} />
-              <Route path="sign-up" element={<SignIn />} />
-              <Route path="sign-in" element={<SignUp />} />
+              <Route path="sign-up" element={<SignUp />} />
+              <Route path="sign-in" element={<SignIn />} />
               <Route path="*" element={<NoPage />} />
             </Route>
           </Routes>
