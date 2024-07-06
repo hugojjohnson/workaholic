@@ -36,7 +36,7 @@ export default function SignIn(): React.ReactElement {
                 <input className="bg-transparent p-3 rounded-md border-[1px] border-white w-full" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
 
-            <button className="bg-transparent p-3 border-[1px] border-white rounded-md" onClick={async () => (await requestLogin())}>Sign In..</button>
+            <button className="bg-transparent p-3 border-[1px] border-white rounded-md" onClick={async () => (await requestLogin())}>Sign In</button>
 
             <p>{errorText}</p>
         </div></>
