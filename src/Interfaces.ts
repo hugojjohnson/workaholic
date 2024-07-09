@@ -3,11 +3,8 @@ import { Dispatch, SetStateAction } from "react";
 export interface TimerInterface {
     minutes: number;
     seconds: number;
-    paused: boolean;
-    timeStarted: Date | undefined;
-    finished: boolean;
-    pressPause: () => void;
-    resetClock: (time: number) => void;
+    pause: () => void;
+    reset: () => void;
 }
 
 export interface Log {
@@ -22,17 +19,17 @@ export interface Log {
 
 export type SafeData = {
     username: string;
-    // email: string;
     token: string;
-
     projects: string[];
     logs: Log[];
     
+    timerId: string; // actually timeStarted
+    paused?: string;
+    deadline?: string;
     duration: number;
     project: string;
 };
 export type UserData = SafeData | null | undefined;
-
 export type Safe = [SafeData, Dispatch<SetStateAction<SafeData>>]
 export type User = [UserData, Dispatch<SetStateAction<UserData>>]
 
