@@ -5,6 +5,7 @@ export interface TimerInterface {
     seconds: number;
     pause: () => void;
     reset: () => void;
+    stop: () => void;
 }
 
 
@@ -24,7 +25,7 @@ export type SafeData = {
     projects: string[];
     logs: Log[];
     
-    timerId: string; // actually timeStarted
+    timerId?: string; // actually timeStarted
     paused?: string;
     deadline?: string;
     duration: number;

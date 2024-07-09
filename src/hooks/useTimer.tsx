@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
-// import useSound from 'use-sound';
-// import alarm from "/alarm.wav";
+import useSound from 'use-sound';
+import alarm from "/alarm.wav";
 import { TimerInterface, User } from "../Interfaces";
 
-const SECOND = 1_000;
-const MINUTE = SECOND * 60;
-
 export default function useTimer([user, setUser]: User): TimerInterface {
-    // const [playSound] = useSound(alarm)
+    const [playSound] = useSound(alarm)
     const [timeLeft, setTimeLeft] = useState(42000)
+    const SECOND = 1_000;
+    const MINUTE = SECOND * 60;
 
     /** ========== Functions ========== **/
     const pause = () => {
@@ -43,11 +42,19 @@ export default function useTimer([user, setUser]: User): TimerInterface {
         setTimeLeft(user.duration * MINUTE)
     }
 
+    const stop = () => {
+        if (!user) { return }
+        const user2 = structuredClone(user)
+        user2.timerId = undefined
+        user2.deadline = undefined
+        user2.paused = undefined
+        setUser(user2)
+    }
+
     /** ========== useEffects ========== **/
     useEffect(() => {
-        if (!user) { return }
-        setTimeLeft((new Date(user.deadline || "sigh").getTime() - new Date().getTime()));
-
+        if (!user || !user.deadline) { return }
+        setTimeLeft((new Date(user.deadline).getTime() - new Date().getTime()));
         let intervalId: number;
         if (user.deadline !== undefined && user.paused === undefined) {
             intervalId = setInterval(() => {
@@ -57,7 +64,7 @@ export default function useTimer([user, setUser]: User): TimerInterface {
         return () => {
             clearInterval(intervalId);
         };
-    }, [user?.paused, user?.deadline]);
+    }, [user, user?.paused, user?.deadline]);
 
     // /* If the initial deadline value changes */
     // useEffect(() => {
@@ -72,31 +79,33 @@ export default function useTimer([user, setUser]: User): TimerInterface {
         const minutes = Math.floor((timeLeft / MINUTE))
         const seconds = Math.floor((timeLeft / SECOND) % 60)
         document.title = "Workaholic - " + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-        // if (timeLeft < 1000 && !finished && timeStarted !== undefined) {
-        //     setFinished(true)
-        //     setTimeLeft(0)
-        //     playSound()
-        //     Notification.requestPermission()
-        //     const img = "/vite.svg";
-        //     const text = `HEY! Your task is now overdue.`;
-        //     new Notification("To do list", { body: text, icon: img });
-        // }
-    }, [timeLeft])
+        if (timeLeft < 1100 && user.timerId !== undefined) {
+            setTimeLeft(0)
+            stop()
+            playSound()
+            Notification.requestPermission()
+            const img = "/vite.svg";
+            const text = `HEY! Your task is now overdue.`;
+            new Notification("To do list", { body: text, icon: img });
+        }
+    }, [timeLeft, MINUTE, user])
 
 
+    /** ========== JSX ========== **/
     if (!user) {
         return {
             minutes: 0,
             seconds: 0,
             pause: () => {},
-            reset: () => {}
+            reset: () => {},
+            stop: () => {}
         }
     }
-    /** ========== JSX ========== **/
     return {
         minutes: Math.floor(timeLeft / MINUTE),
         seconds: Math.floor((timeLeft / SECOND) % 60),
         pause,
-        reset
+        reset,
+        stop
     }
 }

@@ -1,18 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 // import { post } from "../Network";
 import { Log, TimerInterface } from "../Interfaces";
 import useUser from "../hooks/useUser";
-import { UserContext } from "../Context";
 
 export default function Dashboard({ timer }: { timer: TimerInterface}): React.ReactElement {
     const [user, setUser] = useUser()
-    // const [user, setUser] = useContext(UserContext)
-    // const [user, setUser] = useUser()
-
-
-    // if (!user) { throw new Error(`ERROR: User is null or undefined.`) }
-    
-
     const [description, setDescription] = useState("")
     const [confetti] = useState(false)
 
@@ -55,8 +47,8 @@ export default function Dashboard({ timer }: { timer: TimerInterface}): React.Re
 
     /** ========== useEffects ========== **/
     useEffect(() => {
-        timer.reset()
-    }, [user])
+        timer.reset() // Not vital, but it makes the timer look unset (e.g. 15:00) while it is loading.
+    }, [timer])
 
     // useEffect(() => {
     //     if (timer.finished) {
@@ -78,7 +70,6 @@ export default function Dashboard({ timer }: { timer: TimerInterface}): React.Re
         </div>
 
         <button className={`w-30 w-28 px-4 py-2 text-lg border-[1px] ${user.paused ? "border-gray-500 text-gray-500" : "border-white"} rounded-md`} onClick={() => timer.pause()}>{user.paused ? "Start" : "Pause"}</button>
-
 
         <div>
             <h1>Hours studied today</h1>
