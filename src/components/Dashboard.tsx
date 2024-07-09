@@ -1,15 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { post } from "../Network";
+import React, { useContext, useEffect, useState } from "react";
+// import { post } from "../Network";
 import { Log, TimerInterface } from "../Interfaces";
 import useUser from "../hooks/useUser";
+import { UserContext } from "../Context";
 
 export default function Dashboard({ timer }: { timer: TimerInterface}): React.ReactElement {
     const [user, setUser] = useUser()
+    // const [user, setUser] = useContext(UserContext)
+    // const [user, setUser] = useUser()
+
+
     // if (!user) { throw new Error(`ERROR: User is null or undefined.`) }
     
 
     const [description, setDescription] = useState("")
-    const [confetti, setConfetti] = useState(false)
+    const [confetti] = useState(false)
 
     const today = new Date()
     const test: Log[] = user?.logs.map(idk => {
@@ -25,47 +30,44 @@ export default function Dashboard({ timer }: { timer: TimerInterface}): React.Re
     let minutesStudiedToday = 0;
     for (const idk of logsForToday) { minutesStudiedToday += idk.duration }
 
+    /** ========== Functions ========== **/
+    // const sendLog = async () => {
+    //     const newLog = {
+    //         project: user?.project || "Undefined",
+    //         duration: user?.duration || -1,
+    //         description: description,
+    //         timeStarted: user.timerId,
+    //         timeFinished: new Date()
+    //     }
+    //     timer.reset()
 
+    //     const response = await post<Log>("add-log", { token: user.token }, { log: newLog })
+
+    //     if (typeof response.data !== "string") {
+    //         setDescription("")
+    //         setConfetti(true)
+    //         setTimeout(() => {
+    //             setConfetti(false);
+    //         }, 1500);
+    //         user?.logs.push(response.data)
+    //     }
+    // }
+
+    /** ========== useEffects ========== **/
     useEffect(() => {
-        timer.resetClock(user.duration || 0)
+        timer.reset()
     }, [user])
 
-    useEffect(() => {
-        if (timer.finished) {
-            sendLog()
-        }
-    }, [timer])
+    // useEffect(() => {
+    //     if (timer.finished) {
+    //         sendLog()
+    //     }
+    // }, [timer])
 
-    const sendLog = async () => {
-        const newLog = {
-            project: user?.project || "Undefined",
-            duration: user?.duration || -1,
-            description: description,
-            timeStarted: timer.timeStarted,
-            timeFinished: new Date()
-        }
-        
-        timer.resetClock(user?.duration || 0)
-
-        const response = await post<Log>("add-log", { token: user.token }, { log: newLog })
-
-        if (typeof response.data !== "string") {
-            setDescription("")
-            setConfetti(true)
-            setTimeout(() => {
-                setConfetti(false);
-            }, 1500);
-            user?.logs.push(response.data)
-        }
-    }
-
+    /** ========== JSX ========== **/
     return <div className="flex flex-col gap-8 items-center max-w-screen-sm mx-auto">
-        <select className="p-3 bg-transparent border-2 border-white rounded-md text-center" value={user.project} onChange={(e) => {
-            setUser({ ...user, project: e.target.value })
-        }}>
-            {
-                user?.projects.map((projec, index) => <option key={index}>{projec}</option>)
-            }
+        <select className="p-3 bg-transparent border-2 border-white rounded-md text-center" value={user.project} onChange={(e) => setUser({ ...user, project: e.target.value })}>
+            { user.projects.map((projec, index) => <option key={index}>{projec}</option>) }
         </select>
         <div className="flex flex-row gap-3 justify-center">
             <p className="text-8xl">{timer.minutes}:{timer.seconds > 9 ? timer.seconds : ("0" + timer.seconds)}</p>
@@ -75,7 +77,7 @@ export default function Dashboard({ timer }: { timer: TimerInterface}): React.Re
             <input className="w-full px-3 py-1 text-lg border-[1px] border-white bg-transparent rounded-md" value={description} onChange={(e) => setDescription(e.target.value)} />
         </div>
 
-        <button className={`w-30 w-28 px-4 py-2 text-lg border-[1px] ${!timer.paused ? "border-gray-500 text-gray-500" : "border-white"} rounded-md`} onClick={() => timer.pressPause()}>{timer.paused ? "Start" : "Pause"}</button>
+        <button className={`w-30 w-28 px-4 py-2 text-lg border-[1px] ${user.paused ? "border-gray-500 text-gray-500" : "border-white"} rounded-md`} onClick={() => timer.pause()}>{user.paused ? "Start" : "Pause"}</button>
 
 
         <div>

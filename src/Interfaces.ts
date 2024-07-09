@@ -7,6 +7,7 @@ export interface TimerInterface {
     reset: () => void;
 }
 
+
 export interface Log {
     _id: string,
     project: string;

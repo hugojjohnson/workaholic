@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserContext } from "./Context";
 import { get } from "./Network";
-import useTimerBetter from "./hooks/useTimerBetter"
+// import useTimerBetter from "./hooks/useTimerBetter"
+import useTimer from "./hooks/useTimer"
 
 // Interfaces
 import { Log, UserData, requestResponse } from "./Interfaces";
@@ -21,7 +22,7 @@ import SignUp from "./components/SignUp";
 function App(): React.ReactElement {
   // Context
   const [user, setUser] = useState<UserData>(undefined);
-  const timer = useTimerBetter()
+  const timer = useTimer([user, setUser])
 
   useEffect(() => {
     const tempUser = JSON.parse(localStorage.getItem("workaholicUser") || "{}")

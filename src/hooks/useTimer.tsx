@@ -1,19 +1,20 @@
 import { useState, useEffect } from "react";
 // import useSound from 'use-sound';
 // import alarm from "/alarm.wav";
-import { TimerInterface } from "../Interfaces";
-import useUser from "./useUser";
+import { TimerInterface, User } from "../Interfaces";
 
 const SECOND = 1_000;
 const MINUTE = SECOND * 60;
 
-export default function useTimerBetter(): TimerInterface {
-    const [user, setUser] = useUser()
+export default function useTimer([user, setUser]: User): TimerInterface {
     // const [playSound] = useSound(alarm)
     const [timeLeft, setTimeLeft] = useState(42000)
 
     /** ========== Functions ========== **/
     const pause = () => {
+        console.log("pausing")
+        
+        if (!user) { return }
         const user2 = structuredClone(user)
         if (user.timerId === undefined) {
             user2.timerId = new Date().toISOString()
@@ -38,11 +39,15 @@ export default function useTimerBetter(): TimerInterface {
     }
 
     const reset = () => {
+        if (!user) { return }
         setTimeLeft(user.duration * MINUTE)
     }
 
     /** ========== useEffects ========== **/
     useEffect(() => {
+        if (!user) { return }
+        setTimeLeft((new Date(user.deadline || "sigh").getTime() - new Date().getTime()));
+
         let intervalId: number;
         if (user.deadline !== undefined && user.paused === undefined) {
             intervalId = setInterval(() => {
@@ -52,15 +57,18 @@ export default function useTimerBetter(): TimerInterface {
         return () => {
             clearInterval(intervalId);
         };
-    }, [user.paused, user.deadline]);
+    }, [user?.paused, user?.deadline]);
 
     // /* If the initial deadline value changes */
     // useEffect(() => {
+    // if (!user) { return }
     //     setTimeLeft((new Date(deadline).getTime() - new Date().getTime()));
     // }, [deadline]);
 
     // Check if the clock is paused
     useEffect(() => {
+        console.log(timeLeft)
+        if (!user) { return }
         const minutes = Math.floor((timeLeft / MINUTE))
         const seconds = Math.floor((timeLeft / SECOND) % 60)
         document.title = "Workaholic - " + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
@@ -76,6 +84,14 @@ export default function useTimerBetter(): TimerInterface {
     }, [timeLeft])
 
 
+    if (!user) {
+        return {
+            minutes: 0,
+            seconds: 0,
+            pause: () => {},
+            reset: () => {}
+        }
+    }
     /** ========== JSX ========== **/
     return {
         minutes: Math.floor(timeLeft / MINUTE),

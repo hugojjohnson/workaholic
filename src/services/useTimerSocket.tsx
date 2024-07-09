@@ -1,17 +1,18 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
 import socketService from './socketService';
 import { baseURL } from '../Network';
 import useSound from 'use-sound';
 import alarm from "/alarm.wav";
 import { SocketTimerInterface } from '../Interfaces';
 import { UserData } from '../Interfaces';
+import { UserContext } from '../Context';
 
 const SECOND = 1_000;
 const MINUTE = SECOND * 60;
 
 export default function useTimerSocket({ user, setUser }: { user: NonNullable<UserData>, setUser: Dispatch<SetStateAction<UserData>> }) {
+    // const [user, setUser] = useContext(UserContext)
     const [playSound] = useSound(alarm)
-
     const [timeLeft, setTimeLeft] = useState(42000) // in milliseconds
 
     // useEffect(() => {
