@@ -1,10 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
-import { UserContext } from "../Context";
+import React, { useEffect, useState } from "react";
 import { post } from "../Network";
 import { Log, TimerInterface } from "../Interfaces";
+import useUser from "../hooks/useUser";
 
 export default function Dashboard({ timer }: { timer: TimerInterface}): React.ReactElement {
-    const [user, setUser] = useContext(UserContext)
+    const [user, setUser] = useUser()
+    // if (!user) { throw new Error(`ERROR: User is null or undefined.`) }
+    
+
     const [description, setDescription] = useState("")
     const [confetti, setConfetti] = useState(false)
 
@@ -24,7 +27,7 @@ export default function Dashboard({ timer }: { timer: TimerInterface}): React.Re
 
 
     useEffect(() => {
-        timer.resetClock(user?.duration || 0)
+        timer.resetClock(user.duration || 0)
     }, [user])
 
     useEffect(() => {
@@ -44,7 +47,7 @@ export default function Dashboard({ timer }: { timer: TimerInterface}): React.Re
         
         timer.resetClock(user?.duration || 0)
 
-        const response = await post<Log>("add-log", { token: user?.token }, { log: newLog })
+        const response = await post<Log>("add-log", { token: user.token }, { log: newLog })
 
         if (typeof response.data !== "string") {
             setDescription("")
@@ -57,10 +60,8 @@ export default function Dashboard({ timer }: { timer: TimerInterface}): React.Re
     }
 
     return <div className="flex flex-col gap-8 items-center max-w-screen-sm mx-auto">
-        <select className="p-3 bg-transparent border-2 border-white rounded-md text-center" value={user?.project} onChange={(e) => {
-            if (user !== undefined && user !== null) {
-                setUser({ ...user, project: e.target.value })
-            }
+        <select className="p-3 bg-transparent border-2 border-white rounded-md text-center" value={user.project} onChange={(e) => {
+            setUser({ ...user, project: e.target.value })
         }}>
             {
                 user?.projects.map((projec, index) => <option key={index}>{projec}</option>)

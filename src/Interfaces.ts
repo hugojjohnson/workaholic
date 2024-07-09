@@ -20,7 +20,7 @@ export interface Log {
     user: string;
 }
 
-export type UserData = {
+export type SafeData = {
     username: string;
     // email: string;
     token: string;
@@ -30,9 +30,10 @@ export type UserData = {
     
     duration: number;
     project: string;
-} | null | undefined;
+};
+export type UserData = SafeData | null | undefined;
 
-
+export type Safe = [SafeData, Dispatch<SetStateAction<SafeData>>]
 export type User = [UserData, Dispatch<SetStateAction<UserData>>]
 
 export interface requestResponse<T> {
