@@ -20,10 +20,10 @@ import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 
 function App(): React.ReactElement {
-  // Context
   const [user, setUser] = useState<UserData>(undefined);
   const timer = useTimer([user, setUser])
 
+  /** ========== useEffects ========== **/
   useEffect(() => {
     const tempUser = JSON.parse(localStorage.getItem("workaholicUser") || "{}")
     if (!tempUser.token) {
@@ -33,7 +33,6 @@ function App(): React.ReactElement {
 
     setUser(tempUser)
     updateUser(tempUser)
-
 
     async function updateUser(tempUser: UserData): Promise<void> {
       const response: requestResponse<Log[]> = await get("/get-updates", { token: tempUser?.token })
@@ -57,6 +56,7 @@ function App(): React.ReactElement {
     }
   }, [user])
 
+  /** ========== JSX ========== **/
   if (user == null) {
     return (
       <UserContext.Provider value={[user, setUser]}>

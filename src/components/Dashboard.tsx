@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 // import { post } from "../Network";
 import { Log, TimerInterface } from "../Interfaces";
 import useUser from "../hooks/useUser";
@@ -46,10 +46,6 @@ export default function Dashboard({ timer }: { timer: TimerInterface}): React.Re
     // }
 
     /** ========== useEffects ========== **/
-    useEffect(() => {
-        timer.reset() // Not vital, but it makes the timer look unset (e.g. 15:00) while it is loading.
-    }, [timer])
-
     // useEffect(() => {
     //     if (timer.finished) {
     //         sendLog()
@@ -62,14 +58,15 @@ export default function Dashboard({ timer }: { timer: TimerInterface}): React.Re
             { user.projects.map((projec, index) => <option key={index}>{projec}</option>) }
         </select>
         <div className="flex flex-row gap-3 justify-center">
-            <p className="text-8xl">{timer.minutes}:{timer.seconds > 9 ? timer.seconds : ("0" + timer.seconds)}</p>
+            {timer.minutes === 11570 ? <p className="text-8xl">--:--</p>
+            : <p className="text-8xl">{timer.minutes}:{timer.seconds > 9 ? timer.seconds : ("0" + timer.seconds)}</p>}
         </div>
         <div className="w-full max-w-screen-sm px-5">
             <p className="text-sm text-gray-400">I made progress on</p>
             <input className="w-full px-3 py-1 text-lg border-[1px] border-white bg-transparent rounded-md" value={description} onChange={(e) => setDescription(e.target.value)} />
         </div>
 
-        <button className={`w-30 w-28 px-4 py-2 text-lg border-[1px] ${user.paused ? "border-gray-500 text-gray-500" : "border-white"} rounded-md`} onClick={() => timer.pause()}>{user.paused ? "Start" : "Pause"}</button>
+        <button className={`w-30 w-28 px-4 py-2 text-lg border-[1px] ${user.paused === undefined && user.timerId !== undefined ? "border-gray-500 text-gray-500" : "border-white"} rounded-md`} onClick={() => timer.pause()}>{user.paused === undefined && user.timerId !== undefined ? "Pause" : "Start"}</button>
 
         <div>
             <h1>Hours studied today</h1>

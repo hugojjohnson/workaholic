@@ -3,9 +3,9 @@ import { Dispatch, SetStateAction } from "react";
 export interface TimerInterface {
     minutes: number;
     seconds: number;
+    init: () => void;
     pause: () => void;
-    reset: () => void;
-    stop: () => void;
+    stop: (user2?: SafeData) => void;
 }
 
 

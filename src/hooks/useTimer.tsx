@@ -1,21 +1,20 @@
 import { useState, useEffect } from "react";
 import useSound from 'use-sound';
 import alarm from "/alarm.wav";
-import { TimerInterface, User } from "../Interfaces";
+import { SafeData, TimerInterface, User } from "../Interfaces";
 
 export default function useTimer([user, setUser]: User): TimerInterface {
     const [playSound] = useSound(alarm)
-    const [timeLeft, setTimeLeft] = useState(42000)
+    const [timeLeft, setTimeLeft] = useState(694200000)
     const SECOND = 1_000;
     const MINUTE = SECOND * 60;
 
     /** ========== Functions ========== **/
     const pause = () => {
-        console.log("pausing")
-        
         if (!user) { return }
         const user2 = structuredClone(user)
         if (user.timerId === undefined) {
+            console.log("starting timer")
             user2.timerId = new Date().toISOString()
             user2.paused = undefined
             user2.deadline = new Date(new Date().getTime() + user.duration * MINUTE).toISOString()
@@ -23,11 +22,13 @@ export default function useTimer([user, setUser]: User): TimerInterface {
             return
         }
         if (user.paused === undefined) {
+            console.log("pausing timer")
             user2.paused = new Date().toISOString()
             setUser(user2)
             return
         }
         if (user.deadline) {
+            console.log("playing timer")
             const rem = new Date(user.deadline).getTime() - new Date(user.paused).getTime()
             user2.deadline = new Date(new Date().getTime() + rem).toISOString()
             user2.paused = undefined
@@ -37,24 +38,32 @@ export default function useTimer([user, setUser]: User): TimerInterface {
         throw new Error("Timer shouldn't have reached this stage.")
     }
 
-    const reset = () => {
+    const init = () => {
         if (!user) { return }
-        setTimeLeft(user.duration * MINUTE)
+        if (user.paused && user.deadline) {
+            const tml = new Date(user.deadline).getTime() - new Date(user.paused).getTime()
+            setTimeLeft(tml)
+        } else if (user.deadline) {
+            const tml = new Date(user.deadline).getTime() - new Date().getTime()
+            setTimeLeft(tml)
+        } else {
+            setTimeLeft(user.duration * MINUTE)
+        }
     }
 
-    const stop = () => {
+    const stop = (user2?: SafeData) => {
         if (!user) { return }
-        const user2 = structuredClone(user)
+        if (!user2) { user2 = structuredClone(user) }
         user2.timerId = undefined
         user2.deadline = undefined
         user2.paused = undefined
         setUser(user2)
+        setTimeLeft(user2.duration * MINUTE)
     }
 
     /** ========== useEffects ========== **/
     useEffect(() => {
         if (!user || !user.deadline) { return }
-        setTimeLeft((new Date(user.deadline).getTime() - new Date().getTime()));
         let intervalId: number;
         if (user.deadline !== undefined && user.paused === undefined) {
             intervalId = setInterval(() => {
@@ -66,6 +75,10 @@ export default function useTimer([user, setUser]: User): TimerInterface {
         };
     }, [user, user?.paused, user?.deadline]);
 
+    useEffect(() => {
+        init()
+    }, [user])
+
     // /* If the initial deadline value changes */
     // useEffect(() => {
     // if (!user) { return }
@@ -74,7 +87,6 @@ export default function useTimer([user, setUser]: User): TimerInterface {
 
     // Check if the clock is paused
     useEffect(() => {
-        console.log(timeLeft)
         if (!user) { return }
         const minutes = Math.floor((timeLeft / MINUTE))
         const seconds = Math.floor((timeLeft / SECOND) % 60)
@@ -96,16 +108,16 @@ export default function useTimer([user, setUser]: User): TimerInterface {
         return {
             minutes: 0,
             seconds: 0,
+            init: () => {},
             pause: () => {},
-            reset: () => {},
             stop: () => {}
         }
     }
     return {
         minutes: Math.floor(timeLeft / MINUTE),
         seconds: Math.floor((timeLeft / SECOND) % 60),
+        init,
         pause,
-        reset,
         stop
     }
 }
