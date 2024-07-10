@@ -39,3 +39,11 @@ export interface requestResponse<T> {
     success: boolean;
     data: T | string;
 }
+
+export type SocketTimerInterface = {
+    timerId?: string; // actually timeStarted
+    paused?: string;
+    deadline?: string;
+    duration: number;
+    project: string;
+};

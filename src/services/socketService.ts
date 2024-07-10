@@ -4,15 +4,15 @@ import { SocketTimerInterface } from '../Interfaces';
 class SocketService {
     public socket: Socket | null = null;
 
-    public connect(url: string): void {
-        this.socket = io(url);
+    public connect(url: string, token: string): void {
+        this.socket = io(url, { query: { token } });
 
         this.socket.on('connect', () => {
-            // ('Connected to WebSocket server');
+            console.debug('Connected to WebSocket server');
         });
 
         this.socket.on('disconnect', () => {
-            // ('Disconnected from WebSocket server');
+            console.debug('Disconnected from WebSocket server');
         });
     }
 

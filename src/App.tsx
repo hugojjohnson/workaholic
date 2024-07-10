@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserContext } from "./Context";
 import { get } from "./Network";
-// import useTimerBetter from "./hooks/useTimerBetter"
-import useTimer from "./hooks/useTimer"
 
 // Interfaces
 import { Log, UserData, requestResponse } from "./Interfaces";
@@ -21,7 +19,6 @@ import SignUp from "./components/SignUp";
 
 function App(): React.ReactElement {
   const [user, setUser] = useState<UserData>(undefined);
-  const timer = useTimer([user, setUser])
 
   /** ========== useEffects ========== **/
   useEffect(() => {
@@ -57,7 +54,7 @@ function App(): React.ReactElement {
   }, [user])
 
   /** ========== JSX ========== **/
-  if (user == null) {
+  if (user == null || user === undefined) {
     return (
       <UserContext.Provider value={[user, setUser]}>
         <BrowserRouter basename="workaholic">
@@ -73,15 +70,15 @@ function App(): React.ReactElement {
       </UserContext.Provider>
     )
   }
-  
+
   return (
     <UserContext.Provider value={[user, setUser]}>
       <BrowserRouter basename="workaholic">
         <Routes>
           <Route path="/" element={<Header />}>
-            <Route index element={<Dashboard timer={timer} />} />
+            <Route index element={<Dashboard />} />
             <Route path="profile" element={<Profile />} />
-            <Route path="settings" element={<Settings timer={timer} />} />
+            <Route path="settings" element={<Settings />} />
             <Route path="reports" element={<Reports />} />
             <Route path="*" element={<NoPage />} />
           </Route>

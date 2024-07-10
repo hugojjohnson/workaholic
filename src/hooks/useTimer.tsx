@@ -1,17 +1,20 @@
 import { useState, useEffect } from "react";
 import useSound from 'use-sound';
 import alarm from "/alarm.wav";
-import { SafeData, TimerInterface, User } from "../Interfaces";
+import { SafeData, TimerInterface } from "../Interfaces";
+import useSocket from "../hooks/useSocket";
+import useUser from "./useUser";
 
-export default function useTimer([user, setUser]: User): TimerInterface {
+export default function useTimer(): TimerInterface {
+    const [user, setUser] = useUser()
     const [playSound] = useSound(alarm)
     const [timeLeft, setTimeLeft] = useState(694200000)
+    const socket = useSocket()
     const SECOND = 1_000;
     const MINUTE = SECOND * 60;
 
     /** ========== Functions ========== **/
     const pause = () => {
-        if (!user) { return }
         const user2 = structuredClone(user)
         if (user.timerId === undefined) {
             console.log("starting timer")
@@ -19,12 +22,14 @@ export default function useTimer([user, setUser]: User): TimerInterface {
             user2.paused = undefined
             user2.deadline = new Date(new Date().getTime() + user.duration * MINUTE).toISOString()
             setUser(user2)
+            socket.emit(user2)
             return
         }
         if (user.paused === undefined) {
             console.log("pausing timer")
             user2.paused = new Date().toISOString()
             setUser(user2)
+            socket.emit(user2)
             return
         }
         if (user.deadline) {
@@ -33,13 +38,13 @@ export default function useTimer([user, setUser]: User): TimerInterface {
             user2.deadline = new Date(new Date().getTime() + rem).toISOString()
             user2.paused = undefined
             setUser(user2)
+            socket.emit(user2)
             return
         }
         throw new Error("Timer shouldn't have reached this stage.")
     }
 
     const init = () => {
-        if (!user) { return }
         if (user.paused && user.deadline) {
             const tml = new Date(user.deadline).getTime() - new Date(user.paused).getTime()
             setTimeLeft(tml)
@@ -52,12 +57,12 @@ export default function useTimer([user, setUser]: User): TimerInterface {
     }
 
     const stop = (user2?: SafeData) => {
-        if (!user) { return }
         if (!user2) { user2 = structuredClone(user) }
         user2.timerId = undefined
         user2.deadline = undefined
         user2.paused = undefined
         setUser(user2)
+        socket.emit(user2)
         setTimeLeft(user2.duration * MINUTE)
     }
 
@@ -81,13 +86,11 @@ export default function useTimer([user, setUser]: User): TimerInterface {
 
     // /* If the initial deadline value changes */
     // useEffect(() => {
-    // if (!user) { return }
     //     setTimeLeft((new Date(deadline).getTime() - new Date().getTime()));
     // }, [deadline]);
 
     // Check if the clock is paused
     useEffect(() => {
-        if (!user) { return }
         const minutes = Math.floor((timeLeft / MINUTE))
         const seconds = Math.floor((timeLeft / SECOND) % 60)
         document.title = "Workaholic - " + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
@@ -104,15 +107,6 @@ export default function useTimer([user, setUser]: User): TimerInterface {
 
 
     /** ========== JSX ========== **/
-    if (!user) {
-        return {
-            minutes: 0,
-            seconds: 0,
-            init: () => {},
-            pause: () => {},
-            stop: () => {}
-        }
-    }
     return {
         minutes: Math.floor(timeLeft / MINUTE),
         seconds: Math.floor((timeLeft / SECOND) % 60),

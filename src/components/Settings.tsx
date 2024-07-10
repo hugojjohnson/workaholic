@@ -1,11 +1,15 @@
 import { useState } from "react"
 import { post } from "../Network"
 import useUser from "../hooks/useUser"
-import { TimerInterface } from "../Interfaces"
+import useSocket from "../hooks/useSocket"
+import useTimer from "../hooks/useTimer"
 
 
-export default function Settings({ timer }: { timer: TimerInterface}) {
+export default function Settings() {
     const [user, setUser] = useUser()
+    const socket = useSocket()
+    const timer = useTimer()
+
 
     const [newProject, setNewProject] = useState(user.projects[0] || "undefined")
     const [newDuration, setNewDuration] = useState(30)
@@ -24,6 +28,7 @@ export default function Settings({ timer }: { timer: TimerInterface}) {
             user2.projects = projects
         }
         timer.stop(user2)
+        socket.emit(user2)
         // await post<unknown>("/update-projects-duration", { token: user.token }, { projects: projects, duration: actualMins })
     }
 

@@ -1,9 +1,11 @@
 import axios, { AxiosError } from "axios";
 import { requestResponse } from "./Interfaces";
 
+export const baseURL = "http://localhost:3001/"
+// export const baseURL = "https://44.220.164.141.nip.io/"
+
 const apiClient = axios.create({
-    // baseURL: "http://localhost:3001/",
-    baseURL: "https://44.220.164.141.nip.io/",
+    baseURL: baseURL,
     timeout: 10000,
     headers: { 'Content-Type': 'application/json' }
 });

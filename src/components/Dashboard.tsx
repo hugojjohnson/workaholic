@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 // import { post } from "../Network";
-import { Log, TimerInterface } from "../Interfaces";
+import { Log } from "../Interfaces";
 import useUser from "../hooks/useUser";
+import useTimer from "../hooks/useTimer";
 
-export default function Dashboard({ timer }: { timer: TimerInterface}): React.ReactElement {
+export default function Dashboard(): React.ReactElement {
+    const timer = useTimer()
     const [user, setUser] = useUser()
     const [description, setDescription] = useState("")
     const [confetti] = useState(false)
