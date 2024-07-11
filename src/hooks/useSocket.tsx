@@ -11,6 +11,7 @@ export default function useSocket() {
     const emit = (user2?: SafeData) => {
         if (!user2) { user2 = user }
         socketService.sendMessage("update", {
+            projects: user2.projects,
             timerId: user2.timerId,
             paused: user2.paused,
             deadline: user2.deadline,
@@ -28,6 +29,7 @@ export default function useSocket() {
             console.log(timer)
             setUser({
                 ...user,
+                projects: timer.projects,
                 timerId: timer.timerId,
                 paused: timer.paused,
                 deadline: timer.deadline,

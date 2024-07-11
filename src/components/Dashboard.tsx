@@ -62,6 +62,7 @@ export default function Dashboard(): React.ReactElement {
         <div className="flex flex-row gap-3 justify-center">
             {timer.minutes === 11570 ? <p className="text-8xl">--:--</p>
             : <p className="text-8xl">{timer.minutes}:{timer.seconds > 9 ? timer.seconds : ("0" + timer.seconds)}</p>}
+            <button className={`absolute ml-[320px] mt-9 rounded-full border-2 ${user.timerId ? "border-white text-white" : "border-gray-500 text-gray-500"} w-10 h-10`} onClick={() => timer.stop()}>X</button>
         </div>
         <div className="w-full max-w-screen-sm px-5">
             <p className="text-sm text-gray-400">I made progress on</p>

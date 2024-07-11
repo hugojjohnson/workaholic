@@ -41,6 +41,7 @@ export interface requestResponse<T> {
 }
 
 export type SocketTimerInterface = {
+    projects: string[],
     timerId?: string; // actually timeStarted
     paused?: string;
     deadline?: string;

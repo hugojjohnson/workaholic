@@ -84,11 +84,6 @@ export default function useTimer(): TimerInterface {
         init()
     }, [user])
 
-    // /* If the initial deadline value changes */
-    // useEffect(() => {
-    //     setTimeLeft((new Date(deadline).getTime() - new Date().getTime()));
-    // }, [deadline]);
-
     // Check if the clock is paused
     useEffect(() => {
         const minutes = Math.floor((timeLeft / MINUTE))

@@ -20,6 +20,7 @@ export default function Settings() {
 
     /** ========== Functions ========== **/
     const updateUser = async (mins?: number, projects?: string[]) => {
+        console.log(projects)
         const user2 = structuredClone(user)
         if (mins) {
             user2.duration = mins
@@ -43,15 +44,16 @@ export default function Settings() {
     /** ========== JSX ========== **/
     const projectHTML = (index: number) => {
         return <div key={index} className="w-64 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md">
-            <input className="mr-auto text-lg bg-transparent" value={user.projects[index]} onBlur={() => updateUser()} onChange={(e) => {
+            <input className="mr-auto text-lg bg-transparent" value={user.projects[index]} onBlur={() => updateUser(undefined, user.projects)} onChange={(e) => {
                 const test = [...user.projects]
                 test[index] = e.target.value
-                updateUser(undefined, test)
+                setUser({...user, projects: test})
             }} />
             <button className="w-7 h-7 text-sm rounded-sm bg-[#424242]" onClick={() => {
                 const user2 = structuredClone(user)
                 user2.projects.splice(index, 1)
                 setUser(user2)
+                socket.emit(user2)
                 // setUselessVar(uselessVar + 1)
                 // updateUser()
             }}>X</button>
