@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import { post } from "../Network";
 import { Log } from "../Interfaces";
 import useUser from "../hooks/useUser";
@@ -11,49 +11,15 @@ export default function Dashboard(): React.ReactElement {
     const [confetti] = useState(false)
 
     const today = new Date()
-    const test: Log[] = user?.logs.map(idk => {
-        idk.timeStarted = new Date(idk.timeStarted)
-        idk.timeFinished = new Date(idk.timeFinished)
-        return idk
-    }) || []
-    const logsForToday = test.filter(log =>
-        log.timeStarted.getFullYear() === today.getFullYear() &&
-        log.timeStarted.getMonth() === today.getMonth() &&
-        log.timeStarted.getDate() === today.getDate()
-    ) || [];
+    const logsForToday = user.logs.filter(log =>
+        new Date(log.timeStarted).getFullYear() === today.getFullYear() &&
+        new Date(log.timeStarted).getMonth() === today.getMonth() &&
+        new Date(log.timeStarted).getDate() === today.getDate()
+    );
     let minutesStudiedToday = 0;
     for (const idk of logsForToday) { minutesStudiedToday += idk.duration }
-
-    /** ========== Functions ========== **/
-    // const sendLog = async () => {
-    //     const newLog = {
-    //         project: user?.project || "Undefined",
-    //         duration: user?.duration || -1,
-    //         description: description,
-    //         timeStarted: user.timerId,
-    //         timeFinished: new Date()
-    //     }
-    //     timer.reset()
-
-    //     const response = await post<Log>("add-log", { token: user.token }, { log: newLog })
-
-    //     if (typeof response.data !== "string") {
-    //         setDescription("")
-    //         setConfetti(true)
-    //         setTimeout(() => {
-    //             setConfetti(false);
-    //         }, 1500);
-    //         user?.logs.push(response.data)
-    //     }
-    // }
-
-    /** ========== useEffects ========== **/
-    // useEffect(() => {
-    //     if (timer.finished) {
-    //         sendLog()
-    //     }
-    // }, [timer])
-
+    
+    
     /** ========== JSX ========== **/
     return <div className="flex flex-col gap-8 items-center max-w-screen-sm mx-auto">
         <select className="p-3 bg-transparent border-2 border-white rounded-md text-center" value={user.project} onChange={(e) => setUser({ ...user, project: e.target.value })}>

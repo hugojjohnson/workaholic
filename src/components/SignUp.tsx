@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { post } from "../Network";
 import { Link, useNavigate } from "react-router-dom";
-import { requestResponse } from "../Interfaces";
+import { RequestResponse } from "../Interfaces";
 
 
 export default function SignUp(): React.ReactElement {
@@ -48,7 +48,7 @@ export default function SignUp(): React.ReactElement {
             {/* <p>{errorText}</p> */}
         </div></>
 
-    async function requestSignUp(): Promise<requestResponse<unknown>> {
+    async function requestSignUp(): Promise<RequestResponse<unknown>> {
         // encrypt the password before sending it
         // from https://stackoverflow.com/questions/18338890
         async function saltify(data: string): Promise<string> {

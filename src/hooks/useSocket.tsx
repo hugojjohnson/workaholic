@@ -27,6 +27,7 @@ export default function useSocket() {
         socketService.onMessage('update', (timer: SocketTimerInterface) => {
             console.log("Socket updated user:")
             console.log(timer)
+            
             setUser({
                 ...user,
                 projects: timer.projects,
@@ -42,8 +43,7 @@ export default function useSocket() {
         };
     }, []);
 
-
-    /** ========== JSX ========== **/
+    
     return {
         emit
     }

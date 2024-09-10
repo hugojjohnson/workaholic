@@ -35,10 +35,17 @@ export type UserData = SafeData | null | undefined;
 export type Safe = [SafeData, Dispatch<SetStateAction<SafeData>>]
 export type User = [UserData, Dispatch<SetStateAction<UserData>>]
 
-export interface requestResponse<T> {
-    success: boolean;
-    data: T | string;
-}
+type RequestResponseSuccess<T> = {
+    success: true;
+    data: T;
+    status?: number;
+};
+type RequestResponseFailure = {
+    success: false;
+    data: string;
+    status?: number;
+};
+export type RequestResponse<T> = RequestResponseSuccess<T> | RequestResponseFailure;
 
 export type SocketTimerInterface = {
     projects: string[],

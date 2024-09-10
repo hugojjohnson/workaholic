@@ -1,8 +1,7 @@
 import axios, { AxiosError } from "axios";
-import { requestResponse } from "./Interfaces";
+import { RequestResponse } from "./Interfaces";
 
-// export const baseURL = "http://localhost:3001/"
-export const baseURL = "https://44.220.164.141.nip.io/"
+export const baseURL = import.meta.env.VITE_PRODUCTION ? "http://localhost:3001/workaholic/" : "https://44.220.164.141.nip.io/workaholic/"
 
 const apiClient = axios.create({
     baseURL: baseURL,
@@ -10,7 +9,7 @@ const apiClient = axios.create({
     headers: { 'Content-Type': 'application/json' }
 });
 
-export async function get<T>(path: string, params: Record<string, unknown>): Promise<requestResponse<T>> {
+export async function get<T>(path: string, params: Record<string, unknown>): Promise<RequestResponse<T>> {
     try {
         const response = await apiClient.get(path, { params })
         if (response.status >= 200 && response.status <= 299) {
@@ -29,7 +28,7 @@ export async function get<T>(path: string, params: Record<string, unknown>): Pro
     }
 }
 
-export async function post<T>(path: string, params?: Record<string, unknown>, body?: Record<string, unknown>): Promise<requestResponse<T>> {
+export async function post<T>(path: string, params?: Record<string, unknown>, body?: Record<string, unknown>): Promise<RequestResponse<T>> {
     try {
         const response = await apiClient.post(path, body, { params: params })
         if (response.status >= 200 && response.status <= 299) {

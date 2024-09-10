@@ -4,7 +4,7 @@ import { UserContext } from "./Context";
 import { get } from "./Network";
 
 // Interfaces
-import { Log, UserData, requestResponse } from "./Interfaces";
+import { Log, UserData, RequestResponse } from "./Interfaces";
 
 // Components
 import Header from "./components/Header";
@@ -32,7 +32,7 @@ function App(): React.ReactElement {
     updateUser(tempUser)
 
     async function updateUser(tempUser: UserData): Promise<void> {
-      const response: requestResponse<Log[]> = await get("/get-updates", { token: tempUser?.token })
+      const response: RequestResponse<Log[]> = await get("/get-updates", { token: tempUser?.token })
       if (typeof response.data !== "string" && tempUser?.username) {
         setUser({
           ...tempUser,

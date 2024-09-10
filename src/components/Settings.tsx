@@ -29,14 +29,14 @@ export default function Settings() {
             user2.projects = projects
         }
         timer.stop(user2)
-        socket.emit(user2)
+        // socket.emit(user2)
         // await post<unknown>("/update-projects-duration", { token: user.token }, { projects: projects, duration: actualMins })
     }
 
     const addProject = async () => {
-        const timeFinished = new Date(new Date(newTimeStarted).getTime() + 11 * 60_000 * 60 + user.duration * 60_000)
+        const timeFinished = new Date(new Date(newTimeStarted).getTime() + user.duration * 60_000)
         await post<string>("/add-log", { token: user.token }, { log: {
-            project: newProject, duration: newDuration, description: newDescription, timeStarted: new Date(new Date(newTimeStarted).getTime() + 11 * 60_000 * 60), timeFinished: timeFinished
+            project: newProject, duration: newDuration, description: newDescription, timeStarted: new Date(newTimeStarted), timeFinished: timeFinished
         }})
     }
 
@@ -53,7 +53,7 @@ export default function Settings() {
                 const user2 = structuredClone(user)
                 user2.projects.splice(index, 1)
                 setUser(user2)
-                socket.emit(user2)
+                // socket.emit(user2)
                 // setUselessVar(uselessVar + 1)
                 // updateUser()
             }}>X</button>

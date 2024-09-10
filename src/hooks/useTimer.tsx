@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import useSound from 'use-sound';
 import alarm from "/alarm.wav";
-import { SafeData, TimerInterface } from "../Interfaces";
+import { Log, SafeData, TimerInterface } from "../Interfaces";
 import useSocket from "../hooks/useSocket";
 import useUser from "./useUser";
+import { post } from "../Network";
 
 export default function useTimer(): TimerInterface {
     const [user, setUser] = useUser()
@@ -20,7 +21,7 @@ export default function useTimer(): TimerInterface {
             console.log("starting timer")
             user2.timerId = new Date().toISOString()
             user2.paused = undefined
-            user2.deadline = new Date(new Date().getTime() + user.duration * MINUTE).toISOString()
+            user2.deadline = new Date(new Date().getTime() + user.duration * 1_000).toISOString()
             setUser(user2)
             socket.emit(user2)
             return
@@ -69,7 +70,7 @@ export default function useTimer(): TimerInterface {
     /** ========== useEffects ========== **/
     useEffect(() => {
         if (!user || !user.deadline) { return }
-        let intervalId: number;
+        let intervalId: NodeJS.Timeout;
         if (user.deadline !== undefined && user.paused === undefined) {
             intervalId = setInterval(() => {
                 setTimeLeft((new Date(user.deadline || "sigh").getTime() - new Date().getTime()));
@@ -90,13 +91,32 @@ export default function useTimer(): TimerInterface {
         const seconds = Math.floor((timeLeft / SECOND) % 60)
         document.title = "Workaholic - " + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
         if (timeLeft < 1100 && user.timerId !== undefined) {
-            setTimeLeft(0)
             stop()
+            setTimeLeft(0)
             playSound()
             Notification.requestPermission()
             const img = "/vite.svg";
-            const text = `HEY! Your task is now overdue.`;
-            new Notification("To do list", { body: text, icon: img });
+            const text = "Take a break!";
+            new Notification("Timer finished", { body: text, icon: img });
+
+            // Send request to the server
+            async function doStuff() {
+                if (!user.deadline || !user.timerId) { throw new Error("Timer not set properly.") }
+
+                const response = await post<Log>("/add-log", { token: user.token }, { log: {
+                    project: user.project, duration: user.duration, description: "TODO: Add", timeStarted: user.timerId, timeFinished: user.deadline
+                    }
+                })
+                if (!response.success) {
+                    const existingData = localStorage.getItem("workaholicBackup");
+                    const data: string[] = existingData ? JSON.parse(existingData) : [];
+                    data.push(JSON.stringify({
+                        project: user.project, duration: user.duration, description: "TODO: Add", timeStarted: user.timerId, timeFinished: user.deadline
+                    }))
+                    localStorage.setItem("workaholicBackup", JSON.stringify(data));
+                }
+            }
+            doStuff()
         }
     }, [timeLeft, MINUTE, user])
 

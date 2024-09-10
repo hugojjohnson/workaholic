@@ -16,6 +16,9 @@ export function Heatmap2({ chart, logs }: { chart: any, logs: Log[] }) {
 
 
     useEffect(() => {
+        if (logs.length === 0) {
+            return
+        }
         if (canvasRef.current) {
             if (chartRef.current) {
                 chartRef.current.destroy();
@@ -100,7 +103,7 @@ export function Heatmap2({ chart, logs }: { chart: any, logs: Log[] }) {
             }
         };
     }, []);
-
+    
     return <canvas ref={canvasRef} />;
 }
 

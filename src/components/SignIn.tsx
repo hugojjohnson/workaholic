@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { UserContext } from "../Context";
 import { post } from "../Network";
 
-import { Log, User, requestResponse } from "../Interfaces";
+import { Log, User, RequestResponse } from "../Interfaces";
 import { Link, useNavigate } from "react-router-dom";
 
 
@@ -51,7 +51,7 @@ export default function SignIn(): React.ReactElement {
         logs: Log[]
     }
 
-    async function requestLogin(): Promise<requestResponse<responseType>> {
+    async function requestLogin(): Promise<RequestResponse<responseType>> {
         // encrypt the password before sending it
         // from https://stackoverflow.com/questions/18338890
         async function saltify(data: string): Promise<string> {

@@ -5,8 +5,8 @@ class SocketService {
     public socket: Socket | null = null;
 
     public connect(url: string, token: string): void {
-        this.socket = io(url, { query: { token } });
-
+        this.socket = io(url.substring(0, url.indexOf("/", 8)), { path: "/workaholic/socket.io", query: { token } });
+        
         this.socket.on('connect', () => {
             console.debug('Connected to WebSocket server');
         });

@@ -1,16 +1,16 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { UserContext } from "./../Context";
+import React, { useEffect, useState } from 'react';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, Colors, ChartOptions, registerables } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { PieChart } from 'react-minimal-pie-chart';
 import { MatrixController, MatrixElement } from 'chartjs-chart-matrix';
 import Heatmap2 from './Heatmap2';
+import useUser from '../hooks/useUser';
 
 
 
 export default function Reports(): React.ReactElement {
-    const [user] = useContext(UserContext)
+    const [user] = useUser()
     const [labels, setLabels] = useState<Date[]>([])
     const [semesterLabels] = useState<Date[]>([])
 
@@ -22,6 +22,9 @@ export default function Reports(): React.ReactElement {
     ChartJS.defaults.color = '#DDD';
 
     useEffect(() => {
+        if (user.logs.length === 0) {
+            return
+        }
         if (labels.length !== 0) { return }
         // Set up the relevant date window
         let monday = new Date(Date.now());
@@ -33,7 +36,7 @@ export default function Reports(): React.ReactElement {
             monday.setDate(monday.getDate() + 1);
         }
 
-        const sortedLogs = user?.logs.sort((a, b) => a.timeStarted > b.timeStarted ? 1 : -1) || []
+        const sortedLogs = user.logs.sort((a, b) => a.timeStarted > b.timeStarted ? 1 : -1)
 
         monday = new Date(sortedLogs[0].timeStarted)
         while (monday.getTime() < new Date(sortedLogs[sortedLogs?.length - 1].timeStarted).getTime()) {
@@ -41,7 +44,7 @@ export default function Reports(): React.ReactElement {
             monday = new Date(monday.getTime() + 86400000)
         }
         setUselessVar(userlessVar + 1)
-    }, [labels, user?.logs, semesterLabels, userlessVar])
+    }, [labels, user.logs, semesterLabels, userlessVar])
 
     function changeWeek(forward: boolean) {
         const tempWindow: Date[] = []
@@ -62,8 +65,8 @@ export default function Reports(): React.ReactElement {
     // Construct datasets
     const my_datasets = []
     const my_datasets_semester = []
-    for (const project of user?.projects || []) {
-        const projectLogs = user?.logs.filter(idk => idk.project === project) || []
+    for (const project of user.projects) {
+        const projectLogs = user.logs.filter(idk => idk.project === project)
         let my_data = []
         for (const myDay of labels) {
             const sameDayLogs = projectLogs.filter(idk => isSameDay(new Date(idk.timeStarted), new Date(myDay)))
@@ -86,7 +89,7 @@ export default function Reports(): React.ReactElement {
     const data = { labels: labels.map(idk => idk.toLocaleString().split(",")[0].slice(0, -5)), datasets: my_datasets }
     const data_semester = { labels: semesterLabels.map(idk => idk.toLocaleString().split(",")[0].slice(0, -5)), datasets: my_datasets_semester }
     const myColours = ['rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)']
-    const dataPie = user?.projects.map((idk, index) => {
+    const dataPie = user.projects.map((idk, index) => {
         return {
             title: `${idk}: ${Math.round((user.logs.filter(hm => hm.project === idk).reduce((sum, ah) => sum + ah.duration, 0))/6)/10}`,
             value: user.logs.filter(hm => hm.project === idk).reduce((sum, ah) => sum + ah.duration, 0),
@@ -94,16 +97,16 @@ export default function Reports(): React.ReactElement {
         }
     })
     let totalMinutes = 0
-    for (const log of user?.logs || []) {
+    for (const log of user.logs) {
         totalMinutes += log.duration
     }
 
     function getStreak() {
-        if (user?.logs.length === 0) {
+        if (user.logs.length === 0) {
             return 0
         }
         // Get streak, starting from today, but today isn't really necessary.
-        const sortedDateList = user?.logs.map(idk => new Date(idk.timeStarted).getTime()).sort().reverse() || []
+        const sortedDateList = user.logs.map(idk => new Date(idk.timeStarted).getTime()).sort().reverse()
         const today = new Date();
         // yesterday.setDate(yesterday.getDate() - 1);
         today.setHours(0, 0, 0, 0);
@@ -133,7 +136,7 @@ export default function Reports(): React.ReactElement {
 
     const stats: [string, number, number][] = [
         ["Total hours", Math.round(totalMinutes / 60 * 10) / 10, 0],
-        ["Total intervals", user?.logs.length || -1, 1],
+        ["Total intervals", user.logs.length, 1],
         ["Streak", streak, 1],
         ["Average daily hours", Math.round(totalMinutes / (60 * daysPassed) * 10) / 10, 0]
     ]
@@ -214,7 +217,7 @@ export default function Reports(): React.ReactElement {
 
             <Bar options={options} data={data_semester} />
 
-           <Heatmap2 chart={ChartJS} logs={user?.logs || []} />
+           <Heatmap2 chart={ChartJS} logs={user.logs} />
         </div>
     </div>
 }
