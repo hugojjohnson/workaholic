@@ -1,13 +1,13 @@
 import { useState } from "react"
 import { post } from "../Network"
 import useUser from "../hooks/useUser"
-import useSocket from "../hooks/useSocket"
+// import useSocket from "../hooks/useSocket"
 import useTimer from "../hooks/useTimer"
 
 
 export default function Settings() {
     const [user, setUser] = useUser()
-    const socket = useSocket()
+    // const socket = useSocket()
     const timer = useTimer()
 
 
