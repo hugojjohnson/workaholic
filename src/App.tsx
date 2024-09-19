@@ -22,6 +22,9 @@ function App(): React.ReactElement {
 
   /** ========== useEffects ========== **/
   useEffect(() => {
+    if (import.meta.env.VITE_DEV) {
+      console.log("Running in a dev environment.")
+    }
     const tempUser = JSON.parse(localStorage.getItem("workaholicUser") || "{}")
     if (!tempUser.token) {
       setUser(null)
