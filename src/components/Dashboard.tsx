@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
-// import { post } from "../Network";
-import { Log } from "../Interfaces";
+import React, { useState } from "react";
 import useUser from "../hooks/useUser";
 import useTimer from "../hooks/useTimer";
+import DashboardChart from "./charts/DashboardChart";
 
 export default function Dashboard(): React.ReactElement {
     const timer = useTimer()
@@ -41,6 +40,8 @@ export default function Dashboard(): React.ReactElement {
             <h1>Hours studied today</h1>
             <p className="self-center text-center text-2xl text-red-300">{Math.floor(minutesStudiedToday / 60)}h {minutesStudiedToday % 60}min</p>
         </div>
+
+        <DashboardChart />
         <img className={`fixed ${confetti ? "h-full w-full top-0" : "h-0 w-0"} transition-all duration-50`} src={"/confetti.gif"} alt="confetti" />
     </div>
 }
