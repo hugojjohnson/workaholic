@@ -22,6 +22,7 @@ function App(): React.ReactElement {
 
   /** ========== useEffects ========== **/
   useEffect(() => {
+    console.log("Actually updated")
     if (import.meta.env.VITE_DEV) {
       console.log("Running in a dev environment.")
     }
