@@ -21,7 +21,7 @@ export default function useTimer(): TimerInterface {
             console.log("starting timer")
             user2.timerId = new Date().toISOString()
             user2.paused = undefined
-            user2.deadline = new Date(new Date().getTime() + user.duration * 1_000).toISOString()
+            user2.deadline = new Date(new Date().getTime() + user.duration * 60_000).toISOString()
             setUser(user2)
             socket.emit(user2)
             return
