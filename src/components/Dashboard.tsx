@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import useUser from "../hooks/useUser";
 import useTimer from "../hooks/useTimer";
 import DashboardChart from "./charts/DashboardChart";
+import useSocket from "../hooks/useSocket";
 
 export default function Dashboard(): React.ReactElement {
     const timer = useTimer()
+    const socket = useSocket()
     const [user, setUser] = useUser()
     const [description, setDescription] = useState("")
     const [confetti] = useState(false)
@@ -21,7 +23,7 @@ export default function Dashboard(): React.ReactElement {
     
     /** ========== JSX ========== **/
     return <div className="flex flex-col gap-8 items-center max-w-screen-sm mx-auto">
-        <select className="p-3 bg-transparent border-2 border-white rounded-md text-center" value={user.project} onChange={(e) => setUser({ ...user, project: e.target.value })}>
+        <select className="p-3 bg-transparent border-2 border-white rounded-md text-center" value={user.project} onChange={(e) => { socket.emit({ ...user, project: e.target.value }); setUser({ ...user, project: e.target.value })} }>
             { user.projects.map((projec, index) => <option key={index}>{projec}</option>) }
         </select>
         <div className="flex flex-row gap-3 justify-center">
