@@ -1,11 +1,9 @@
-import { defineConfig, loadEnv } from 'vite'
+import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 // esnext is a recent addition so it won't work on old browsers. However it lets you use
 // the bson library to create object ids. If you want to build for old browsers, just remove
 // every instance of 'esnext' in this file and it should be all good.
-
-const env = loadEnv("", process.cwd(), "")
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -21,6 +19,6 @@ export default defineConfig({
     }
   },
   server: {
-    open: env.PROD ? false : "workaholic"
+    open: "workaholic"
   }
 })
