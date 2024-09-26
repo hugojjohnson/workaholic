@@ -21,6 +21,6 @@ export default defineConfig({
     }
   },
   server: {
-    open: env.VITE_PRODUCTION ? "food" : false
+    open: env.PROD ? false : "workaholic"
   }
 })
