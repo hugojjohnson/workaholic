@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { RequestResponse } from "./Interfaces";
 
-export const baseURL = import.meta.env.DEV ? "http://localhost:3001/workaholic/" : "https://3.87.169.7.nip.io/workaholic/"
+export const baseURL = import.meta.env.DEV ? "http://localhost:3001/workaholic/" : "https://34.231.62.154.nip.io/workaholic/"
 
 const apiClient = axios.create({
     baseURL: baseURL,
