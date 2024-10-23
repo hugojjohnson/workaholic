@@ -24,6 +24,8 @@ function App(): React.ReactElement {
   useEffect(() => {
     if (import.meta.env.DEV) {
       console.log("Running in a dev environment.")
+    } else {
+      console.log("Running in a prod environment.")
     }
     const tempUser = JSON.parse(localStorage.getItem("workaholicUser") || "{}")
     if (!tempUser.token) {
@@ -76,7 +78,7 @@ function App(): React.ReactElement {
 
   return (
     <UserContext.Provider value={[user, setUser]}>
-      <BrowserRouter basename="workaholic">
+      <BrowserRouter>
         <Routes>
           <Route path="/" element={<Header />}>
             <Route index element={<Dashboard />} />
