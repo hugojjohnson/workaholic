@@ -60,7 +60,7 @@ function App(): React.ReactElement {
   if (user == null || user === undefined) {
     return (
       <UserContext.Provider value={[user, setUser]}>
-        <BrowserRouter basename="workaholic">
+        <BrowserRouter>
           <Routes>
             <Route path="/" element={<Header />}>
               <Route index element={<Welcome />} />
