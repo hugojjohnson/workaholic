@@ -23,7 +23,7 @@ export default function Dashboard(): React.ReactElement {
     /** ========== JSX ========== **/
     return <div className="flex flex-col gap-8 items-center max-w-screen-sm mx-auto">
         <div className="flex flex-row gap-2">
-            <select className="w-64 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" value={user.project} onChange={(e) => { socket.emit({ ...user, project: e.target.value }); setUser({ ...user, project: e.target.value })} }>
+            <select className="w-64 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg text-center" value={user.project} onChange={(e) => { socket.emit({ ...user, project: e.target.value }); setUser({ ...user, project: e.target.value })} }>
                 { user.projects.map((projec, index) => <option key={index}>{projec}</option>) }
             </select>
             <select className="w-24 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" value={user.duration + " min"} onChange={(e) => {
@@ -41,10 +41,11 @@ export default function Dashboard(): React.ReactElement {
         </div>
         <div className="w-full max-w-screen-sm px-5">
             <p className="text-sm text-gray-400">I made progress on</p>
-            <input className="w-full px-3 py-1 text-lg border-[1px] border-white bg-transparent rounded-md" value={user.description} onChange={(e) => setUser({ ...user, description: e.target.value })} onBlur={e => socket.emit({ ...user, description: e.target.value })} />
+            {/* className="w-full px-3 py-1 text-lg border-[1px] border-white bg-transparent rounded-md" */}
+            <input className="w-full p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" value={user.description} onChange={(e) => setUser({ ...user, description: e.target.value })} onBlur={e => socket.emit({ ...user, description: e.target.value })} />
         </div>
 
-        <button className={`w-30 w-28 px-4 py-2 text-lg border-[1px] ${user.paused === undefined && user.timerId !== undefined ? "border-gray-500 text-gray-500" : "border-white"} rounded-md`} onClick={() => timer.pause()}>{user.paused === undefined && user.timerId !== undefined ? "Pause" : "Start"}</button>
+        <button className={`w-30 w-28 px-4 py-2 text-lg border-[1px] ${user.paused === undefined && user.timerId !== undefined ? "border-gray-500 text-gray-500" : "border-white bg-[#323232]"} rounded-md`} onClick={() => timer.pause()}>{user.paused === undefined && user.timerId !== undefined ? "Pause" : "Start"}</button>
 
         <div>
             <h1>Hours studied today</h1>

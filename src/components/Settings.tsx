@@ -11,7 +11,8 @@ export default function Settings() {
     const [newProject, setNewProject] = useState(user.projects[0] || "undefined")
     const [newDuration, setNewDuration] = useState(30)
     const [newDescription, setNewDescription] = useState("")
-    const [newTimeStarted, setNewTimeStarted] = useState(new Date().toUTCString())
+    const [newTimeStarted, setNewTimeStarted] = useState(new Date().toISOString().slice(0, 16))
+    console.log(newTimeStarted)
 
     /** ========== Functions ========== **/
     const updateUser = async (projects: string[]) => {
@@ -65,30 +66,32 @@ export default function Settings() {
             }}>+</button>
         </div>
 
-        <h3 className="text-2xl mb-3 mt-6">Add log</h3>
+        <div className="rounded-md outline-dashed outline-2 w-fit pl-6 pr-32 py-4 mb-3 mt-48">
+            <h3 className="text-2xl">Add log</h3>
 
-        <p className="mt-2">Project</p>
-        <select className="w-80 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" value={newProject} onChange={(e) => setNewProject(e.target.value)}>
-        {
-            user.projects.map((_, index) => <option key={index}>{user.projects[index]}</option>)
-        }
-        </select>
+            <p className="mt-2">Project</p>
+            <select className="w-80 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" value={newProject} onChange={(e) => setNewProject(e.target.value)}>
+            {
+                user.projects.map((_, index) => <option key={index}>{user.projects[index]}</option>)
+            }
+            </select>
 
-        <p className="mt-2">Duration</p>
-        <select className="w-80 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" value={newDuration + " minutes"} onChange={(e) => {
-            const myMins = parseInt(e.target.value.substring(0, e.target.value.indexOf(" minutes"))) || -1
-            setNewDuration(myMins)
-        }}>
-            {[5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60].map((duration, index) => <option key={index}>{duration} minutes</option>) }
-        </select>
+            <p className="mt-2">Duration</p>
+            <select className="w-80 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" value={newDuration + " minutes"} onChange={(e) => {
+                const myMins = parseInt(e.target.value.substring(0, e.target.value.indexOf(" minutes"))) || -1
+                setNewDuration(myMins)
+            }}>
+                {[5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60].map((duration, index) => <option key={index}>{duration} minutes</option>) }
+            </select>
 
-        <p className="mt-2">Description</p>
-        <input className="w-80 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" value={newDescription} onChange={e => setNewDescription(e.target.value)} />
+            <p className="mt-2">Description</p>
+            <input className="w-80 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" value={newDescription} onChange={e => setNewDescription(e.target.value)} />
 
-        <p className="mt-2">Time started</p>
-        <input className="w-80 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" type="datetime-local" value={new Date(newTimeStarted).toISOString().replace(/\.\d+Z/,'')} onChange={e => setNewTimeStarted(e.target.value)} />
+            <p className="mt-2">Time started</p>
+            <input className="w-80 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" type="datetime-local" value={newTimeStarted} onChange={e => { setNewTimeStarted(e.target.value); console.log(e.target.value)}} />
 
 
-        <button className="border-2 border-white rounded-md py-1 px-2 mt-5" onClick={addLog}>Add</button>
+            <button className="border-2 border-white rounded-md py-1 px-2 mt-5" onClick={addLog}>Add</button>
+        </div>
     </div>
 }
