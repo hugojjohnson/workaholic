@@ -37,11 +37,12 @@ function App(): React.ReactElement {
     updateUser(tempUser)
 
     async function updateUser(tempUser: UserData): Promise<void> {
-      const response: RequestResponse<Log[]> = await get("/get-updates", { token: tempUser?.token })
+      const response: RequestResponse<{ logs: Log[], projects: string[] }> = await get("/get-updates", { token: tempUser?.token })
       if (typeof response.data !== "string" && tempUser?.username) {
         setUser({
           ...tempUser,
-          logs: response.data
+          logs: response.data.logs,
+          projects: response.data.projects
         })
       }
     }

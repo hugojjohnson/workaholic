@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import useUser from "../hooks/useUser";
 import useTimer from "../hooks/useTimer";
-import DashboardChart from "./charts/DashboardChart";
 import useSocket from "../hooks/useSocket";
 
 export default function Dashboard(): React.ReactElement {
@@ -12,6 +11,8 @@ export default function Dashboard(): React.ReactElement {
     const [confetti] = useState(false)
 
     const today = new Date()
+
+    /** ========== Functions ========== **/
     const logsForToday = user.logs.filter(log =>
         new Date(log.timeStarted).getFullYear() === today.getFullYear() &&
         new Date(log.timeStarted).getMonth() === today.getMonth() &&
@@ -20,12 +21,20 @@ export default function Dashboard(): React.ReactElement {
     let minutesStudiedToday = 0;
     for (const idk of logsForToday) { minutesStudiedToday += idk.duration }
     
-    
     /** ========== JSX ========== **/
     return <div className="flex flex-col gap-8 items-center max-w-screen-sm mx-auto">
-        <select className="p-3 bg-transparent border-2 border-white rounded-md text-center" value={user.project} onChange={(e) => { socket.emit({ ...user, project: e.target.value }); setUser({ ...user, project: e.target.value })} }>
-            { user.projects.map((projec, index) => <option key={index}>{projec}</option>) }
-        </select>
+        <div className="flex flex-row gap-2">
+            <select className="w-64 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" value={user.project} onChange={(e) => { socket.emit({ ...user, project: e.target.value }); setUser({ ...user, project: e.target.value })} }>
+                { user.projects.map((projec, index) => <option key={index}>{projec}</option>) }
+            </select>
+            <select className="w-24 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" value={user.duration + " min"} onChange={(e) => {
+                const user2 = structuredClone(user)
+                user2.duration = parseInt(e.target.value.substring(0, e.target.value.indexOf(" min"))) || -1
+                timer.stop(user2)
+            }}>
+                { [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60].map((duration, index) => <option key={index}>{duration} min</option>) }
+            </select>
+        </div>
         <div className="flex flex-row gap-3 justify-center">
             {timer.minutes === 11570 ? <p className="text-8xl">--:--</p>
             : <p className="text-8xl">{timer.minutes}:{timer.seconds > 9 ? timer.seconds : ("0" + timer.seconds)}</p>}
@@ -43,7 +52,6 @@ export default function Dashboard(): React.ReactElement {
             <p className="self-center text-center text-2xl text-red-300">{Math.floor(minutesStudiedToday / 60)}h {minutesStudiedToday % 60}min</p>
         </div>
 
-        <DashboardChart />
         <img className={`fixed ${confetti ? "h-full w-full top-0" : "h-0 w-0"} transition-all duration-50`} src={"/confetti.gif"} alt="confetti" />
     </div>
 }

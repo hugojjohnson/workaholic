@@ -1,39 +1,33 @@
 import { useState } from "react"
 import { post } from "../Network"
 import useUser from "../hooks/useUser"
-// import useSocket from "../hooks/useSocket"
 import useTimer from "../hooks/useTimer"
 
 
 export default function Settings() {
     const [user, setUser] = useUser()
-    // const socket = useSocket()
     const timer = useTimer()
-
 
     const [newProject, setNewProject] = useState(user.projects[0] || "undefined")
     const [newDuration, setNewDuration] = useState(30)
     const [newDescription, setNewDescription] = useState("")
     const [newTimeStarted, setNewTimeStarted] = useState(new Date().toUTCString())
 
-    const possibleDurations = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
-
     /** ========== Functions ========== **/
-    const updateUser = async (mins?: number, projects?: string[]) => {
+    const updateUser = async (projects: string[]) => {
         console.log(projects)
         const user2 = structuredClone(user)
-        if (mins) {
-            user2.duration = mins
-        }
         if (projects) {
             user2.projects = projects
         }
         timer.stop(user2)
-        // socket.emit(user2)
-        // await post<unknown>("/update-projects-duration", { token: user.token }, { projects: projects, duration: actualMins })
+        const response = await post<string>("/update-projects", { token: user.token }, { projects: projects })
+        if (!response.success) {
+            console.error(response.data)
+        }
     }
 
-    const addProject = async () => {
+    const addLog = async () => {
         const timeFinished = new Date(new Date(newTimeStarted).getTime() + user.duration * 60_000)
         await post<string>("/add-log", { token: user.token }, { log: {
             project: newProject, duration: newDuration, description: newDescription, timeStarted: new Date(newTimeStarted), timeFinished: timeFinished
@@ -44,7 +38,7 @@ export default function Settings() {
     /** ========== JSX ========== **/
     const projectHTML = (index: number) => {
         return <div key={index} className="w-64 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md">
-            <input className="mr-auto text-lg bg-transparent" value={user.projects[index]} onBlur={() => updateUser(undefined, user.projects)} onChange={(e) => {
+            <input className="mr-auto text-lg bg-transparent" value={user.projects[index]} onBlur={() => updateUser(user.projects)} onChange={(e) => {
                 const test = [...user.projects]
                 test[index] = e.target.value
                 setUser({...user, projects: test})
@@ -53,9 +47,6 @@ export default function Settings() {
                 const user2 = structuredClone(user)
                 user2.projects.splice(index, 1)
                 setUser(user2)
-                // socket.emit(user2)
-                // setUselessVar(uselessVar + 1)
-                // updateUser()
             }}>X</button>
         </div>
     }
@@ -74,17 +65,6 @@ export default function Settings() {
             }}>+</button>
         </div>
 
-        <h3 className="text-2xl mb-3 mt-6">Study Timer</h3>
-        <select className="w-64 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" value={user.duration + " minutes"} onChange={(e) => {
-            const myMins = parseInt(e.target.value.substring(0, e.target.value.indexOf(" minutes"))) || -1
-            // setDuration(myMins)
-            updateUser(myMins, undefined)
-        }}>
-            {
-                possibleDurations.map((duration, index) => <option key={index}>{duration} minutes</option>)
-            }
-        </select>
-
         <h3 className="text-2xl mb-3 mt-6">Add log</h3>
 
         <p className="mt-2">Project</p>
@@ -99,7 +79,7 @@ export default function Settings() {
             const myMins = parseInt(e.target.value.substring(0, e.target.value.indexOf(" minutes"))) || -1
             setNewDuration(myMins)
         }}>
-            { possibleDurations.map((duration, index) => <option key={index}>{duration} minutes</option>) }
+            {[5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60].map((duration, index) => <option key={index}>{duration} minutes</option>) }
         </select>
 
         <p className="mt-2">Description</p>
@@ -109,6 +89,6 @@ export default function Settings() {
         <input className="w-80 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" type="datetime-local" value={new Date(newTimeStarted).toISOString().replace(/\.\d+Z/,'')} onChange={e => setNewTimeStarted(e.target.value)} />
 
 
-        <button className="border-2 border-white rounded-md py-1 px-2 mt-5" onClick={addProject}>Add</button>
+        <button className="border-2 border-white rounded-md py-1 px-2 mt-5" onClick={addLog}>Add</button>
     </div>
 }
