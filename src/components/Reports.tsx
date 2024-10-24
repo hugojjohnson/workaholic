@@ -181,6 +181,8 @@ export default function Reports(): React.ReactElement {
                 <button className='px-2 bg-gray-700 rounded-md text-center' onClick={() => changeWeek(false) }>&lt;</button>
                 <button className='px-2 bg-gray-700 rounded-md text-center' onClick={() => changeWeek(true)}>&gt;</button>
             </div>
+            <div className='w-10 h-10 bg-[rgba(54,162,235,0.5)]'>hu</div>
+
             <Bar options={options} data={data} />
         </div>
     </div>

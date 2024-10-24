@@ -66,7 +66,7 @@ export default function Settings() {
             }}>+</button>
         </div>
 
-        <div className="rounded-md outline-dashed outline-2 w-fit pl-6 pr-32 py-4 mb-3 mt-48">
+        <div className="rounded-md outline-dashed outline-2 w-fit pl-6 pr-32 py-4 mb-3 mt-24">
             <h3 className="text-2xl">Add log</h3>
 
             <p className="mt-2">Project</p>

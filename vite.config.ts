@@ -19,6 +19,6 @@ export default defineConfig({
     }
   },
   server: {
-    open: "workaholic"
+    open: ""
   }
 })

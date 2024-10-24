@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { UserContext } from "../Context";
 import { useNavigate } from "react-router-dom";
-import { post } from "../Network";
+import { get } from "../Network";
 
 
 export default function Profile(): React.ReactElement {
@@ -9,49 +9,59 @@ export default function Profile(): React.ReactElement {
 
     const navigate = useNavigate()
 
-    return <div className='px-7 md:px-32 pt-10'>
+    return <div className='px-7 md:px-32 pt-10 flex flex-col gap-3'>
         <h1 className="text-4xl mb-5">Profile</h1>
 
-        <h3 className="text-3xl mt-16">Personal information</h3>
-        <div className="w-full border-[1px] border-gray-300"></div>
+        <h3 className="text-2xl">Personal information</h3>
+        <div className="w-[35%] border-[0.5px] border-gray-300"></div>
         <h5>Username: {user?.username}</h5>
         {/* <h5>Email: {user?.email}</h5> */}
         <h5>Email: unknown</h5>
         {/* <h5>Profile photo</h5> */}
 
-        <h3 className="text-3xl mt-16">Security</h3>
-        <div className="w-full border-[1px] border-gray-300"></div>
-        <div className="flex flex-row gap-2">
-            <h5>Current password</h5>
-            <input className="border-2 border-gray-500 rounded-md" />
+        <h3 className="text-2xl mt-8">Security</h3>
+        <div className="w-[35%] border-[0.5px] border-gray-300"></div>
+        <div>
+        <table>
+            <tr>
+                <td className="TABLEROW py-1 px-2">Current password</td>
+                <td className="TABLEROW py-1 px-2"><input type="password" placeholder="•••••••••••" className="w-64 p-2 bg-[#323232] rounded-md text-lg" /></td>
+            </tr>
+            <tr>
+                <td className="TABLEROW py-1 px-2">New password</td>
+                <td className="TABLEROW py-1 px-2"><input type="password" placeholder="•••••••••••" className="w-64 p-2 bg-[#323232] rounded-md text-lg" /></td>
+            </tr>
+            <tr>
+                <td className="TABLEROW py-1 px-2">Confirm new password</td>
+                <td className="TABLEROW py-1 px-2"><input type="password" placeholder="•••••••••••" className="w-64 p-2 bg-[#323232] rounded-md text-lg" /></td>
+            </tr>
+        </table>
         </div>
-        <div className="flex flex-row gap-2">
-            <h5>New password</h5>
-            {/* <Input placeholder="••••••••••" /> */}
+
+        <div>
+            <button className="p-2 mt-2 rounded-md text-center border-[1px] border-white w-auto">Change password</button>
         </div>
-        <div className="flex flex-row gap-2">
-            <h5>Confirm new password</h5>
-            {/* <Input placeholder="••••••••••" /> */}
-        </div>
-        <button>Change password</button>
 
 
-
-        <button className="text-lg p-3 mt-10 border-[1px] border-white rounded-md block" onClick={async () => {
+        <h3 className="text-xl mt-8">Sign Out</h3>
+        <div className="w-[35%] border-[0.5px] border-gray-300"></div>
+        <div><button className="p-2 rounded-md text-lg text-center border-[1px] border-white w-auto" onClick={async () => {
             try {
-                await post<unknown>("users/sign-out", {}, { token: user?.token })
+                await get("users/sign-out", { token: user?.token })
             } catch (err) {
                 console.error(err)
             }
             setUser(null)
             navigate("/")
 
-        }}>Sign out</button>
+        }}>Sign out</button></div>
         
 
 
-        <h3 className="text-3xl mt-16">Danger</h3>
-        <div className="w-full border-[1px] border-gray-300"></div>
-        <button className="rounded-md border-2 border-red-500 p-3 text-red-500 hover:cursor-pointer">Delete account</button>
+        <h3 className="text-2xl mt-8">Danger</h3>
+        <div className="w-[35%] border-[0.5px] border-gray-300"></div>
+        <div>
+            <button className="rounded-md border-2 border-red-500 p-3 text-red-500 hover:cursor-pointer">Delete account</button>
+        </div>
     </div>
 }
