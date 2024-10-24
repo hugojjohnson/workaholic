@@ -30,6 +30,7 @@ export type SafeData = {
     deadline?: string;
     duration: number;
     project: string;
+    description: string;
 };
 export type UserData = SafeData | null | undefined;
 export type Safe = [SafeData, Dispatch<SetStateAction<SafeData>>]
@@ -54,4 +55,5 @@ export type SocketTimerInterface = {
     deadline?: string;
     duration: number;
     project: string;
+    description: string;
 };

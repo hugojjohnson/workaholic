@@ -16,7 +16,8 @@ export default function useSocket() {
             paused: user2.paused,
             deadline: user2.deadline,
             duration: user2.duration,
-            project: user2.project
+            project: user2.project,
+            description: user2.description
         })
         return
     }
@@ -25,9 +26,8 @@ export default function useSocket() {
     useEffect(() => {
         socketService.connect(baseURL, user.token);
         socketService.onMessage('update', (timer: SocketTimerInterface) => {
-            console.log("Socket updated user:")
-            console.log(timer)
-            
+            // console.log("Socket updated user:")
+            // console.log(timer)
             setUser({
                 ...user,
                 projects: timer.projects,
@@ -36,6 +36,7 @@ export default function useSocket() {
                 deadline: timer.deadline,
                 project: timer.project,
                 duration: timer.duration,
+                description: timer.description
             })
         });
         return () => {

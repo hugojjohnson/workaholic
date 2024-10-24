@@ -7,7 +7,6 @@ export default function Dashboard(): React.ReactElement {
     const timer = useTimer()
     const socket = useSocket()
     const [user, setUser] = useUser()
-    const [description, setDescription] = useState("")
     const [confetti] = useState(false)
 
     const today = new Date()
@@ -42,7 +41,7 @@ export default function Dashboard(): React.ReactElement {
         </div>
         <div className="w-full max-w-screen-sm px-5">
             <p className="text-sm text-gray-400">I made progress on</p>
-            <input className="w-full px-3 py-1 text-lg border-[1px] border-white bg-transparent rounded-md" value={description} onChange={(e) => setDescription(e.target.value)} />
+            <input className="w-full px-3 py-1 text-lg border-[1px] border-white bg-transparent rounded-md" value={user.description} onChange={(e) => setUser({ ...user, description: e.target.value })} onBlur={e => socket.emit({ ...user, description: e.target.value })} />
         </div>
 
         <button className={`w-30 w-28 px-4 py-2 text-lg border-[1px] ${user.paused === undefined && user.timerId !== undefined ? "border-gray-500 text-gray-500" : "border-white"} rounded-md`} onClick={() => timer.pause()}>{user.paused === undefined && user.timerId !== undefined ? "Pause" : "Start"}</button>

@@ -21,7 +21,7 @@ export default function useTimer(): TimerInterface {
             console.log("starting timer")
             user2.timerId = new Date().toISOString()
             user2.paused = undefined
-            user2.deadline = new Date(new Date().getTime() + user.duration * 60_000).toISOString()
+            user2.deadline = new Date(new Date().getTime() + user.duration * (import.meta.env.DEV ? 1_000 : 60_000)).toISOString()
             setUser(user2)
             socket.emit(user2)
             return
@@ -62,6 +62,7 @@ export default function useTimer(): TimerInterface {
         user2.timerId = undefined
         user2.deadline = undefined
         user2.paused = undefined
+        user2.description = ""
         setUser(user2)
         socket.emit(user2)
         setTimeLeft(user2.duration * MINUTE)
@@ -104,10 +105,11 @@ export default function useTimer(): TimerInterface {
                 if (!user.deadline || !user.timerId) { throw new Error("Timer not set properly.") }
 
                 const response = await post<Log>("/add-log", { token: user.token }, { log: {
-                    project: user.project, duration: user.duration, description: "TODO: Add", timeStarted: user.timerId, timeFinished: user.deadline
+                    project: user.project, duration: user.duration, description: user.description, timeStarted: user.timerId, timeFinished: user.deadline
                     }
                 })
                 if (!response.success) {
+                    console.error(response.data)
                     const existingData = localStorage.getItem("workaholicBackup");
                     const data: string[] = existingData ? JSON.parse(existingData) : [];
                     data.push(JSON.stringify({
