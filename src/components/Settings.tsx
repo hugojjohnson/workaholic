@@ -60,7 +60,7 @@ export default function Settings() {
         return <div className="p-2 outline-dashed outline-2 rounded-md relative">
             <h1 className="text-xl">{log.project}</h1>
             <p className="text-gray-400">{new Date(log.timeStarted).toLocaleString().slice(0, -3)}-{new Date(new Date(log.timeStarted).getTime() + log.duration * 60_000).toLocaleString().slice(-8, -3)}</p>
-            <p className="text-gray-200 absolute top-1 right-2 italic">{log.duration} minutes</p>
+            <p className="text-gray-200 absolute top-2 right-3 italic">{log.duration} minutes</p>
             <p className="text-sm mt-2">{log.description}</p>
         </div>
     }
