@@ -13,7 +13,7 @@ export default function Settings() {
     const [newDuration, setNewDuration] = useState(30)
     const [newDescription, setNewDescription] = useState("")
     const [newTimeStarted, setNewTimeStarted] = useState(new Date().toISOString().slice(0, 16))
-    const [viewingLogs, setViewingLogs] = useState(false)
+    // const [viewingLogs, setViewingLogs] = useState(false)
     console.log(newTimeStarted)
 
     /** ========== Functions ========== **/
