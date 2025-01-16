@@ -115,7 +115,7 @@ export default function Settings() {
                 <h1 className="text-2xl mb-3">Logs</h1>
                 <div className="flex flex-col gap-7">
                     {
-                        user.logs.slice(0, Math.min(user.logs.length, 5)).map(log => logHTML(log))
+                        user.logs.sort((l1, l2) => new Date(l1.timeStarted) > new Date(l2.timeStarted) ? -1 : 1).slice(0, Math.min(user.logs.length, 5)).map(log => logHTML(log))
                     }
                 </div>
             </div>
