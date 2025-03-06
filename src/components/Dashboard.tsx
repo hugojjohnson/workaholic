@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import useUser from "../hooks/useUser";
 import useTimer from "../hooks/useTimer";
 import useSocket from "../hooks/useSocket";
+import { post } from "../Network";
+import { SafeData, User } from "../Interfaces";
 
 export default function Dashboard(): React.ReactElement {
     const timer = useTimer()
@@ -19,6 +21,16 @@ export default function Dashboard(): React.ReactElement {
     );
     let minutesStudiedToday = 0;
     for (const idk of logsForToday) { minutesStudiedToday += idk.duration }
+
+    async function updateProjectAndDuration(user2: SafeData) {
+        const response = await post<string>("/update-project-duration", { token: user.token }, {
+            project: user2.project,
+            duration: user2.duration
+        })
+        if (!response.success) {
+            throw Error("Timer was not updated on server.")
+        }
+    }
     
     /** ========== JSX ========== **/
     return <div className="flex flex-col gap-8 items-center justify-center max-w-screen-sm mx-auto mt-10">
@@ -29,6 +41,7 @@ export default function Dashboard(): React.ReactElement {
             <select className="w-24 p-2 flex flex-row items-center gap-2 rounded-md text-lg border-[0.5px] border-white bg-transparent" value={user.duration + " min"} onChange={(e) => {
                 const user2 = structuredClone(user)
                 user2.duration = parseInt(e.target.value.substring(0, e.target.value.indexOf(" min"))) || -1
+                // TODO: Pass this to the server
                 timer.stop(user2)
             }}>
                 { [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60].map((duration, index) => <option key={index}>{duration} min</option>) }

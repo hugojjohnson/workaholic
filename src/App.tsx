@@ -23,9 +23,9 @@ function App(): React.ReactElement {
   /** ========== useEffects ========== **/
   useEffect(() => {
     if (import.meta.env.DEV) {
-      console.log("Running in a dev environment.")
+      console.debug("Running in a dev environment.")
     } else {
-      console.log("Running in a prod environment.")
+      console.debug("Running in a prod environment.")
     }
     const tempUser = JSON.parse(localStorage.getItem("workaholicUser") || "{}")
     if (!tempUser.token) {
@@ -37,17 +37,21 @@ function App(): React.ReactElement {
     updateUser(tempUser)
 
     async function updateUser(tempUser: UserData): Promise<void> {
-      const response: RequestResponse<{ logs: Log[], projects: Project[] }> = await get("/get-updates", { token: tempUser?.token })
-      console.log("response")
-      console.log(response)
+      type responseType = { logs: Log[], projects: Project[], duration: number, goal: number, timerId?: string, paused?: string, deadline?: string, description: string }
+      const response: RequestResponse<responseType> = await get("/get-updates", { token: tempUser?.token })
       if (typeof response.data !== "string" && tempUser?.username) {
         setUser({
           ...tempUser,
           logs: response.data.logs,
-          projects: response.data.projects
+          projects: response.data.projects,
+          duration: response.data.duration,
+          goal: response.data.goal,
+          timerId: response.data.timerId,
+          paused: response.data.paused,
+          deadline: response.data.deadline,
+          description: response.data.description
         })
       } else if (response.status === 403) {
-        console.log("Signing user out.")
         setUser(null)
       }
     }

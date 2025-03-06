@@ -36,6 +36,7 @@ export type SafeData = {
     duration: number;
     project: Project;
     description: string;
+    goal: number;
 };
 export type UserData = SafeData | null | undefined;
 export type Safe = [SafeData, Dispatch<SetStateAction<SafeData>>]
@@ -54,12 +55,12 @@ type RequestResponseFailure = {
 export type RequestResponse<T> = RequestResponseSuccess<T> | RequestResponseFailure;
 
 export type SocketTimerInterface = {
-    projects: string[],
+    projects: Project[],
     timerId?: string; // actually timeStarted
     paused?: string;
     deadline?: string;
     duration: number;
-    project: string;
+    project: Project;
     description: string;
 };
 

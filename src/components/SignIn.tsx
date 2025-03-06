@@ -75,14 +75,16 @@ export default function SignIn(): React.ReactElement {
             setErrorText("Please fill in the email and password.")
             return {
                 success: false,
-                data: "Please fill in the email and password."
+                data: "Please fill in the email and password.",
+                status: 400
             }
         }
         if (!email.includes("@")) {
             setErrorText("Email is invalid.")
             return {
                 success: false,
-                data: "email is invalid."
+                data: "email is invalid.",
+                status: 400
             }
         }
 
@@ -99,14 +101,16 @@ export default function SignIn(): React.ReactElement {
                 duration: response.data.duration,
                 project: response.data.projects[0] || { name: "Default", colour: "red" },
                 logs: response.data.logs || [],
-                description: ""
+                description: "",
+                goal: 3
             });
             navigate('/');
         }
         setErrorText("An unknown error occurred.")
         return {
             success: false,
-            data: "An unknown error occurred."
+            data: "An unknown error occurred.",
+            status: 500
         }
     }
 }

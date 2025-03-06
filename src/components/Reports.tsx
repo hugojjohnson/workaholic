@@ -4,6 +4,7 @@ import { Bar } from 'react-chartjs-2';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { MatrixController, MatrixElement } from 'chartjs-chart-matrix';
 import useUser from '../hooks/useUser';
+import { BackgroundColours, BorderColours } from '../Interfaces';
 
 
 
@@ -11,7 +12,7 @@ export default function Reports(): React.ReactElement {
     const [user] = useUser()
     const [labels, setLabels] = useState<Date[]>([])
 
-    ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, Colors, annotationPlugin);
+    ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, annotationPlugin);
     ChartJS.register(...registerables);
     ChartJS.register(MatrixController, MatrixElement);
     ChartJS.defaults.color = '#DDD';
@@ -57,10 +58,7 @@ export default function Reports(): React.ReactElement {
     // Construct datasets
     const my_datasets = []
     for (const project of user.projects) {
-        console.log(project)
-        console.log(user.logs)
         const projectLogs = user.logs.filter(idk => idk.project === project.name)
-        console.log(projectLogs)
         let my_data = []
         for (const myDay of labels) {
             const sameDayLogs = projectLogs.filter(idk => isSameDay(new Date(idk.timeStarted), new Date(myDay)))
@@ -68,7 +66,7 @@ export default function Reports(): React.ReactElement {
             for (const sameDayLog of sameDayLogs) { x += sameDayLog.duration }
             my_data.push(x / 60)
         }
-        my_datasets.push({ label: project.name, data: my_data })
+        my_datasets.push({ label: project.name, data: my_data, backgroundColor: BackgroundColours[project.colour], borderColor: BorderColours[project.colour] })
     }
 
     const data = { labels: labels.map(idk => idk.toLocaleString().split(",")[0].slice(0, -5)), datasets: my_datasets }
@@ -145,8 +143,8 @@ export default function Reports(): React.ReactElement {
                     box1: {
                     //     // Indicates the type of annotation
                         type: "line",
-                        yMin: 3,
-                        yMax: 3,
+                        yMin: user.goal,
+                        yMax: user.goal,
                         borderColor: 'rgba(185, 50, 50, 1)',
                         borderDash: [10],
                         borderWidth: 1

@@ -2,8 +2,6 @@ import React, { useContext } from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { UserContext } from "../Context";
 
-// TODO: Make the logo white for sign up and log in pages.
-
 export default function Header(): React.ReactElement {
     const location = useLocation()
     const [user] = useContext(UserContext)

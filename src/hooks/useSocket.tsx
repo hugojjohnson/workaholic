@@ -26,8 +26,6 @@ export default function useSocket() {
     useEffect(() => {
         socketService.connect(baseURL, user.token);
         socketService.onMessage('update', (timer: SocketTimerInterface) => {
-            // console.log("Socket updated user:")
-            // console.log(timer)
             setUser({
                 ...user,
                 projects: timer.projects,

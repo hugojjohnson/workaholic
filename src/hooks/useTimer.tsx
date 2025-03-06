@@ -15,6 +15,22 @@ export default function useTimer(): TimerInterface {
     const MINUTE = SECOND * 60;
 
     /** ========== Functions ========== **/
+    const update = (user2: SafeData) => {
+        setUser(user2)
+        socket.emit(user2)
+        async function doStuff() {
+            const response = await post<string>("/update-timer", { token: user.token }, {
+                timerId: user.timerId,
+                paused: user.paused,
+                deadline: user.deadline
+            })
+            if (!response.success) {
+                throw Error("Timer was not updated on server.")
+            }
+        }
+        doStuff()
+        return
+    }
     const pause = () => {
         const user2 = structuredClone(user)
         if (user.timerId === undefined) {
@@ -22,15 +38,11 @@ export default function useTimer(): TimerInterface {
             user2.timerId = new Date().toISOString()
             user2.paused = undefined
             user2.deadline = new Date(new Date().getTime() + user.duration * (import.meta.env.DEV ? 1_000 : 60_000)).toISOString()
-            setUser(user2)
-            socket.emit(user2)
-            return
         }
         if (user.paused === undefined) {
             console.log("pausing timer")
             user2.paused = new Date().toISOString()
-            setUser(user2)
-            socket.emit(user2)
+            update(user2)
             return
         }
         if (user.deadline) {
@@ -38,8 +50,7 @@ export default function useTimer(): TimerInterface {
             const rem = new Date(user.deadline).getTime() - new Date(user.paused).getTime()
             user2.deadline = new Date(new Date().getTime() + rem).toISOString()
             user2.paused = undefined
-            setUser(user2)
-            socket.emit(user2)
+            update(user2)
             return
         }
         throw new Error("Timer shouldn't have reached this stage.")
@@ -63,8 +74,7 @@ export default function useTimer(): TimerInterface {
         user2.deadline = undefined
         user2.paused = undefined
         user2.description = ""
-        setUser(user2)
-        socket.emit(user2)
+        update(user2)
         setTimeLeft(user2.duration * MINUTE)
     }
 
@@ -74,7 +84,7 @@ export default function useTimer(): TimerInterface {
         let intervalId: NodeJS.Timeout;
         if (user.deadline !== undefined && user.paused === undefined) {
             intervalId = setInterval(() => {
-                setTimeLeft((new Date(user.deadline || "sigh").getTime() - new Date().getTime()));
+                setTimeLeft((new Date(user.deadline || "").getTime() - new Date().getTime()));
             }, SECOND);
         }
         return () => {
@@ -83,6 +93,7 @@ export default function useTimer(): TimerInterface {
     }, [user, user?.paused, user?.deadline]);
 
     useEffect(() => {
+        console.log("Init")
         init()
     }, [user])
 
@@ -105,15 +116,20 @@ export default function useTimer(): TimerInterface {
                 if (!user.deadline || !user.timerId) { throw new Error("Timer not set properly.") }
 
                 const response = await post<Log>("/add-log", { token: user.token }, { log: {
-                    project: user.project, duration: user.duration, description: user.description, timeStarted: user.timerId, timeFinished: user.deadline
+                    project: user.project.name, duration: user.duration, description: user.description, timeStarted: user.timerId, timeFinished: user.deadline
                     }
                 })
-                if (!response.success) {
+                if (response.success) {
+                    console.log(response.data)
+                    const user2 = structuredClone(user)
+                    user2.logs.push(response.data)
+                    stop(user2) // updates automatically
+                } else {
                     console.error(response.data)
                     const existingData = localStorage.getItem("workaholicBackup");
                     const data: string[] = existingData ? JSON.parse(existingData) : [];
                     data.push(JSON.stringify({
-                        project: user.project, duration: user.duration, description: "TODO: Add", timeStarted: user.timerId, timeFinished: user.deadline
+                        project: user.project, duration: user.duration, description: user.description, timeStarted: user.timerId, timeFinished: user.deadline
                     }))
                     localStorage.setItem("workaholicBackup", JSON.stringify(data));
                 }

@@ -16,10 +16,6 @@ export default function SignUp(): React.ReactElement {
         <div className="w-full h-20 text-xl text-gray-300 flex flex-row justify-center md:justify-end items-center gap-5 md:pr-10">
             <Link className="text-white border-[0.5px] border-white rounded-md p-2" to="/sign-in">Sign in</Link>
             <Link className="text-white border-[0.5px] border-white rounded-md p-2" to="/sign-up">Sign up</Link>
-            {/* <Link to="/profile" style={{ "display": "flex", "alignItems": "center" }}>
-                <img className="profile-pic" src={profileUrl} alt="profile pic" />
-                <p>Profile</p>
-            </Link> */}
         </div>
 
         <div className="flex flex-col gap-8 items-center max-w-screen-sm mx-auto">
@@ -71,19 +67,22 @@ export default function SignUp(): React.ReactElement {
         if (username === "" || password === "") {
             return {
                 success: false,
-                data: "Please fill in the username and password."
+                data: "Please fill in the username and password.",
+                status: 400
             }
         }
         if (password !== confirmPassword) {
             return {
                 success: false,
-                data: "Passwords do not match."
+                data: "Passwords do not match.",
+                status: 400
             }
         }
         if (!email.includes("@")) {
             return {
                 success: false,
-                data: "Email is not valid."
+                data: "Email is not valid.",
+                status: 400
             }
         }
 

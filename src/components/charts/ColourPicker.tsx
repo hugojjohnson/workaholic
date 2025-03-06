@@ -16,7 +16,7 @@ const ColourPicker = ({start, callback}: {start: Colours, callback: (colour: Col
 
             {/* Dropdown Options */}
             {isOpen && (
-                <div className="flex flex-col gap-3 items-center justify-center shadow-md p-3 absolute top-5 border-white border-dashed border-[1px] rounded-md overflow-clip bg-[#242424]">
+                <div className="z-10 flex flex-col gap-3 items-center justify-center shadow-md p-3 absolute top-5 border-white border-dashed border-[1px] rounded-md overflow-clip bg-[#242424]">
                     {colors.map((c, ind) => (
                         <div key={c} className="w-12 h-5 rounded-md p-2 cursor-pointer flex items-center justify-center" style={{ backgroundColor: c }}
                             onClick={() => {
