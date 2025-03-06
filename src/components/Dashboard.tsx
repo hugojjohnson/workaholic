@@ -23,8 +23,8 @@ export default function Dashboard(): React.ReactElement {
     /** ========== JSX ========== **/
     return <div className="flex flex-col gap-8 items-center justify-center max-w-screen-sm mx-auto mt-10">
         <div className="flex flex-row gap-2">
-            <select className="w-64 p-2 flex flex-row items-center gap-2 rounded-md text-lg text-center border-[0.5px] border-white bg-transparent" value={user.project} onChange={(e) => { socket.emit({ ...user, project: e.target.value }); setUser({ ...user, project: e.target.value })} }>
-                { user.projects.map((projec, index) => <option key={index}>{projec}</option>) }
+            <select className="w-64 p-2 flex flex-row items-center gap-2 rounded-md text-lg text-center border-[0.5px] border-white bg-transparent" value={user.project.name} onChange={(e) => { socket.emit({ ...user, project: { name: e.target.value, colour: "red" }}); setUser({ ...user, project: { name: e.target.value, colour: "red" }})} }>
+                { user.projects.map((projec, index) => <option key={index}>{projec.name}</option>) }
             </select>
             <select className="w-24 p-2 flex flex-row items-center gap-2 rounded-md text-lg border-[0.5px] border-white bg-transparent" value={user.duration + " min"} onChange={(e) => {
                 const user2 = structuredClone(user)

@@ -4,7 +4,7 @@ import { UserContext } from "./Context";
 import { get } from "./Network";
 
 // Interfaces
-import { Log, UserData, RequestResponse } from "./Interfaces";
+import { Log, UserData, RequestResponse, Project } from "./Interfaces";
 
 // Components
 import Header from "./components/Header";
@@ -37,13 +37,18 @@ function App(): React.ReactElement {
     updateUser(tempUser)
 
     async function updateUser(tempUser: UserData): Promise<void> {
-      const response: RequestResponse<{ logs: Log[], projects: string[] }> = await get("/get-updates", { token: tempUser?.token })
+      const response: RequestResponse<{ logs: Log[], projects: Project[] }> = await get("/get-updates", { token: tempUser?.token })
+      console.log("response")
+      console.log(response)
       if (typeof response.data !== "string" && tempUser?.username) {
         setUser({
           ...tempUser,
           logs: response.data.logs,
           projects: response.data.projects
         })
+      } else if (response.status === 403) {
+        console.log("Signing user out.")
+        setUser(null)
       }
     }
   }, [])

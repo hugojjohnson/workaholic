@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { UserContext } from "../Context";
 import { post } from "../Network";
 
-import { Log, User, RequestResponse } from "../Interfaces";
+import { Log, User, RequestResponse, Project } from "../Interfaces";
 import { Link, useNavigate } from "react-router-dom";
 
 
@@ -45,7 +45,7 @@ export default function SignIn(): React.ReactElement {
     interface responseType {
         username: string,
         token: string,
-        projects: string[],
+        projects: Project[],
         duration: number,
         project: string,
         logs: Log[]
@@ -97,7 +97,7 @@ export default function SignIn(): React.ReactElement {
                 token: response.data.token,
                 projects: response.data.projects,
                 duration: response.data.duration,
-                project: response.data.projects[0] || "Undefined",
+                project: response.data.projects[0] || { name: "Default", colour: "red" },
                 logs: response.data.logs || [],
                 description: ""
             });

@@ -59,7 +59,7 @@ export default function Reports(): React.ReactElement {
     for (const project of user.projects) {
         console.log(project)
         console.log(user.logs)
-        const projectLogs = user.logs.filter(idk => idk.project === project)
+        const projectLogs = user.logs.filter(idk => idk.project === project.name)
         console.log(projectLogs)
         let my_data = []
         for (const myDay of labels) {
@@ -68,7 +68,7 @@ export default function Reports(): React.ReactElement {
             for (const sameDayLog of sameDayLogs) { x += sameDayLog.duration }
             my_data.push(x / 60)
         }
-        my_datasets.push({ label: project, data: my_data })
+        my_datasets.push({ label: project.name, data: my_data })
     }
 
     const data = { labels: labels.map(idk => idk.toLocaleString().split(",")[0].slice(0, -5)), datasets: my_datasets }

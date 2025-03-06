@@ -2,14 +2,17 @@ import { useState } from "react"
 import { post } from "../Network"
 import useUser from "../hooks/useUser"
 import useTimer from "../hooks/useTimer"
-import { Log } from "../Interfaces"
+import { Colours, Log, Project } from "../Interfaces"
+import ColourPicker from "./charts/ColourPicker"
+import { useNavigate } from "react-router-dom"
 
 
 export default function Settings() {
     const [user, setUser] = useUser()
     const timer = useTimer()
+    const navigate = useNavigate()
 
-    const [newProject, setNewProject] = useState(user.projects[0] || "undefined")
+    const [newProject, setNewProject] = useState(user.projects[0])
     const [newDuration, setNewDuration] = useState(30)
     const [newDescription, setNewDescription] = useState("")
     const [newTimeStarted, setNewTimeStarted] = useState(new Date().toISOString().slice(0, 16))
@@ -17,7 +20,7 @@ export default function Settings() {
     console.log(newTimeStarted)
 
     /** ========== Functions ========== **/
-    const updateUser = async (projects: string[]) => {
+    const updateUser = async (projects: Project[]) => {
         console.log(projects)
         const user2 = structuredClone(user)
         if (projects) {
@@ -32,27 +35,43 @@ export default function Settings() {
 
     const addLog = async () => {
         const timeFinished = new Date(new Date(newTimeStarted).getTime() + user.duration * 60_000)
-        await post<string>("/add-log", { token: user.token }, {
+        const response = await post<Log>("/add-log", { token: user.token }, {
             log: {
-                project: newProject, duration: newDuration, description: newDescription, timeStarted: new Date(newTimeStarted), timeFinished: timeFinished
+                project: newProject.name, duration: newDuration, description: newDescription, timeStarted: new Date(newTimeStarted), timeFinished: timeFinished
             }
         })
+        if (response.success) {
+            const user2 = structuredClone(user)
+            user2.logs.push(response.data)
+            setUser(user2)
+            console.log(response)
+            // navigate("/")
+        }
     }
 
 
     /** ========== JSX ========== **/
     const projectHTML = (index: number) => {
-        return <div key={index} className="w-64 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md">
-            <input className="mr-auto text-lg bg-transparent" value={user.projects[index]} onBlur={() => updateUser(user.projects)} onChange={(e) => {
-                const test = [...user.projects]
-                test[index] = e.target.value
-                setUser({ ...user, projects: test })
+        return <div key={index} className="w-96 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md">
+            <input className="text-lg bg-transparent" value={user.projects[index].name} onBlur={() => updateUser(user.projects)} onChange={(e) => {
+                const user2 = [...user.projects]
+                user2[index].name = e.target.value
+                setUser({ ...user, projects: user2 })
             }} />
-            <button className="w-7 h-7 text-sm rounded-sm bg-[#424242]" onClick={() => {
-                const user2 = structuredClone(user)
-                user2.projects.splice(index, 1)
-                setUser(user2)
-            }}>X</button>
+            <div className="flex flex-row items-center gap-5 ml-auto">
+                <ColourPicker start={user.projects[index].colour} callback={(colour: Colours) => {
+                    console.log(`${colour} was picked!`)
+                    const user2 = structuredClone(user)
+                    user2.projects[index].colour = colour
+                    updateUser(user2.projects)
+                    setUser({ ...user, projects: user2.projects })
+                }}/>
+                <button className="w-7 h-7 text-sm rounded-sm bg-[#424242]" onClick={() => {
+                    const user2 = structuredClone(user)
+                    user2.projects.splice(index, 1)
+                    setUser(user2)
+                }}>X</button>
+            </div>
         </div>
     }
 
@@ -76,7 +95,7 @@ export default function Settings() {
                     }
                     <button className="w-10 h-10 self-start bg-[#323232] rounded-md" onClick={() => {
                         const user2 = structuredClone(user)
-                        user2.projects.push("")
+                        user2.projects.push({ name: "Default", colour: "red" })
                         setUser(user2)
                     }}>+</button>
                 </div>
@@ -85,9 +104,9 @@ export default function Settings() {
                     <h3 className="text-2xl">Add log</h3>
 
                     <p className="mt-2">Project</p>
-                    <select className="w-80 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" value={newProject} onChange={(e) => setNewProject(e.target.value)}>
+                    <select className="w-80 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" value={newProject.name} onChange={(e) => setNewProject({ name: e.target.value, colour: "red" })}>
                         {
-                            user.projects.map((_, index) => <option key={index}>{user.projects[index]}</option>)
+                            user.projects.map((_, index) => <option key={index}>{user.projects[index].name}</option>)
                         }
                     </select>
 

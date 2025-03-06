@@ -13,18 +13,18 @@ export async function get<T>(path: string, params: Record<string, unknown>): Pro
     try {
         const response = await apiClient.get(path, { params })
         if (response.status >= 200 && response.status <= 299) {
-            return { success: true, data: response.data }
+            return { success: true, data: response.data, status: response.status }
         }
-        return { success: false, data: response.data }
+        return { success: false, data: response.data, status: response.status }
     } catch (err: unknown) {
         console.error(err)
         if (err instanceof AxiosError && err.response && err.response.data) {
-            return { success: false, data: err.response.data };
+            return { success: false, data: err.response.data, status: err.response.status };
         }
         if (err instanceof AxiosError && err.message) {
-            return { success: false, data: err.message };
+            return { success: false, data: err.message, status: err.status || 500 };
         }
-        return { success: false, data: "An unknown error ocurred." };
+        return { success: false, data: "An unknown error ocurred.", status: 500 };
     }
 }
 
@@ -32,17 +32,17 @@ export async function post<T>(path: string, params?: Record<string, unknown>, bo
     try {
         const response = await apiClient.post(path, body, { params: params })
         if (response.status >= 200 && response.status <= 299) {
-            return { success: true, data: response.data }
+            return { success: true, data: response.data, status: response.status }
         }
-        return { success: false, data: response.data }
+        return { success: false, data: response.data, status: response.status }
     } catch (err: unknown) {
         console.error(err)
         if (err instanceof AxiosError && err.response && err.response.data) {
-            return { success: false, data: err.response.data };
+            return { success: false, data: err.response.data, status: err.status || 500 };
         }
         if (err instanceof AxiosError && err.message) {
-            return { success: false, data: err.message };
+            return { success: false, data: err.message, status: err.status || 500 };
         }
-        return { success: false, data: "An unknown error ocurred." };
+        return { success: false, data: "An unknown error ocurred.", status: 500 };
     }
 }
