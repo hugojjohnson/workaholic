@@ -1,44 +1,17 @@
 import { useState } from "react"
 import { post } from "../Network"
 import useUser from "../hooks/useUser"
-import useTimer from "../hooks/useTimer"
-import { Colours, Log, Project } from "../Interfaces"
+import { Colours, Log } from "../Interfaces"
 import ColourPicker from "./charts/ColourPicker"
 
 
 export default function Settings() {
-    const [user, setUser] = useUser()
-    const timer = useTimer()
+    const [user, setUser, setUserLocal] = useUser()
 
     const [newProject, setNewProject] = useState(user.projects[0])
     const [newDuration, setNewDuration] = useState(30)
     const [newDescription, setNewDescription] = useState("")
     const [newTimeStarted, setNewTimeStarted] = useState(new Date().toISOString().slice(0, 16))
-
-    /** ========== Functions ========== **/
-    const updateProjects = async (projects: Project[]) => {
-        const user2 = structuredClone(user)
-        if (projects) {
-            user2.projects = projects
-        }
-        timer.stop(user2)
-        const response = await post<string>("/update-projects", { token: user.token }, { projects: projects })
-        if (!response.success) {
-            console.error(response.data)
-        }
-    }
-    const updateGoal = async (goal: number) => {
-        const user2 = structuredClone(user)
-        if (goal <= 0) {
-            console.error("Goal must be positive.")
-            return
-        }
-        user2.goal = goal
-        const response = await post<string>("/update-goal", { token: user.token }, { goal: goal })
-        if (!response.success) {
-            console.error(response.data)
-        }
-    }
 
     const addLog = async () => {
         const timeFinished = new Date(new Date(newTimeStarted).getTime() + user.duration * 60_000)
@@ -58,16 +31,15 @@ export default function Settings() {
     /** ========== JSX ========== **/
     const projectHTML = (index: number) => {
         return <div key={index} className="w-96 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md">
-            <input className="text-lg bg-transparent" value={user.projects[index].name} onBlur={() => updateProjects(user.projects)} onChange={(e) => {
+            <input className="text-lg bg-transparent" value={user.projects[index].name} onBlur={() => setUser(user)} onChange={(e) => {
                 const user2 = [...user.projects]
                 user2[index].name = e.target.value
-                setUser({ ...user, projects: user2 })
+                setUserLocal({ ...user, projects: user2 })
             }} />
             <div className="flex flex-row items-center gap-5 ml-auto">
                 <ColourPicker start={user.projects[index].colour} callback={(colour: Colours) => {
                     const user2 = structuredClone(user)
                     user2.projects[index].colour = colour
-                    updateProjects(user2.projects)
                     setUser({ ...user, projects: user2.projects })
                 }}/>
                 <button className="w-7 h-7 text-sm rounded-sm bg-[#424242]" onClick={() => {
@@ -105,7 +77,7 @@ export default function Settings() {
                 </div>
 
                 <h3 className="text-2xl mb-3 mt-10">Daily goal (hours)</h3>
-                <input type="number" className="w-96 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md" defaultValue={user.goal} onBlur={e => updateGoal(parseFloat(e.target.value))} />
+                <input type="number" className="w-96 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md" defaultValue={user.goal} onBlur={e => setUser({ ...user, goal: parseFloat(e.target.value) })} />
 
                 <div className="rounded-md outline-dashed outline-2 w-fit pl-6 pr-32 py-4 mb-3 mt-24">
                     <h3 className="text-2xl">Add log</h3>

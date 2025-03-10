@@ -33,13 +33,13 @@ function App(): React.ReactElement {
       return
     }
 
-    setUser(tempUser)
+    setUser({...tempUser, logs: []}) // Sorry this can't be used... I actually couldn't tell you why.
     updateUser(tempUser)
 
     async function updateUser(tempUser: UserData): Promise<void> {
       type responseType = { logs: Log[], projects: Project[], duration: number, goal: number, timerId?: string, paused?: string, deadline?: string, description: string }
       const response: RequestResponse<responseType> = await get("/get-updates", { token: tempUser?.token })
-      if (typeof response.data !== "string" && tempUser?.username) {
+      if (response.success && tempUser?.username) {
         setUser({
           ...tempUser,
           logs: response.data.logs,

@@ -3,9 +3,8 @@ import { Dispatch, SetStateAction } from "react";
 export interface TimerInterface {
     minutes: number;
     seconds: number;
-    init: () => void;
-    pause: () => void;
-    stop: (user2?: SafeData) => void;
+    pause: (user2: SafeData) => void;
+    stop: (user2: SafeData) => void;
 }
 
 
@@ -39,7 +38,7 @@ export type SafeData = {
     goal: number;
 };
 export type UserData = SafeData | null | undefined;
-export type Safe = [SafeData, Dispatch<SetStateAction<SafeData>>]
+export type Safe = [SafeData, Dispatch<SetStateAction<SafeData>>, Dispatch<SetStateAction<SafeData>>]
 export type User = [UserData, Dispatch<SetStateAction<UserData>>]
 
 type RequestResponseSuccess<T> = {
@@ -56,12 +55,14 @@ export type RequestResponse<T> = RequestResponseSuccess<T> | RequestResponseFail
 
 export type SocketTimerInterface = {
     projects: Project[],
+    logs: Log[],
     timerId?: string; // actually timeStarted
     paused?: string;
     deadline?: string;
     duration: number;
     project: Project;
     description: string;
+    goal: number;
 };
 
 export type Colours = "red" | "orange" | "yellow" | "green" | "blue" | "purple" | "grey"

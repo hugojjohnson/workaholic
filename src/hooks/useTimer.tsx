@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import useSound from 'use-sound';
 import alarm from "/alarm.wav";
 import { Log, SafeData, TimerInterface } from "../Interfaces";
-import useSocket from "../hooks/useSocket";
 import useUser from "./useUser";
 import { post } from "../Network";
 
@@ -10,53 +9,58 @@ export default function useTimer(): TimerInterface {
     const [user, setUser] = useUser()
     const [playSound] = useSound(alarm)
     const [timeLeft, setTimeLeft] = useState(694200000)
-    const socket = useSocket()
     const SECOND = 1_000;
     const MINUTE = SECOND * 60;
 
     /** ========== Functions ========== **/
-    const update = (user2: SafeData) => {
-        setUser(user2)
-        socket.emit(user2)
-        async function doStuff() {
-            const response = await post<string>("/update-timer", { token: user.token }, {
-                timerId: user.timerId,
-                paused: user.paused,
-                deadline: user.deadline
-            })
-            if (!response.success) {
-                throw Error("Timer was not updated on server.")
-            }
-        }
-        doStuff()
-        return
-    }
-    const pause = () => {
-        const user2 = structuredClone(user)
+    const pause = (user2: SafeData) => {
         if (user.timerId === undefined) {
-            console.log("starting timer")
+            console.debug("starting timer")
             user2.timerId = new Date().toISOString()
             user2.paused = undefined
             user2.deadline = new Date(new Date().getTime() + user.duration * (import.meta.env.DEV ? 1_000 : 60_000)).toISOString()
-        }
-        if (user.paused === undefined) {
-            console.log("pausing timer")
+        } else if (user.paused === undefined) {
+            console.debug("pausing timer")
             user2.paused = new Date().toISOString()
-            update(user2)
-            return
-        }
-        if (user.deadline) {
-            console.log("playing timer")
+        } else if (user.deadline) {
+            console.debug("playing timer")
             const rem = new Date(user.deadline).getTime() - new Date(user.paused).getTime()
             user2.deadline = new Date(new Date().getTime() + rem).toISOString()
             user2.paused = undefined
-            update(user2)
-            return
+        } else {
+            throw new Error("Timer shouldn't have reached this stage.")
         }
-        throw new Error("Timer shouldn't have reached this stage.")
+        setUser(user2)
     }
 
-    const init = () => {
+    const stop = (user2?: SafeData) => {
+        console.log("timer.stop")
+        console.log(user.logs)
+        if (!user2) { user2 = structuredClone(user) }
+        user2.timerId = undefined
+        user2.deadline = undefined
+        user2.paused = undefined
+        user2.description = ""
+        setTimeLeft(user2.duration * MINUTE)
+        setUser(user2)
+    }
+
+    /** ========== useEffects ========== **/
+    useEffect(() => {
+        if (!user || !user.deadline) {
+            return
+        } else {
+            let intervalId: NodeJS.Timeout;
+            const x = user.deadline
+            setTimeLeft((new Date(x).getTime() - new Date().getTime()));
+            intervalId = setInterval(() => {
+                setTimeLeft((new Date(x).getTime() - new Date().getTime()));
+            }, SECOND);
+            return () => { clearInterval(intervalId); };
+        }
+    }, [user, user.paused, user.deadline, user.logs]);
+
+    useEffect(() => {
         if (user.paused && user.deadline) {
             const tml = new Date(user.deadline).getTime() - new Date(user.paused).getTime()
             setTimeLeft(tml)
@@ -66,35 +70,6 @@ export default function useTimer(): TimerInterface {
         } else {
             setTimeLeft(user.duration * MINUTE)
         }
-    }
-
-    const stop = (user2?: SafeData) => {
-        if (!user2) { user2 = structuredClone(user) }
-        user2.timerId = undefined
-        user2.deadline = undefined
-        user2.paused = undefined
-        user2.description = ""
-        update(user2)
-        setTimeLeft(user2.duration * MINUTE)
-    }
-
-    /** ========== useEffects ========== **/
-    useEffect(() => {
-        if (!user || !user.deadline) { return }
-        let intervalId: NodeJS.Timeout;
-        if (user.deadline !== undefined && user.paused === undefined) {
-            intervalId = setInterval(() => {
-                setTimeLeft((new Date(user.deadline || "").getTime() - new Date().getTime()));
-            }, SECOND);
-        }
-        return () => {
-            clearInterval(intervalId);
-        };
-    }, [user, user?.paused, user?.deadline]);
-
-    useEffect(() => {
-        console.log("Init")
-        init()
     }, [user])
 
     // Check if the clock is paused
@@ -103,7 +78,6 @@ export default function useTimer(): TimerInterface {
         const seconds = Math.floor((timeLeft / SECOND) % 60)
         document.title = "Workaholic - " + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
         if (timeLeft < 1100 && user.timerId !== undefined) {
-            stop()
             setTimeLeft(0)
             playSound()
             Notification.requestPermission()
@@ -120,10 +94,11 @@ export default function useTimer(): TimerInterface {
                     }
                 })
                 if (response.success) {
-                    console.log(response.data)
                     const user2 = structuredClone(user)
+                    console.log("finished")
+                    console.log(user.logs)
                     user2.logs.push(response.data)
-                    stop(user2) // updates automatically
+                    stop(user2)
                 } else {
                     console.error(response.data)
                     const existingData = localStorage.getItem("workaholicBackup");
@@ -132,18 +107,17 @@ export default function useTimer(): TimerInterface {
                         project: user.project, duration: user.duration, description: user.description, timeStarted: user.timerId, timeFinished: user.deadline
                     }))
                     localStorage.setItem("workaholicBackup", JSON.stringify(data));
+                    stop()
                 }
             }
             doStuff()
         }
-    }, [timeLeft, MINUTE, user])
-
-
+    }, [timeLeft, user, user.logs, user.timerId])
+    
     /** ========== JSX ========== **/
     return {
         minutes: Math.floor(timeLeft / MINUTE),
         seconds: Math.floor((timeLeft / SECOND) % 60),
-        init,
         pause,
         stop
     }
