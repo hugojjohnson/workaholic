@@ -4,7 +4,7 @@ export interface TimerInterface {
     minutes: number;
     seconds: number;
     pause: (user2: SafeData) => void;
-    stop: (user2: SafeData) => void;
+    stop: (user2?: SafeData) => void;
 }
 
 
