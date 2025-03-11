@@ -32,7 +32,7 @@ function App(): React.ReactElement {
       setUser(null)
       return
     }
-    console.log("Hi there!")
+    console.log("V2")
 
     setUser({...tempUser, logs: []}) // Sorry this can't be used... I actually couldn't tell you why.
     updateUser(tempUser)
