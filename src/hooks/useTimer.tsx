@@ -34,8 +34,6 @@ export default function useTimer(): TimerInterface {
     }
 
     const stop = (user2?: SafeData) => {
-        console.log("timer.stop")
-        console.log(user.logs)
         if (!user2) { user2 = structuredClone(user) }
         user2.timerId = undefined
         user2.deadline = undefined
@@ -95,8 +93,6 @@ export default function useTimer(): TimerInterface {
                 })
                 if (response.success) {
                     const user2 = structuredClone(user)
-                    console.log("finished")
-                    console.log(user.logs)
                     user2.logs.push(response.data)
                     stop(user2)
                 } else {

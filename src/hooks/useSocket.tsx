@@ -5,7 +5,7 @@ import { SafeData, SocketTimerInterface } from '../Interfaces';
 import { UserContext } from '../Context';
 
 export default function useSocket() {
-    const [user, setUser] = useContext(UserContext)
+    const [user, setUserLocal] = useContext(UserContext)
 
     if (user === undefined || user === null) {
         throw new Error("User is undefined or null")
@@ -34,7 +34,7 @@ export default function useSocket() {
         const updateHandler = (timer: SocketTimerInterface) => {
             if (!user) { return }
             socketService.connect(baseURL, user.token);
-            setUser({
+            setUserLocal({
                 ...user,
                 projects: timer.projects,
                 logs: timer.logs, // Need this to have the LOGS SYNC!
