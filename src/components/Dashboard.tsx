@@ -32,7 +32,7 @@ export default function Dashboard(): React.ReactElement {
             <select className="w-24 p-2 flex flex-row items-center gap-2 rounded-md text-lg border-[0.5px] border-white bg-transparent" value={user.duration + " min"} onChange={(e) => {
                 const user2 = structuredClone(user)
                 user2.duration = parseInt(e.target.value.substring(0, e.target.value.indexOf(" min"))) || -1
-                timer.stop()
+                timer.stop(user2)
             }}>
                 { [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60].map((duration, index) => <option key={index}>{duration} min</option>) }
             </select>
@@ -40,7 +40,7 @@ export default function Dashboard(): React.ReactElement {
         <div className="flex flex-row gap-3 justify-center">
             {timer.minutes === 11570 ? <p className="text-8xl">--:--</p>
             : <p className="text-8xl">{timer.minutes}:{timer.seconds > 9 ? timer.seconds : ("0" + timer.seconds)}</p>}
-            <button className={`absolute ml-[320px] mt-9 rounded-full border-2 ${user.timerId ? "border-white text-white" : "border-gray-500 text-gray-500"} w-10 h-10`} onClick={() => { console.log(user.logs); timer.stop()}}>X</button>
+            <button className={`absolute ml-[320px] mt-9 rounded-full border-2 ${user.timerId ? "border-white text-white" : "border-gray-500 text-gray-500"} w-10 h-10`} onClick={() => { timer.stop()}}>X</button>
         </div>
         <div className="w-full max-w-screen-sm px-5">
             <p className="text-sm text-gray-400">I made progress on</p>

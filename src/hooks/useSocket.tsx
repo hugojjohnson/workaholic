@@ -31,9 +31,9 @@ export default function useSocket() {
 
     /** ========== useEffects ========== **/
     useEffect(() => {
-        if (!user) { return }
-        socketService.connect(baseURL, user.token);
-        socketService.onMessage('update', (timer: SocketTimerInterface) => {
+        const updateHandler = (timer: SocketTimerInterface) => {
+            if (!user) { return }
+            socketService.connect(baseURL, user.token);
             setUser({
                 ...user,
                 projects: timer.projects,
@@ -46,11 +46,13 @@ export default function useSocket() {
                 description: timer.description,
                 goal: timer.goal,
             })
-        });
+            
+            socketService.onMessage('update', updateHandler)
+        }
         return () => {
             socketService.disconnect();
         };
-    }, []);
+    }, [user]);
 
     
     return {

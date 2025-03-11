@@ -31,6 +31,7 @@ class SocketService {
 
     public onMessage(event: string, callback: (timer: SocketTimerInterface) => void): void {
         if (this.socket) {
+            this.socket.off(event) // Remove all previous listeners
             this.socket.on(event, callback);
         }
     }
