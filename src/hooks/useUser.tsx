@@ -19,6 +19,10 @@ function useUser() {
         if (user2 == null || user2 == undefined) {
             return
         }
+
+        userContext[1](user2)
+        socket.emit(user2)
+        
         const response = await post("users/update-user", { token: user2.token }, {
             projects: user2.projects,
             timerId: user2.timerId,
@@ -30,12 +34,10 @@ function useUser() {
             goal: user2.goal,
         })
         if (!response.success) {
+            userContext[1](userContext[0]) // Reset to previous value
             console.error(response.data)
             return false
         }
-        socket.emit(user2)
-        userContext[1](user2)
-
     }
     return [userContext[0], modifyUser, userContext[1]] as Safe;
 }
