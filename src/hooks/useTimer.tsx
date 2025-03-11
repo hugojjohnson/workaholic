@@ -18,7 +18,7 @@ export default function useTimer(): TimerInterface {
             console.debug("starting timer")
             user2.timerId = new Date().toISOString()
             user2.paused = undefined
-            user2.deadline = new Date(new Date().getTime() + user.duration * (import.meta.env.DEV ? 1_000 : 60_000)).toISOString()
+            user2.deadline = new Date(new Date().getTime() + user.duration * (import.meta.env.DEV ? 60_000 : 60_000)).toISOString()
         } else if (user.paused === undefined) {
             console.debug("pausing timer")
             user2.paused = new Date().toISOString()
