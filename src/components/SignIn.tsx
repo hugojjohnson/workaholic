@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { UserContext } from "../Context";
 import { post } from "../Network";
 
-import { Log, User, RequestResponse, Project } from "../Interfaces";
+import { Log, User, Project } from "../Interfaces";
 import { Link, useNavigate } from "react-router-dom";
 
 
@@ -51,7 +51,7 @@ export default function SignIn(): React.ReactElement {
         logs: Log[]
     }
 
-    async function requestLogin(): Promise<RequestResponse<responseType>> {
+    async function requestLogin(): Promise<void> {
         // encrypt the password before sending it
         // from https://stackoverflow.com/questions/18338890
         async function saltify(data: string): Promise<string> {
@@ -73,19 +73,11 @@ export default function SignIn(): React.ReactElement {
 
         if (email === "" || password === "") {
             setErrorText("Please fill in the email and password.")
-            return {
-                success: false,
-                data: "Please fill in the email and password.",
-                status: 400
-            }
+            return
         }
         if (!email.includes("@")) {
             setErrorText("Email is invalid.")
-            return {
-                success: false,
-                data: "email is invalid.",
-                status: 400
-            }
+            return
         }
 
         const salt = await saltify(email + password)
@@ -93,7 +85,7 @@ export default function SignIn(): React.ReactElement {
                 email: email,
                 hash: salt
         })
-        if (response.success && typeof response.data !== "string") {
+        if (response.success) {
             setUser({
                 username: response.data.username,
                 token: response.data.token,
@@ -106,11 +98,12 @@ export default function SignIn(): React.ReactElement {
             });
             navigate('/');
         }
-        setErrorText("An unknown error occurred.")
-        return {
-            success: false,
-            data: "An unknown error occurred.",
-            status: 500
+        console.log("Status")
+        console.log(response.status)
+        if (response.status === 401) {
+            setErrorText("Username or password incorrect. Please try again.")
+        } else {
+            setErrorText("An unknown error occurred.")
         }
     }
 }

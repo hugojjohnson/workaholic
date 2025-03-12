@@ -15,15 +15,15 @@ export default function useTimer(): TimerInterface {
     /** ========== Functions ========== **/
     const pause = (user2: SafeData) => {
         if (user.timerId === undefined) {
-            console.debug("starting timer")
+            console.log("starting timer")
             user2.timerId = new Date().toISOString()
             user2.paused = undefined
             user2.deadline = new Date(new Date().getTime() + user.duration * (import.meta.env.DEV ? 60_000 : 60_000)).toISOString()
         } else if (user.paused === undefined) {
-            console.debug("pausing timer")
+            console.log("pausing timer")
             user2.paused = new Date().toISOString()
         } else if (user.deadline) {
-            console.debug("playing timer")
+            console.log("playing timer")
             const rem = new Date(user.deadline).getTime() - new Date(user.paused).getTime()
             user2.deadline = new Date(new Date().getTime() + rem).toISOString()
             user2.paused = undefined
@@ -35,40 +35,31 @@ export default function useTimer(): TimerInterface {
 
     const stop = (user2?: SafeData) => {
         if (!user2) { user2 = structuredClone(user) }
-        user2.timerId = undefined
-        user2.deadline = undefined
-        user2.paused = undefined
-        user2.description = ""
+        user2 = { ...user2, timerId: undefined, deadline: undefined, paused: undefined, description: "" }
         setTimeLeft(user2.duration * MINUTE)
         setUser(user2)
     }
 
     /** ========== useEffects ========== **/
     useEffect(() => {
-        if (!user || !user.deadline) {
-            return
+        if (!user || !user.deadline) return;
+        const x = new Date(user.deadline).getTime();
+        let intervalId: NodeJS.Timeout;
+        if (user.paused) {
+            const pausedTime = new Date(user.paused).getTime();
+            setTimeLeft(x - pausedTime);
         } else {
-            let intervalId: NodeJS.Timeout;
-            const x = user.deadline
-            setTimeLeft((new Date(x).getTime() - new Date().getTime()));
+            setTimeLeft(x - new Date().getTime());
             intervalId = setInterval(() => {
-                setTimeLeft((new Date(x).getTime() - new Date().getTime()));
+                setTimeLeft(x - new Date().getTime());
             }, SECOND);
-            return () => { clearInterval(intervalId); };
         }
-    }, [user, user.paused, user.deadline, user.logs]);
 
-    useEffect(() => {
-        if (user.paused && user.deadline) {
-            const tml = new Date(user.deadline).getTime() - new Date(user.paused).getTime()
-            setTimeLeft(tml)
-        } else if (user.deadline) {
-            const tml = new Date(user.deadline).getTime() - new Date().getTime()
-            setTimeLeft(tml)
-        } else {
-            setTimeLeft(user.duration * MINUTE)
-        }
-    }, [user])
+        return () => {
+            if (intervalId) clearInterval(intervalId);
+        };
+    }, [user]);
+
 
     // Check if the clock is paused
     useEffect(() => {
@@ -108,7 +99,7 @@ export default function useTimer(): TimerInterface {
             }
             doStuff()
         }
-    }, [timeLeft, user, user.logs, user.timerId])
+    }, [timeLeft, user])
     
     /** ========== JSX ========== **/
     return {

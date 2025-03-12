@@ -22,6 +22,8 @@ function useUser() {
 
         userContext[1](user2)
         socket.emit(user2)
+        console.log("updating user:")
+        console.log(user2.paused)
         
         const response = await post("users/update-user", { token: user2.token }, {
             projects: user2.projects,

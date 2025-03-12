@@ -8,11 +8,11 @@ class SocketService {
         this.socket = io(url.substring(0, url.indexOf("/", 8)), { path: "/workaholic/socket.io", query: { token } });
         
         this.socket.on('connect', () => {
-            console.debug('Connected to WebSocket server');
+            console.log('Connected to WebSocket server');
         });
 
         this.socket.on('disconnect', () => {
-            console.debug('Disconnected from WebSocket server');
+            console.log('Disconnected from WebSocket server');
         });
     }
 
@@ -33,6 +33,8 @@ class SocketService {
         if (this.socket) {
             this.socket.off(event) // Remove all previous listeners
             this.socket.on(event, callback);
+        } else {
+            console.log("Socket doesn't exist!")
         }
     }
 }

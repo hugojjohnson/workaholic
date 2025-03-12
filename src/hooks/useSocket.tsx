@@ -15,6 +15,7 @@ export default function useSocket() {
     const emit = (user2?: SafeData) => {
         if (!user) { return }
         if (!user2) { user2 = user }
+        console.log("About to update socket")
         socketService.sendMessage("update", {
             projects: user2.projects,
             logs: user2.logs,
@@ -31,7 +32,9 @@ export default function useSocket() {
 
     /** ========== useEffects ========== **/
     useEffect(() => {
+        console.log("Woah")
         const updateHandler = (timer: SocketTimerInterface) => {
+            console.log("Socket triggered")
             if (!user) { return }
             socketService.connect(baseURL, user.token);
             setUserLocal({
