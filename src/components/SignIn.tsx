@@ -98,8 +98,6 @@ export default function SignIn(): React.ReactElement {
             });
             navigate('/');
         }
-        console.log("Status")
-        console.log(response.status)
         if (response.status === 401) {
             setErrorText("Username or password incorrect. Please try again.")
         } else {

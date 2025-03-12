@@ -21,7 +21,7 @@ export default function Dashboard(): React.ReactElement {
         let minutesStudiedToday = 0;
         for (const idk of logsForToday) { minutesStudiedToday += idk.duration }
         setTimeStudiedToday([Math.floor(minutesStudiedToday / 60), minutesStudiedToday % 60])
-    }, [user.logs])
+    }, [user])
     
     /** ========== JSX ========== **/
     return <div className="flex flex-col gap-8 items-center justify-center max-w-screen-sm mx-auto mt-10">

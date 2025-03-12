@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 import { Safe, SafeData } from '../Interfaces';
 import { UserContext } from '../Context';
-import useSocket from './useSocket';
 import { post } from '../Network';
+import useSocket from './useSocket';
 
 function useUser() {
     const userContext = useContext(UserContext);
@@ -22,8 +22,6 @@ function useUser() {
 
         userContext[1](user2)
         socket.emit(user2)
-        console.log("updating user:")
-        console.log(user2.paused)
         
         const response = await post("users/update-user", { token: user2.token }, {
             projects: user2.projects,
@@ -36,8 +34,15 @@ function useUser() {
             goal: user2.goal,
         })
         if (!response.success) {
-            userContext[1](userContext[0]) // Reset to previous value
             console.error(response.data)
+            if (userContext[0] && userContext[0].deadline) { // Edge case: We want to
+                const timeLeft = new Date(userContext[0].deadline).getTime() - new Date().getTime()
+                if (timeLeft < 1100 && userContext[0].timerId !== undefined) {
+                    userContext[1]({ ...userContext[0], timerId: undefined, deadline: undefined, paused: undefined, description: "" }) // Reset to previous value
+                    return false;
+                }
+            }
+            userContext[1](userContext[0]) // Reset to previous value
             return false
         }
     }

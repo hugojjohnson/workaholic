@@ -13,9 +13,8 @@ export default function useSocket() {
 
     /** ========== Functions ========== **/
     const emit = (user2?: SafeData) => {
-        if (!user) { return }
         if (!user2) { user2 = user }
-        console.log("About to update socket")
+        console.log("Sending message")
         socketService.sendMessage("update", {
             projects: user2.projects,
             logs: user2.logs,
@@ -27,16 +26,14 @@ export default function useSocket() {
             description: user2.description,
             goal: user2.goal
         })
-        return
     }
 
     /** ========== useEffects ========== **/
     useEffect(() => {
-        console.log("Woah")
+        socketService.connect(baseURL, user.token);
         const updateHandler = (timer: SocketTimerInterface) => {
-            console.log("Socket triggered")
+            console.log("Receiving message")
             if (!user) { return }
-            socketService.connect(baseURL, user.token);
             setUserLocal({
                 ...user,
                 projects: timer.projects,
@@ -49,13 +46,12 @@ export default function useSocket() {
                 description: timer.description,
                 goal: timer.goal,
             })
-            
-            socketService.onMessage('update', updateHandler)
         }
+        socketService.onMessage('update', updateHandler)
         return () => {
             socketService.disconnect();
         };
-    }, [user]);
+    }, []);
 
     
     return {

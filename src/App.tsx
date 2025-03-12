@@ -33,7 +33,7 @@ function App(): React.ReactElement {
       setUser(null)
       return
     }
-    console.log("V3")
+    console.log("V4")
 
     prevUserRef.current = {...tempUser, logs: []}
     setUser({...tempUser, logs: []}) // Sorry this can't be used... I actually couldn't tell you why.
