@@ -26,10 +26,10 @@ export default function Dashboard(): React.ReactElement {
     /** ========== JSX ========== **/
     return <div className="relative flex flex-col gap-8 items-center justify-center max-w-screen-sm mx-auto mt-10 top-20 md:top-0 md:static">
         <div className="flex flex-row gap-2 mx-5 lg:mx-0">
-            <select className="w-64 p-2 flex flex-row items-center gap-2 rounded-md text-lg text-center border-[1px] border-white bg-transparent" value={user.project.name} onChange={(e) => { setUser({ ...user, project: { name: e.target.value, colour: "red" }})} }>
+            <select className="w-64 p-2 flex flex-row items-center gap-2 rounded-md text-lg text-center border-[0.5px] md:border-[0.5px] border-white bg-transparent" value={user.project.name} onChange={(e) => { setUser({ ...user, project: { name: e.target.value, colour: "red" }})} }>
                 { user.projects.map((projec, index) => <option key={index}>{projec.name}</option>) }
             </select>
-            <select className="w-24 p-2 flex flex-row items-center gap-2 rounded-md text-lg border-[1px] border-white bg-transparent" value={user.duration + " min"} onChange={(e) => {
+            <select className="w-24 p-2 flex flex-row items-center gap-2 rounded-md text-lg border-[0.5px] md:border-[0.5px] border-white bg-transparent" value={user.duration + " min"} onChange={(e) => {
                 const user2 = structuredClone(user)
                 user2.duration = parseInt(e.target.value.substring(0, e.target.value.indexOf(" min"))) || -1
                 timer.stop(user2)
