@@ -24,8 +24,8 @@ export default function Dashboard(): React.ReactElement {
     }, [user])
     
     /** ========== JSX ========== **/
-    return <div className="flex flex-col gap-8 items-center justify-center max-w-screen-sm mx-auto mt-10">
-        <div className="flex flex-row gap-2">
+    return <div className="relative flex flex-col gap-8 items-center justify-center max-w-screen-sm mx-auto mt-10 top-20 md:top-0 md:static">
+        <div className="flex flex-row gap-2 mx-5 lg:mx-0">
             <select className="w-64 p-2 flex flex-row items-center gap-2 rounded-md text-lg text-center border-[0.5px] border-white bg-transparent" value={user.project.name} onChange={(e) => { setUser({ ...user, project: { name: e.target.value, colour: "red" }})} }>
                 { user.projects.map((projec, index) => <option key={index}>{projec.name}</option>) }
             </select>
