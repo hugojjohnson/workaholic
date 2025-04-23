@@ -104,9 +104,17 @@ export default function useTimer(): TimerInterface {
 
         if (timeLeft < 1100 && user.timerId !== undefined) {
             setTimeLeft(0)
-            playSound()
-            Notification.requestPermission()
-            new Notification("Timer finished", { body: "Take a break!", icon: "/vite.svg" })
+            try {
+                playSound()
+            } catch (e) {
+                console.error(e)
+            }
+            if (typeof Notification !== "undefined") {
+                Notification.requestPermission?.().then(p => {
+                if (p === "granted") new Notification("Timer finished", { body: "Take a break!", icon: "/vite.svg" });
+                })
+            }
+
 
             stop()
             // Send request to the server
