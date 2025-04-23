@@ -9,9 +9,9 @@ export default function Settings() {
     const [user, setUser, setUserLocal] = useUser()
 
     const [newProject, setNewProject] = useState(user.projects[0])
-    const [newDuration, setNewDuration] = useState(30)
+    const [newDuration, setNewDuration] = useState(user.duration)
     const [newDescription, setNewDescription] = useState("")
-    const [newTimeStarted, setNewTimeStarted] = useState(new Date().toISOString().slice(0, 16))
+    const [newTimeStarted, setNewTimeStarted] = useState(new Date(Date.now() - new Date().getTimezoneOffset() * 60000 - user.duration * 60_000).toISOString().slice(0, 16))
 
     const addLog = async () => {
         const timeFinished = new Date(new Date(newTimeStarted).getTime() + user.duration * 60_000)
@@ -31,7 +31,7 @@ export default function Settings() {
     /** ========== JSX ========== **/
     const projectHTML = (index: number) => {
         return <div key={index} className="w-full lg:w-96 p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md">
-            <input className="text-lg bg-transparent w-20" value={user.projects[index].name} onBlur={() => setUser(user)} onChange={(e) => {
+            <input className="text-lg bg-transparent min-w-20 pr-1 mr-1" value={user.projects[index].name} onBlur={() => setUser(user)} onChange={(e) => {
                 const user2 = [...user.projects]
                 user2[index].name = e.target.value
                 setUserLocal({ ...user, projects: user2 })
@@ -93,6 +93,7 @@ export default function Settings() {
                     <select className="w-full p-2 flex flex-row items-center gap-2 bg-[#323232] rounded-md text-lg" value={newDuration + " minutes"} onChange={(e) => {
                         const myMins = parseInt(e.target.value.substring(0, e.target.value.indexOf(" minutes"))) || -1
                         setNewDuration(myMins)
+                        setNewTimeStarted(new Date(Date.now() - new Date().getTimezoneOffset() * 60_000 - myMins * 60_000).toISOString().slice(0, 16))
                     }}>
                         {[5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60].map((duration, index) => <option key={index}>{duration} minutes</option>)}
                     </select>
@@ -110,7 +111,7 @@ export default function Settings() {
             {/* Past logs */}
             <div className="w-1/3 pr-32">
                 <h1 className="text-2xl my-8 lg:mt-0">Logs</h1>
-                <div className="flex flex-col gap-7 w-full">
+                <div className="flex flex-col gap-7 w-full mb-10 pb-5">
                     {
                         user.logs.sort((l1, l2) => new Date(l1.timeStarted) > new Date(l2.timeStarted) ? -1 : 1).slice(0, Math.min(user.logs.length, 5)).map(log => logHTML(log))
                     }
