@@ -8,7 +8,7 @@ import ColourPicker from "./charts/ColourPicker"
 export default function Settings() {
     const [user, setUser, setUserLocal] = useUser()
 
-    const [newProject, setNewProject] = useState(user.projects[0])
+    const [newProject, setNewProject] = useState(user.project)
     const [newDuration, setNewDuration] = useState(user.duration)
     const [newDescription, setNewDescription] = useState("")
     const [newTimeStarted, setNewTimeStarted] = useState(new Date(Date.now() - new Date().getTimezoneOffset() * 60000 - user.duration * 60_000).toISOString().slice(0, 16))
