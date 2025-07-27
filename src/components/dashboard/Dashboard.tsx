@@ -12,7 +12,7 @@ export default function Dashboard() {
             {/* Project & Duration Selectors */}
             <div className="flex flex-row gap-4 mx-5 lg:mx-0">
                 <Select
-                    value={user.project.name}
+                    value={ user.project.name}
                     onValueChange={(val) =>
                         setUser({ ...user, project: { name: val, colour: "red" } })
                     }

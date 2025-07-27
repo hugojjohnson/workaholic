@@ -1,5 +1,5 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import type { Preferences } from "@prisma/client";
+import type { Preferences, Subject, Timer } from "@prisma/client";
 import { type DefaultSession, type NextAuthConfig, type Session } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
@@ -16,6 +16,8 @@ declare module "next-auth" {
     user: {
       id: string;
       preferences?: Preferences;
+      timer?: Timer;
+      subjects?: Subject[];
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];
@@ -44,15 +46,24 @@ export const authConfig = {
     session: async ({ session, user }): Promise<Session> => {
       const dbUser = await db.user.findUnique({
         where: { id: user.id },
-        select: { preferences: true },
+        select: {
+          preferences: true,
+          timer: true,
+          subjects: true
+        },
       });
 
+      
+      console.log("dbUser")
+      console.log(dbUser)
       return {
         ...session,
         user: {
           ...session.user,
           id: user.id,
-          preferences: dbUser?.preferences ?? undefined
+          preferences: dbUser?.preferences ?? undefined,
+          timer: dbUser?.timer ?? undefined,
+          subjects: dbUser?.subjects ?? undefined
         },
       }
     },

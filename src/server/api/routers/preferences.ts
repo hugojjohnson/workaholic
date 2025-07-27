@@ -8,21 +8,54 @@ export const preferencesRouter = createTRPCRouter({
       z.object({
         shareActivity: z.boolean(),
         goal: z.number().min(1).max(168), // max hours/week = 7*24
+        subjects: z.array(z.string()).min(1)
       })
     )
     .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+      const user = await ctx.db.user.findFirst({
+        where: { id: userId }
+      })
+      if (!user) {
+        throw new Error("User could not be found.");
+      }
+
       const prefs = await ctx.db.preferences.upsert({
-        where: { userId: ctx.session.user.id },
+        where: { userId: userId },
         update: {
           shareActivity: input.shareActivity,
           goal: input.goal,
         },
         create: {
-          userId: ctx.session.user.id,
+          userId: userId,
           shareActivity: input.shareActivity,
           goal: input.goal,
         },
       });
-      return prefs;
+      await ctx.db.subject.createMany({
+        data: input.subjects.map((subject, i) => ({
+          userId,
+          name: subject,
+          colour: "RED",
+          order: i
+        }))
+      })
+
+      const firstSubject = await ctx.db.subject.findFirst({
+        where: { userId }
+      })
+      if (!firstSubject) {
+        throw new Error("could not find firstSubject.");
+      }
+
+      await ctx.db.timer.create({
+        data: {
+          userId,
+          subjectId: firstSubject.id,
+          duration: 30,
+          tags: [],
+          notes: ""
+        }
+      })
     }),
 });

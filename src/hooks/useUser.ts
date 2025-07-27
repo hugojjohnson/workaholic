@@ -1,12 +1,13 @@
 import { useSession } from "next-auth/react";
 import type { Session } from "next-auth";
-import type { Preferences } from "@prisma/client";
+import type { Preferences, Timer } from "@prisma/client";
 
 
 // Designed for use in the main body of my app, where the user is signed in and has preferences.
 // At the moment it throws an error when one of these is undefined, but eventually it'll redirect.
 type SafeUser = Omit<NonNullable<Session["user"]>, "preferences"> & {
   preferences: Preferences;
+  timer: Timer;
 };
 export function useUser(): SafeUser {
   const { data: session, status } = useSession();
@@ -20,6 +21,12 @@ export function useUser(): SafeUser {
   }
   if (!session?.user.preferences) {
     throw new Error("Preferences are not set up.");
+  }
+  if (!session?.user.timer) {
+    throw new Error("Timer is not set up.");
+  }
+  if (session?.user.subjects?.length == 0) {
+    throw new Error("The user has no subjects.");
   }
 
   // Asserting preferences is well defined

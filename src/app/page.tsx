@@ -13,18 +13,25 @@ export default async function Home() {
   if (!session?.user) {
     return <LandingPage />
   }
+
+  if (!session?.user.preferences) {
+    return <HydrateClient>
+      <SessionProvider session={session}>
+        <SetUpPreferences />
+      </SessionProvider>
+    </HydrateClient>
+  }
+
+  console.log(session.user.preferences)
   return (
     <HydrateClient>
-      <SessionProvider>
+      <SessionProvider session={session}>
         <LogsProvider>
           {
-            session?.user.preferences
-              ? <div>hi</div>
-              : <SetUpPreferences />
+            <div>hi</div>
           }
         </LogsProvider>
       </SessionProvider>
-      <div>hi</div>
     </HydrateClient>
   );
 }

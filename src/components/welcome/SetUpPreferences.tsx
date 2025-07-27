@@ -1,7 +1,6 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api } from "~/trpc/react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -9,29 +8,47 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Switch } from "../ui/switch";
 import { Button } from "../ui/button";
+import { Trash2, Plus } from "lucide-react";
 
 export default function SetUpPreferences() {
-  const { data: session } = useSession()
-  const router = useRouter()
-  const [shareActivity, setShareActivity] = useState(true)
-  const [goal, setGoal] = useState(24) // default hours per week
+  const { data: session } = useSession();
+  const [shareActivity, setShareActivity] = useState(true);
+  const [goal, setGoal] = useState(24);
+  const [subjects, setSubjects] = useState<string[]>([""]);
 
-  const utils = api.useUtils()
+  const utils = api.useUtils();
   const create = api.preferences.upsert.useMutation({
     onSuccess: async () => {
-      await utils.invalidate()
+      await utils.invalidate();
     },
-  })
+  });
+
+  const handleSubjectChange = (index: number, value: string) => {
+    const updated = [...subjects];
+    updated[index] = value;
+    setSubjects(updated);
+  };
+
+  const handleAddSubject = () => {
+    setSubjects((prev) => [...prev, ""]);
+  };
+
+  const handleRemoveSubject = (index: number) => {
+    setSubjects((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const handleContinue = () => {
-    create.mutate({ shareActivity, goal })
-  }
+    const filteredSubjects = subjects.filter((s) => s.trim() !== "");
+    create.mutate({ shareActivity, goal, subjects: filteredSubjects });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-muted flex items-center justify-center p-4">
       <Card className="w-full max-w-xl shadow-2xl border-2 border-border">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">Welcome, {session?.user?.name?.split(" ")[0]} 👋</CardTitle>
+          <CardTitle className="text-2xl font-bold">
+            Welcome, {session?.user?.name?.split(" ")[0]} 👋
+          </CardTitle>
           <p className="text-muted-foreground text-sm mt-2">
             Before you dive in, let’s get a few things set up so we can help you build better study habits this semester.
           </p>
@@ -52,13 +69,49 @@ export default function SetUpPreferences() {
           <div className="flex items-center justify-between">
             <div>
               <Label htmlFor="share">📣 Share your study activity with friends?</Label>
-              <p className="text-muted-foreground text-sm">They’ll see your current subjects, when you’re studying, and kudos in the weekly recap.</p>
+              <p className="text-muted-foreground text-sm">
+                They’ll see your current subjects, when you’re studying, and kudos in the weekly recap.
+              </p>
             </div>
             <Switch
               id="share"
               checked={shareActivity}
               onCheckedChange={setShareActivity}
             />
+          </div>
+
+          <div>
+            <Label className="block mb-2">📚 Your Subjects</Label>
+            <div className="space-y-2">
+              {subjects.map((subject, idx) => (
+                <div key={idx} className="flex gap-2 items-center">
+                  <Input
+                    placeholder={`Subject ${idx + 1}`}
+                    value={subject}
+                    onChange={(e) => handleSubjectChange(idx, e.target.value)}
+                  />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    type="button"
+                    onClick={() => handleRemoveSubject(idx)}
+                    disabled={subjects.length === 1}
+                  >
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-2"
+              type="button"
+              onClick={handleAddSubject}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add subject
+            </Button>
           </div>
 
           <div className="bg-muted rounded-xl p-4 text-sm text-muted-foreground">
@@ -75,5 +128,5 @@ export default function SetUpPreferences() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

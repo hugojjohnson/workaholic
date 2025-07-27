@@ -72,6 +72,10 @@ model Timer {
   userId    String  @unique
   subject   Subject @relation(fields: [subjectId], references: [id])
   subjectId String  @unique
+  duration  Int
+  startedAt DateTime?
+  tags      String[] // Optional: ["flashcards", "lecture"]
+  notes     String? // Optional free-form field
 }
 
 model Preferences {
@@ -86,9 +90,8 @@ model Subject {
   id        String   @id @default(cuid())
   user      User     @relation(fields: [userId], references: [id])
   userId    String
-  uni       String
   name      String
-  color     String
+  colour     String
   order     Int
   logs      Log[]
   timer     Timer?
@@ -97,6 +100,17 @@ model Subject {
 
   @@unique([userId, name]) // user can’t have two subjects with same name
 }
+
+enum ColourType {
+  RED
+  ORANGE
+  YELLOW
+  GREEN
+  BLUE
+  PINK
+  PURPLE
+}
+
 
 model Log {
   id        String   @id @default(cuid())
