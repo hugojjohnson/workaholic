@@ -16,6 +16,7 @@ import { env } from "~/env";
 
 interface TimerContextT {
     timer: inferProcedureOutput<AppRouter["timer"]["get"]> | undefined;
+    isLoading: boolean;
     secondsLeft: number;
     minutesLeft: number;
     pause: () => void;
@@ -141,7 +142,7 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
 
-    const durationSeconds =
+    const durationSeconds: number | undefined =
         timer?.duration
             ? timer.duration * MINUTE
             : 42 * MINUTE;
@@ -289,6 +290,7 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
         <TimerContext.Provider
             value={{
                 timer: timer,
+                isLoading: !timer,
                 minutesLeft: Math.floor(timeLeft / MINUTE),
                 secondsLeft: Math.floor((timeLeft / SECOND) % 60),
                 pause: togglePause,

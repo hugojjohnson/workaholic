@@ -14,9 +14,6 @@ export default function Dashboard() {
     const timer = useTimer();
     const [description, setDescription] = useState<string>(timer.timer?.description ?? "");
 
-    if (!timer.timer) {
-        return <p>loading</p>;
-    }
     return (
         <div className="flex flex-col gap-8 items-center justify-center max-w-screen-sm mx-auto pt-28 top-20 md:top-0 w-screen fixed md:static">
             {/* Project & Duration Selectors */}
@@ -41,7 +38,7 @@ export default function Dashboard() {
 
 
                 <Select
-                    value={`${timer.timer.duration} min`}
+                    value={`${timer.timer?.duration ? timer.timer.duration : "--"} min`}
                     onValueChange={(val) => {
                         const first = val?.split(" ")[0];
                         const n = first ? parseInt(first, 10) : null;
@@ -69,7 +66,9 @@ export default function Dashboard() {
             {/* Timer Display & Stop Button */}
             <div className="relative flex flex-row gap-3 justify-center items-center">
                 <p className="text-8xl font-mono text-white">
-                    {`${timer.minutesLeft}:${timer.secondsLeft.toString().padStart(2, "0")}`}
+                    { timer.isLoading
+                    ? "--:--"
+                    : `${timer.minutesLeft}:${timer.secondsLeft.toString().padStart(2, "0")}`}
                 </p>
 
                 <Button
@@ -100,14 +99,14 @@ export default function Dashboard() {
             <Button
                 className="w-28 text-lg rounded-md"
                 variant={
-                    timer.paused && timer.timer.startedAt !== undefined
+                    timer.paused && timer.timer?.startedAt !== undefined
                         ? "secondary"
                         : "default"
                 }
                 onClick={() => timer.pause()}
             // disabled={timer.paused && timer.timer.id !== undefined}
             >
-                {timer.paused && timer.timer.startedAt !== undefined ? "Pause" : "Start"}
+                {timer.paused && timer.timer?.startedAt !== undefined ? "Pause" : "Start"}
             </Button>
 
             {/* Hours Studied */}
