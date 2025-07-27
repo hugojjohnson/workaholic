@@ -18,7 +18,7 @@ export default function SignInButton() {
   return (
     <div>
       {Object.values(providers).map((provider) => (
-        <button onClick={() => signIn(provider.id)} className="border-[2px] border-gray-300 inline-block rounded-md px-3 py-3 transition bg-white hover:bg-gray-50">
+        <button key={provider.name} onClick={() => signIn(provider.id)} className="border-[2px] border-gray-300 inline-block rounded-md px-3 py-3 transition bg-white hover:bg-gray-50">
           Sign in with {provider.name}
           <img
             src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
