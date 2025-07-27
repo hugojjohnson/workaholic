@@ -42,4 +42,28 @@ export const timerRouter = createTRPCRouter({
         }
       })
     }),
+
+    updateInfo: protectedProcedure
+    .input(
+      z.object({
+        timerId: z.string(),
+        description: z.optional(z.string()),
+        duration: z.optional(z.number().int()),
+        tags: z.optional(z.array(z.string())),
+        subjectId: z.optional(z.string())
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.timer.update({
+        where: {
+          id: input.timerId
+        },
+        data: {
+          description: input.description,
+          duration: input.duration,
+          tags: input.tags,
+          subjectId: input.subjectId
+        }
+      })
+    }),
 });

@@ -6,46 +6,54 @@ import { Button } from "~/components/ui/button";
 import { useLogs } from "~/hooks/LogsContext";
 import { useUser } from "~/hooks/useUser";
 import { useTimer } from "~/hooks/TimerContext";
+import { useState } from "react";
 
 export default function Dashboard() {
     const logs = useLogs();
     const user = useUser();
     const timer = useTimer();
+    const [description, setDescription] = useState<string>(timer.timer?.description ?? "");
+
     if (!timer.timer) {
         return <p>loading</p>;
     }
     return (
-        <div className="flex flex-col gap-8 items-center justify-center max-w-screen-sm mx-auto pt-10 top-20 md:top-0 w-screen fixed md:static">
+        <div className="flex flex-col gap-8 items-center justify-center max-w-screen-sm mx-auto pt-28 top-20 md:top-0 w-screen fixed md:static">
             {/* Project & Duration Selectors */}
             <div className="flex flex-row gap-4 mx-5 lg:mx-0">
                 <Select
-                    value={timer.timer.id}
-                    // onValueChange={(val) =>
-                    //     setUser({ ...user, project: { name: val, colour: "red" } })
-                    // }
-                    // className="w-64"
+                    value={timer.timer?.subjectId ?? ""}
+                    onValueChange={(subjectId) => {
+                        timer.onUpdateTimerInfo({ subjectId });
+                    }}
                 >
-                    <SelectTrigger className="text-lg">
-                        <SelectValue placeholder="Select project" />
+                    <SelectTrigger className="text-lg w-64 justify-center">
+                        <SelectValue placeholder="Select project" className="text-center" />
                     </SelectTrigger>
                     <SelectContent>
-                        {user.subjects.map((s, i) => <SelectItem key={i} value={s.name}>
+                        {user.subjects.map((s) => (
+                            <SelectItem key={s.id} value={s.id}>
                                 {s.name}
                             </SelectItem>
-                        )}
+                        ))}
                     </SelectContent>
                 </Select>
 
+
                 <Select
                     value={`${timer.timer.duration} min`}
-                    // onValueChange={(val) => {
-                    //     const newUser = structuredClone(user);
-                    //     newUser.duration = parseInt(val.split(" ")[0]) || -1;
-                    //     timer.stop(newUser);
-                    // }}
-                    // className="w-24"
+                    onValueChange={(val) => {
+                        const first = val?.split(" ")[0];
+                        const n = first ? parseInt(first, 10) : null;
+                        const duration = Number.isNaN(n) ? null : n;
+
+                        if (!duration) {
+                            throw new Error("time is not valid.");
+                        }
+                        timer.onUpdateTimerInfo({ duration });
+                    }}
                 >
-                    <SelectTrigger className="text-lg">
+                    <SelectTrigger className="text-lg w-24">
                         <SelectValue placeholder="Duration" />
                     </SelectTrigger>
                     <SelectContent>
@@ -80,12 +88,9 @@ export default function Dashboard() {
                 <p className="text-sm text-gray-400 mb-1">I made progress on</p>
                 <Input
                     className="bg-[#323232] text-lg rounded-md"
-                    value=""
-                    // value={description}
-                    // onChange={(e) => setDescription(e.target.value)}
-                    // onBlur={(e) =>
-                    //     setUser({ ...user, description: e.target.value })
-                    // }
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    onBlur={(e) => timer.onUpdateTimerInfo({ description })}
                     placeholder="Describe your progress..."
                 />
             </div>
@@ -100,7 +105,7 @@ export default function Dashboard() {
                         : "default"
                 }
                 onClick={() => timer.pause()}
-                // disabled={timer.paused && timer.timer.id !== undefined}
+            // disabled={timer.paused && timer.timer.id !== undefined}
             >
                 {timer.paused && timer.timer.startedAt !== undefined ? "Pause" : "Start"}
             </Button>

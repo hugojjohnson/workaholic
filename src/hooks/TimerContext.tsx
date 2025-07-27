@@ -23,6 +23,7 @@ interface TimerContextT {
     paused: boolean;
     disabled: boolean;
     status: string;
+    onUpdateTimerInfo: ({description, duration, tags, subjectId}: {description?: string, duration?: number, tags?: string[], subjectId?: string}) => void;
 }
 const SECOND = 1_000
 const MINUTE = SECOND * 60;
@@ -95,6 +96,50 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
         },
     });
 
+    const updateInfoMutation = api.timer.updateInfo.useMutation({
+        // Optimistically update the cache
+        onMutate: async (newData) => {
+            await utils.timer.get.cancel();
+            const previousTimers = utils.timer.get.getData();
+
+            // Optimistic update: clone and apply the changes locally
+            utils.timer.get.setData({ userId: user.id }, (timer) => {
+                if (!timer) return timer;
+                if (timer.id !== newData.timerId) return timer;
+
+                return {
+                    ...timer,
+                    ...(newData.description !== undefined && {
+                        description: newData.description,
+                    }),
+                    ...(newData.duration !== undefined && {
+                        duration: newData.duration,
+                    }),
+                    ...(newData.tags !== undefined && {
+                        tags: newData.tags,
+                    }),
+                    ...(newData.subjectId !== undefined && {
+                        subjectId: newData.subjectId,
+                    }),
+                };
+            });
+
+            return { previousTimers };
+        },
+
+        // If mutation fails, rollback
+        onError: (_err, _newData, context) => {
+            if (context?.previousTimers) {
+                utils.timer.get.setData({ userId: user.id }, context.previousTimers);
+            }
+        },
+
+        // After mutation, refetch to be safe
+        onSettled: () => {
+            utils.timer.get.invalidate();
+        },
+    });
+
 
     const durationSeconds =
         timer?.duration
@@ -145,6 +190,14 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
         }
         updateTimerMutation.mutate({ timerId: timer.id, startedAt: null, pausedAt: null, deadlineAt: null })
         setTimeLeft(timer.duration * MINUTE)
+    }
+
+    function onUpdateTimerInfo({description, duration, tags, subjectId}: {description?: string, duration?: number, tags?: string[], subjectId?: string}) {
+        if (!timer) {
+            throw new Error("timer is undefined");
+        }
+        updateInfoMutation.mutate({ timerId: timer.id, description, duration, tags, subjectId })
+
     }
 
     //** ========== useEffects ========== **/
@@ -242,7 +295,8 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
                 stop,
                 paused: !!timer?.pausedAt,
                 disabled: timer?.startedAt === null,
-                status: ["Unset", "Paused", "Playing", "Error"][getTimerStatus(timer!)]!
+                status: ["Unset", "Paused", "Playing", "Error"][getTimerStatus(timer!)]!,
+                onUpdateTimerInfo
             }}
         >
             {children}
