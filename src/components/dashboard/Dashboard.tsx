@@ -64,8 +64,8 @@ export default function Dashboard() {
             </div>
 
             {/* Timer Display & Stop Button */}
-            <div className="relative flex flex-row gap-3 justify-center items-center">
-                <p className="text-8xl font-mono text-white">
+            <div className="relative flex flex-row gap-3">
+                <p className="text-8xl font-mono text-white w-[500px] text-center">
                     { timer.isLoading
                     ? "--:--"
                     : `${timer.minutesLeft}:${timer.secondsLeft.toString().padStart(2, "0")}`}
@@ -74,7 +74,7 @@ export default function Dashboard() {
                 <Button
                     variant="outline"
                     size="sm"
-                    className="absolute ml-[320px] mt-9 rounded-full w-10 h-10"
+                    className="absolute right-10 mt-9 rounded-full w-10 h-10"
                     onClick={() => timer.stop()}
                     disabled={timer.disabled}
                 >
@@ -95,7 +95,6 @@ export default function Dashboard() {
             </div>
 
             {/* Pause/Start Button */}
-            <p>{timer.status}</p>
             <Button
                 className="w-28 text-lg rounded-md"
                 variant={
