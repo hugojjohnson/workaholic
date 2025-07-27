@@ -74,6 +74,7 @@ model Timer {
   subjectId String  @unique
   duration  Int
   startedAt DateTime?
+  pausedAt  DateTime?
   tags      String[] // Optional: ["flashcards", "lecture"]
   notes     String? // Optional free-form field
 }

@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/react";
 import type { Session } from "next-auth";
-import type { Preferences, Timer } from "@prisma/client";
+import type { Preferences, Subject, Timer } from "@prisma/client";
 
 
 // Designed for use in the main body of my app, where the user is signed in and has preferences.
@@ -8,6 +8,7 @@ import type { Preferences, Timer } from "@prisma/client";
 type SafeUser = Omit<NonNullable<Session["user"]>, "preferences"> & {
   preferences: Preferences;
   timer: Timer;
+  subjects: Subject[];
 };
 export function useUser(): SafeUser {
   const { data: session, status } = useSession();
@@ -24,6 +25,9 @@ export function useUser(): SafeUser {
   }
   if (!session?.user.timer) {
     throw new Error("Timer is not set up.");
+  }
+  if (!session?.user.subjects) {
+    throw new Error("Subjects is undefined.");
   }
   if (session?.user.subjects?.length == 0) {
     throw new Error("The user has no subjects.");

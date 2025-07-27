@@ -1,43 +1,49 @@
+"use client";
+
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "~/components/ui/select";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { useLogs } from "~/hooks/LogsContext";
 import { useUser } from "~/hooks/useUser";
+import { useTimer } from "~/hooks/TimerContext";
 
 export default function Dashboard() {
     const logs = useLogs();
     const user = useUser();
+    const timer = useTimer();
+    if (!timer.timer) {
+        return <p>loading</p>;
+    }
     return (
         <div className="flex flex-col gap-8 items-center justify-center max-w-screen-sm mx-auto mt-10 top-20 md:top-0 w-screen fixed md:static">
             {/* Project & Duration Selectors */}
             <div className="flex flex-row gap-4 mx-5 lg:mx-0">
                 <Select
-                    value={ user.project.name}
-                    onValueChange={(val) =>
-                        setUser({ ...user, project: { name: val, colour: "red" } })
-                    }
-                    className="w-64"
+                    value={timer.timer.id}
+                    // onValueChange={(val) =>
+                    //     setUser({ ...user, project: { name: val, colour: "red" } })
+                    // }
+                    // className="w-64"
                 >
                     <SelectTrigger className="text-lg">
                         <SelectValue placeholder="Select project" />
                     </SelectTrigger>
                     <SelectContent>
-                        {user.projects.map((projec, idx) => (
-                            <SelectItem key={idx} value={projec.name}>
-                                {projec.name}
+                        {user.subjects.map((s, i) => <SelectItem key={i} value={s.name}>
+                                {s.name}
                             </SelectItem>
-                        ))}
+                        )}
                     </SelectContent>
                 </Select>
 
                 <Select
-                    value={`${user.duration} min`}
-                    onValueChange={(val) => {
-                        const newUser = structuredClone(user);
-                        newUser.duration = parseInt(val.split(" ")[0]) || -1;
-                        timer.stop(newUser);
-                    }}
-                    className="w-24"
+                    value={`${timer.timer.duration} min`}
+                    // onValueChange={(val) => {
+                    //     const newUser = structuredClone(user);
+                    //     newUser.duration = parseInt(val.split(" ")[0]) || -1;
+                    //     timer.stop(newUser);
+                    // }}
+                    // className="w-24"
                 >
                     <SelectTrigger className="text-lg">
                         <SelectValue placeholder="Duration" />
@@ -55,17 +61,17 @@ export default function Dashboard() {
             {/* Timer Display & Stop Button */}
             <div className="relative flex flex-row gap-3 justify-center items-center">
                 <p className="text-8xl font-mono">
-                    {timer.minutes === 11570
+                    {/* {timer.minutes === 11570
                         ? "--:--"
-                        : `${timer.minutes}:${timer.seconds.toString().padStart(2, "0")}`}
+                        : `${timer.minutes}:${timer.seconds.toString().padStart(2, "0")}`} */}
                 </p>
 
                 <Button
                     variant="outline"
                     size="sm"
                     className="absolute ml-[320px] mt-9 rounded-full w-10 h-10"
-                    onClick={() => timer.stop()}
-                    disabled={!user.timerId}
+                    // onClick={() => timer.stop()}
+                    // disabled={!user.timerId}
                 >
                     X
                 </Button>
@@ -76,11 +82,12 @@ export default function Dashboard() {
                 <p className="text-sm text-gray-400 mb-1">I made progress on</p>
                 <Input
                     className="bg-[#323232] text-lg rounded-md"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    onBlur={(e) =>
-                        setUser({ ...user, description: e.target.value })
-                    }
+                    value=""
+                    // value={description}
+                    // onChange={(e) => setDescription(e.target.value)}
+                    // onBlur={(e) =>
+                    //     setUser({ ...user, description: e.target.value })
+                    // }
                     placeholder="Describe your progress..."
                 />
             </div>
@@ -88,15 +95,15 @@ export default function Dashboard() {
             {/* Pause/Start Button */}
             <Button
                 className="w-28 text-lg rounded-md"
-                variant={
-                    user.paused === undefined && user.timerId !== undefined
-                        ? "secondary"
-                        : "default"
-                }
-                onClick={() => timer.pause(structuredClone(user))}
-                disabled={user.paused === undefined && user.timerId !== undefined}
+                // variant={
+                //     user.paused === undefined && user.timerId !== undefined
+                //         ? "secondary"
+                //         : "default"
+                // }
+                // onClick={() => timer.pause(structuredClone(user))}
+                // disabled={user.paused === undefined && user.timerId !== undefined}
             >
-                {user.paused === undefined && user.timerId !== undefined ? "Pause" : "Start"}
+                {timer.timer.pausedAt === undefined && timer.timer.startedAt !== undefined ? "Pause" : "Start"}
             </Button>
 
             {/* Hours Studied */}
