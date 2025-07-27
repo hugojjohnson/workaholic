@@ -60,18 +60,16 @@ export default function Dashboard() {
 
             {/* Timer Display & Stop Button */}
             <div className="relative flex flex-row gap-3 justify-center items-center">
-                <p className="text-8xl font-mono">
-                    {/* {timer.minutes === 11570
-                        ? "--:--"
-                        : `${timer.minutes}:${timer.seconds.toString().padStart(2, "0")}`} */}
+                <p className="text-8xl font-mono text-black">
+                    {`xxx${timer.minutesLeft}:${timer.secondsLeft.toString().padStart(2, "0")}`}
                 </p>
 
                 <Button
                     variant="outline"
                     size="sm"
                     className="absolute ml-[320px] mt-9 rounded-full w-10 h-10"
-                    // onClick={() => timer.stop()}
-                    // disabled={!user.timerId}
+                    onClick={() => timer.stop()}
+                    disabled={timer.disabled}
                 >
                     X
                 </Button>
@@ -95,15 +93,15 @@ export default function Dashboard() {
             {/* Pause/Start Button */}
             <Button
                 className="w-28 text-lg rounded-md"
-                // variant={
-                //     user.paused === undefined && user.timerId !== undefined
-                //         ? "secondary"
-                //         : "default"
-                // }
-                // onClick={() => timer.pause(structuredClone(user))}
-                // disabled={user.paused === undefined && user.timerId !== undefined}
+                variant={
+                    timer.paused && timer.timer.startedAt !== undefined
+                        ? "secondary"
+                        : "default"
+                }
+                onClick={() => timer.pause()}
+                disabled={timer.paused && timer.timer.id !== undefined}
             >
-                {timer.timer.pausedAt === undefined && timer.timer.startedAt !== undefined ? "Pause" : "Start"}
+                {timer.paused && timer.timer.startedAt !== undefined ? "Pause" : "Start"}
             </Button>
 
             {/* Hours Studied */}
