@@ -17,15 +17,14 @@ export default function SetUpPreferences() {
   const [goal, setGoal] = useState(24) // default hours per week
 
   const utils = api.useUtils()
-//   const create = api.preferences.upsert.useMutation({
-//     onSuccess: async () => {
-//       await utils.invalidate()
-//       router.push("/dashboard")
-//     },
-//   })
+  const create = api.preferences.upsert.useMutation({
+    onSuccess: async () => {
+      await utils.invalidate()
+    },
+  })
 
   const handleContinue = () => {
-    // create.mutate({ shareActivity, goal })
+    create.mutate({ shareActivity, goal })
   }
 
   return (
