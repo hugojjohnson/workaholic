@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import DarkModeToggle from "../settings/DarkModeToggle";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -16,6 +17,7 @@ export default function Navbar() {
         <Link className={isActive("/settings")} href="/settings">Settings</Link>
         <Link className={isActive("/reports")} href="/reports">Reports</Link>
         <Link className={isActive("/profile")} href="/profile">Profile</Link>
+        <DarkModeToggle />
       </div>
 
       {/* Mobile Nav */}

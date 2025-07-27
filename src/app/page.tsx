@@ -25,13 +25,13 @@ export default async function Home() {
 
   return (
     <HydrateClient>
-      <SessionProvider session={session}>
-        <LogsProvider>
-          <TimerProvider>
-            <Dashboard />
-          </TimerProvider>
-        </LogsProvider>
-      </SessionProvider>
+        <SessionProvider session={session}>
+          <LogsProvider>
+            <TimerProvider>
+              <Dashboard />
+            </TimerProvider>
+          </LogsProvider>
+        </SessionProvider>
     </HydrateClient>
   );
 }

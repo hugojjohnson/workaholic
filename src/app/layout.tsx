@@ -6,6 +6,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 import { auth } from "~/server/auth";
 import { type Metadata } from "next";
 import Navbar from "~/components/main/Navbar";
+import { ThemeProvider } from "~/components/main/ThemeProvider";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -26,8 +27,14 @@ export default async function RootLayout({
   const session = await auth();
 
   return (
-    <html lang="en" className={geist.variable}>
+    <html lang="en" className={geist.variable} suppressHydrationWarning>
       <body className="bg-[#242424] h-screen">
+        <ThemeProvider
+                attribute="class"
+                defaultTheme="light"
+                enableSystem
+                disableTransitionOnChange
+              >
         {!session?.user.preferences ? (
           <>
           {/* Signed out navbar */}
@@ -38,6 +45,7 @@ export default async function RootLayout({
             <TRPCReactProvider>{children}</TRPCReactProvider>
           </>
         )}
+        </ThemeProvider>
       </body>
     </html>
   );
