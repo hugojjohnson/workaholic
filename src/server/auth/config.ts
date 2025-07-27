@@ -52,10 +52,7 @@ export const authConfig = {
           subjects: true
         },
       });
-
       
-      console.log("dbUser")
-      console.log(dbUser)
       return {
         ...session,
         user: {

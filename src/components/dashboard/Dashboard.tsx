@@ -61,7 +61,7 @@ export default function Dashboard() {
             {/* Timer Display & Stop Button */}
             <div className="relative flex flex-row gap-3 justify-center items-center">
                 <p className="text-8xl font-mono text-black">
-                    {`xxx${timer.minutesLeft}:${timer.secondsLeft.toString().padStart(2, "0")}`}
+                    {`${timer.minutesLeft}:${timer.secondsLeft.toString().padStart(2, "0")}`}
                 </p>
 
                 <Button
@@ -91,6 +91,7 @@ export default function Dashboard() {
             </div>
 
             {/* Pause/Start Button */}
+            <p>{timer.status}</p>
             <Button
                 className="w-28 text-lg rounded-md"
                 variant={
@@ -99,7 +100,7 @@ export default function Dashboard() {
                         : "default"
                 }
                 onClick={() => timer.pause()}
-                disabled={timer.paused && timer.timer.id !== undefined}
+                // disabled={timer.paused && timer.timer.id !== undefined}
             >
                 {timer.paused && timer.timer.startedAt !== undefined ? "Pause" : "Start"}
             </Button>

@@ -23,8 +23,7 @@ export default async function Home() {
       </SessionProvider>
     </HydrateClient>
   }
-
-  console.log(session.user.preferences)
+  
   return (
     <HydrateClient>
       <SessionProvider session={session}>
