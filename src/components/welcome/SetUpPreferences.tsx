@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api } from "~/trpc/react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -10,7 +10,7 @@ import { Input } from "../ui/input";
 import { Switch } from "../ui/switch";
 import { Button } from "../ui/button";
 
-export default function WelcomePage() {
+export default function SetUpPreferences() {
   const { data: session } = useSession()
   const router = useRouter()
   const [shareActivity, setShareActivity] = useState(true)
