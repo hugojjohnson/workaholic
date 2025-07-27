@@ -15,7 +15,7 @@ export default function Dashboard() {
         return <p>loading</p>;
     }
     return (
-        <div className="flex flex-col gap-8 items-center justify-center max-w-screen-sm mx-auto mt-10 top-20 md:top-0 w-screen fixed md:static">
+        <div className="flex flex-col gap-8 items-center justify-center max-w-screen-sm mx-auto pt-10 top-20 md:top-0 w-screen fixed md:static">
             {/* Project & Duration Selectors */}
             <div className="flex flex-row gap-4 mx-5 lg:mx-0">
                 <Select
@@ -60,7 +60,7 @@ export default function Dashboard() {
 
             {/* Timer Display & Stop Button */}
             <div className="relative flex flex-row gap-3 justify-center items-center">
-                <p className="text-8xl font-mono text-black">
+                <p className="text-8xl font-mono text-white">
                     {`${timer.minutesLeft}:${timer.secondsLeft.toString().padStart(2, "0")}`}
                 </p>
 

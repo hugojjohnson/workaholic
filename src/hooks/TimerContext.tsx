@@ -59,10 +59,42 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     const { data: timer, isLoading } = api.timer.get.useQuery({ userId: user.id });
 
     const updateTimerMutation = api.timer.update.useMutation({
+        // Optimistically update the cache
+        onMutate: async (updatedTimer) => {
+            await utils.timer.get.cancel(); // Cancel any outgoing refetches
+
+            const previousData = utils.timer.get.getData({ userId: user.id });
+
+            // Optimistically update the cached data
+            utils.timer.get.setData({ userId: user.id }, (oldData) => {
+                if (!oldData) return oldData;
+                if (!timer) return oldData;
+
+                return {
+                    ...timer,
+                    startedAt: updatedTimer.startedAt ?? timer.startedAt,
+                    pausedAt: updatedTimer.pausedAt ?? timer.pausedAt,
+                    deadlineAt: updatedTimer.deadlineAt ?? timer.deadlineAt,
+                }
+            });
+
+            // Return context for rollback
+            return { previousData };
+        },
+
+        // If it fails, roll back
+        onError: (_err, _updatedTimer, context) => {
+            if (context?.previousData) {
+                utils.timer.get.setData({ userId: user.id }, context.previousData);
+            }
+        },
+
+        // Invalidate to revalidate with fresh server data
         onSettled: () => {
-            utils.timer.get.invalidate({ userId: user.id })
-        }
+            utils.timer.get.invalidate({ userId: user.id });
+        },
     });
+
 
     const durationSeconds =
         timer?.duration
@@ -107,6 +139,10 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
             console.error("timer is undefined");
             return;
         }
+        // Cancel it later
+        if (intervalRef.current) {
+            clearTimeout(intervalRef.current);
+        }
         updateTimerMutation.mutate({ timerId: timer.id, startedAt: null, pausedAt: null, deadlineAt: null })
         setTimeLeft(timer.duration * MINUTE)
     }
@@ -129,7 +165,7 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
                 if (!deadline) {
                     throw new Error("This is just for the compiler")
                 }
-                // setSecondsLeft((deadline - new Date().getTime()))
+                setTimeLeft((deadline - new Date().getTime()))
                 intervalRef.current = setInterval(() => {
                     // if (!deadline) {
                     //     throw new Error("This is just for the compiler")

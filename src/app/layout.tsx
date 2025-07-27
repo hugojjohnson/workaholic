@@ -1,9 +1,11 @@
+// app/layout.tsx
 import "~/styles/globals.css";
 
-import { type Metadata } from "next";
 import { Geist } from "next/font/google";
-
 import { TRPCReactProvider } from "~/trpc/react";
+import { auth } from "~/server/auth";
+import { type Metadata } from "next";
+import Navbar from "~/components/main/Navbar";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -16,13 +18,26 @@ const geist = Geist({
   variable: "--font-geist-sans",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: {
+  children: React.ReactNode;
+}) {
+  const session = await auth();
+
   return (
-    <html lang="en" className={`${geist.variable}`}>
-      <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+    <html lang="en" className={geist.variable}>
+      <body className="bg-[#242424] h-screen">
+        {!session?.user.preferences ? (
+          <>
+          {/* Signed out navbar */}
+          </>
+        ) : (
+          <>
+            <Navbar />
+            <TRPCReactProvider>{children}</TRPCReactProvider>
+          </>
+        )}
       </body>
     </html>
   );
