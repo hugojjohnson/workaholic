@@ -9,10 +9,10 @@ import { Label } from "~/components/ui/label";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import { Separator } from "~/components/ui/separator";
-import { useLogs } from "~/hooks/LogsContext";
+import { useLogs, type AddLogT } from "~/hooks/LogsContext";
 import { useTimer } from "~/hooks/TimerContext";
 import { useUser } from "~/hooks/UserContext";
-import { type AddLogT, useSettings } from "~/hooks/useSettings";
+import { useSettings } from "~/hooks/useSettings";
 
 // TODO: Update these with the actual colours
 const colourOptions: Record<string, { hex: string }> = {
