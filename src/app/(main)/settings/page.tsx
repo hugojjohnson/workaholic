@@ -1,7 +1,7 @@
 "use client";
 
 import type { Log, Subject } from "@prisma/client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
@@ -13,6 +13,7 @@ import { useLogs, type AddLogT } from "~/hooks/LogsContext";
 import { useTimer } from "~/hooks/TimerContext";
 import { useUser } from "~/hooks/UserContext";
 import { useSettings } from "~/hooks/useSettings";
+import DarkModeToggle from "~/components/settings/DarkModeToggle";
 
 // TODO: Update these with the actual colours
 const colourOptions: Record<string, { hex: string }> = {
@@ -52,6 +53,12 @@ export default function Settings() {
         description: "",
         startedAt: new Date()
     })
+
+    useEffect(() => {
+        if (timer.timer?.subjectId && timer.timer?.duration) {
+            setTempLog({ ...tempLog, subjectId: timer.timer.subjectId, duration: timer.timer.duration})
+        }
+    }, [timer.timer?.subjectId, timer.timer?.duration])
 
     if (!user.user) {
         return <p>loading</p> // TODO: replace with loading skeleton.
@@ -126,20 +133,17 @@ export default function Settings() {
         const subjectName = subjects.find((s) => s.id === log.subjectId)?.name;
 
         return (
-            <Card key={log.id} className="w-64 p-4 relative border-dashed border-2">
+            <Card key={log.id} className="w-full p-4 relative border-dashed border-2 bg-muted gap-0">
                 <h1 className="text-xl font-semibold">{subjectName ?? "Unknown"}</h1>
                 <p className="text-muted-foreground">
-                    {new Date(log.startedAt).toLocaleString().slice(0, -3)} -{" "}
-                    {new Date(
-                        new Date(log.startedAt).getTime() + log.endedAt.getTime() * 60_000
-                    )
-                        .toLocaleString()
-                        .slice(-8, -3)}
+                    {new Date(log.startedAt).toLocaleString().slice(0, 10)} | {" "}
+                    {new Date(log.startedAt).toLocaleString().slice(-8, -3)} - {" "}
+                    {new Date(log.startedAt.getTime() + log.duration * 60_000).toLocaleString().slice(-8, -3)}
                 </p>
                 <p className="absolute top-2 right-3 italic text-muted-foreground">
                     {log.duration} min
                 </p>
-                <p className="text-sm mt-3">{log.notes}</p>
+                <p className="text-sm mt-1">Notes: {log.notes}</p>
             </Card>
         );
     });
@@ -186,6 +190,9 @@ export default function Settings() {
                             }
                         }}
                     />
+
+                    <h2 className="text-2xl font-semibold mt-10 mb-3">Change theme</h2>
+                    <DarkModeToggle />
 
                     {/* Add Log */}
                     <div className="mt-12 px-5 py-6 border-dashed border-2 rounded-md max-w-[700px]">
