@@ -1,6 +1,7 @@
 "use client";
 
 import type { Log, Subject } from "@prisma/client";
+import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
@@ -10,12 +11,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~
 import { Separator } from "~/components/ui/separator";
 import { useLogs } from "~/hooks/LogsContext";
 import { useUser } from "~/hooks/UserContext";
-// import { useSettings } from "~/hooks/useSettings";
+import { useSettings } from "~/hooks/useSettings";
 
 export default function Settings() {
     const user = useUser();
     const logs = useLogs();
-    // const settings = useSettings();
+    const settings = useSettings();
+    const [editingSubjectId, setEditingSubjectId] = useState<string | undefined>(undefined);
+    const [tempSubjectName, setTempSubjectName] = useState<string>("");
 
     if (!user.user) {
         return <p>loading</p> // TODO: replace with loading skeleton.
@@ -25,13 +28,13 @@ export default function Settings() {
         <div key={index} className="flex flex-row gap-4">
             <Input
                 className="text-lg bg-transparent"
-                value={subject.name}
-            //   onBlur={() => setUser(user)}
-            //   onChange={(e) => {
-            //     const user2 = [...user.user.projects];
-            //     user2[index].name = e.target.value;
-            //     setUserLocal({ ...user, projects: user2 });
-            //   }}
+                value={editingSubjectId === subject.id ? tempSubjectName : subject.name}
+                onSelect={() => {
+                    setEditingSubjectId(subject.id)
+                    setTempSubjectName(subject.name)
+                }}
+                onChange={e => setTempSubjectName(e.target.value)}
+                onBlur={() => settings.updateSubject(subject.id, tempSubjectName)}
             />
 
             <div className="flex items-center gap-3 ml-auto">
@@ -47,11 +50,7 @@ export default function Settings() {
                     variant="ghost"
                     size="icon"
                     className="bg-destructive/30 hover:bg-destructive/50 text-white"
-                // onClick={() => {
-                //   const user2 = structuredClone(user);
-                //   user2.projects.splice(index, 1);
-                //   setUser(user2);
-                // }}
+                    onClick={() => settings.deleteSubject(subject.id)}
                 >
                     X
                 </Button>
@@ -98,11 +97,7 @@ export default function Settings() {
                         <Button
                             variant="secondary"
                             className="w-10 h-10"
-                        // onClick={() => {
-                        //   const user2 = structuredClone(user);
-                        //   user2.projects.push({ name: "Default", colour: "red" });
-                        //   setUser(user2);
-                        // }}
+                            onClick={() => settings.createSubject("", "RED", user.user?.subjects.length ? user.user.subjects.length : 0)}
                         >
                             +
                         </Button>
@@ -114,9 +109,12 @@ export default function Settings() {
                         type="number"
                         defaultValue={user.user.preferences.goal}
                         className="w-full lg:w-96"
-                    //   onBlur={(e) =>
-                    //     setUser({ ...user, goal: parseFloat(e.target.value) })
-                    //   }
+                        onBlur={e => {
+                            const goalNum = parseInt(e.target.value)
+                            if (!isNaN(goalNum)) {
+                                settings.updateGoal(goalNum)
+                            }
+                        }}
                     />
 
                     {/* Add Log */}
