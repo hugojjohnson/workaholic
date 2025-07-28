@@ -22,6 +22,7 @@ export const logsRouter = createTRPCRouter({
                 subjectId: z.string(),
                 startedAt: z.date(),
                 endedAt: z.date(),
+                duration: z.number(),
                 // tagIds: z.array(z.string()),
                 notes: z.string(),
             })
@@ -40,20 +41,18 @@ export const logsRouter = createTRPCRouter({
                 throw new Error("Subject could not be found.");
             }
 
-            const newLog = await ctx.db.log.create({
+            await ctx.db.log.create({
                 data: {
                     subjectId: input.subjectId,
                     startedAt: input.startedAt,
                     endedAt: input.endedAt,
+                    duration: input.duration,
                     tags: [],
                     notes: input.notes,
                     userId: input.userId
                 }
             })
-            const logs = await ctx.db.log.findMany({
-                where: { userId: input.userId }
-            })
-            return logs;
+            // TODO: Return on error on failure
         }),
     
         delete: protectedProcedure

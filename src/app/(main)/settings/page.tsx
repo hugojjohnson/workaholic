@@ -276,7 +276,7 @@ export default function Settings() {
                             </div>
 
                             {/* <Button className="mt-4" onClick={addLog}> */}
-                            <Button className="mt-4">
+                            <Button className="mt-4" onClick={() => settings.addLog(tempLog)}>
                                 Add
                             </Button>
                         </div>

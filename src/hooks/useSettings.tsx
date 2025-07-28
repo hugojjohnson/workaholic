@@ -153,6 +153,37 @@ export const useSettings = (): UseSettingsT => {
         },
     });
 
+    const addLog = api.logs.add.useMutation({
+        onMutate: async (newLog) => {
+            const userId = user.user?.id;
+            if (!userId) {
+                throw new Error("userId is undefined");
+            }
+            await utils.logs.getAll.cancel(); // cancel any outgoing fetches
+            const previousLogs = utils.logs.getAll.getData();
+            utils.logs.getAll.setData({ userId }, (oldLogs) => {
+                if (!oldLogs) return oldLogs;
+                return [
+                    ...oldLogs,
+                    {
+                        ...newLog,
+                        id: "undefined so far", // TODO
+                        tags: []
+                    }
+                ]
+            });
+            return { previousLogs };
+        },
+        onError: (_err, _newSubject, context) => {
+            if (context?.previousLogs && user.user?.id) {
+                utils.logs.getAll.setData({ userId: user.user?.id }, context.previousLogs);
+            }
+        },
+        onSettled: () => {
+            utils.logs.getAll.invalidate();
+        },
+    });
+
 
     function onCreateSubject(name: string, colour: ColourType, order: number) {
         createSubject.mutate({ name, colour, order });
@@ -171,12 +202,12 @@ export const useSettings = (): UseSettingsT => {
     function onUpdateGoal(newGoal: number) {
         updateGoal.mutate({ newGoal });
     }
-    function onAddLog({
-        subjectId,
-        duration,
-        description,
-        startedAt,
-    }: AddLogT) {
+    function onAddLog(newLog: AddLogT) {
+        const userId = user.user?.id;
+        if (!userId) {
+            throw new Error("userId is undefined");
+        }
+        addLog.mutate({ ...newLog, userId: userId, endedAt: new Date(new Date().getTime() + newLog.duration * 60_000), notes: "" });
 
     }
 
