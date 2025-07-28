@@ -17,8 +17,6 @@ export default function Settings() {
     const user = useUser();
     const logs = useLogs();
     const settings = useSettings();
-    const [editingSubjectId, setEditingSubjectId] = useState<string | undefined>(undefined);
-    const [tempSubjectName, setTempSubjectName] = useState<string>("");
 
     if (!user.user) {
         return <p>loading</p> // TODO: replace with loading skeleton.
@@ -28,13 +26,8 @@ export default function Settings() {
         <div key={index} className="flex flex-row gap-4">
             <Input
                 className="text-lg bg-transparent"
-                value={editingSubjectId === subject.id ? tempSubjectName : subject.name}
-                onSelect={() => {
-                    setEditingSubjectId(subject.id)
-                    setTempSubjectName(subject.name)
-                }}
-                onChange={e => setTempSubjectName(e.target.value)}
-                onBlur={() => settings.updateSubject(subject.id, tempSubjectName)}
+                defaultValue={subject.name}
+                onBlur={e => settings.updateSubject(subject.id, e.target.value)}
             />
 
             <div className="flex items-center gap-3 ml-auto">
@@ -90,10 +83,10 @@ export default function Settings() {
                     {/* Projects */}
                     <h2 className="text-2xl font-semibold mb-3">Projects</h2>
                     <Card className="w-full lg:w-96 p-4 flex flex-col gap-4 bg-muted">
-                        {user.user.subjects.map((subject, index) => <>
+                        {user.user.subjects.map((subject, index) => <div key={index}>
                             {subjectHTML(subject, index)}
                             <Separator />
-                        </>)}
+                        </div>)}
                         <Button
                             variant="secondary"
                             className="w-10 h-10"
@@ -137,7 +130,7 @@ export default function Settings() {
                                         </SelectTrigger>
                                         <SelectContent>
                                             {user.user.subjects.map((subject, index) => (
-                                                <SelectItem key={index} value={subject.name}>
+                                                <SelectItem key={index} value={subject.name.length > 0 ? subject.name : "test"}>
                                                     {subject.name}
                                                 </SelectItem>
                                             ))}
@@ -183,6 +176,7 @@ export default function Settings() {
                             <div>
                                 <Label>Description</Label>
                                 <Input
+                                    readOnly
                                     className="text-lg"
                                     value="description here"
                                 // value={newDescription}
@@ -193,6 +187,7 @@ export default function Settings() {
                             <div>
                                 <Label>Time Started</Label>
                                 <Input
+                                    readOnly
                                     type="datetime-local"
                                     className="text-lg"
                                     value={new Date().getTime()}

@@ -10,6 +10,7 @@ import { ThemeProvider } from "~/components/main/ThemeProvider";
 import { ProviderWrapper } from "~/components/main/ProviderWrapper";
 import { SessionProvider } from "next-auth/react";
 import { HydrateClient } from "~/trpc/server";
+import { useUser } from "~/hooks/UserContext";
 
 export const metadata: Metadata = {
   title: "Create T3 App",

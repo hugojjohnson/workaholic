@@ -28,20 +28,7 @@ interface UseSettingsT {
 }
 export const useSettings = (): UseSettingsT => {
     const utils = api.useUtils();
-    const session = useSession();
     const user = useUser();
-    if (!user.user) {
-        // Return a stub in this case. Could be much more elegant, but it works and that's what's important.
-        return {
-            createSubject: () => { },
-            deleteSubject: (subjectId) => { },
-            updateSubject: (subjectId, newName, newColour) => { },
-            updateGoal: (newGoal) => { },
-            addLog: ({ subjectId, duration, description, startedAt }) => { },
-
-        }
-    }
-    console.log(user.user.name)
 
     const createSubject = api.settings.createSubject.useMutation({
         onMutate: async (newSubject) => {
