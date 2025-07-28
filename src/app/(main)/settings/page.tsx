@@ -56,7 +56,7 @@ export default function Settings() {
 
     useEffect(() => {
         if (timer.timer?.subjectId && timer.timer?.duration) {
-            setTempLog({ ...tempLog, subjectId: timer.timer.subjectId, duration: timer.timer.duration})
+            setTempLog({ ...tempLog, subjectId: timer.timer.subjectId, duration: timer.timer.duration })
         }
     }, [timer.timer?.subjectId, timer.timer?.duration])
 
@@ -143,7 +143,7 @@ export default function Settings() {
                 <p className="absolute top-2 right-3 italic text-muted-foreground">
                     {log.duration} min
                 </p>
-                <p className="text-sm mt-1">Notes: {log.notes}</p>
+                <p className="text-sm mt-2">{log.description}</p>
             </Card>
         );
     });
@@ -177,25 +177,33 @@ export default function Settings() {
                         </Button>
                     </Card>
 
-                    {/* Daily Goal */}
-                    <h2 className="text-2xl font-semibold mt-10 mb-3">Daily goal (hours)</h2>
-                    <Input
-                        type="number"
-                        defaultValue={user.user.preferences.goal}
-                        className="w-full lg:w-96"
-                        onBlur={e => {
-                            const goalNum = parseInt(e.target.value)
-                            if (!isNaN(goalNum)) {
-                                settings.updateGoal(goalNum)
-                            }
-                        }}
-                    />
+                    <div className="flex flex-row gap-32">
+                        <div>
+                            {/* Daily Goal */}
+                            <h2 className="text-2xl font-semibold mt-10 mb-3">Daily goal (hours)</h2>
+                            <Input
+                                type="number"
+                                defaultValue={user.user.preferences.goal}
+                                className="w-full lg:w-96"
+                                onBlur={e => {
+                                    const goalNum = parseInt(e.target.value)
+                                    if (!isNaN(goalNum)) {
+                                        settings.updateGoal(goalNum)
+                                    }
+                                }}
+                            />
+                        </div>
 
-                    <h2 className="text-2xl font-semibold mt-10 mb-3">Change theme</h2>
-                    <DarkModeToggle />
+                        <div>
+                            {/* Theme */}
+                            <h2 className="text-2xl font-semibold mt-10 mb-3">Change theme</h2>
+                            <DarkModeToggle />
+                        </div>
+                    </div>
+
 
                     {/* Add Log */}
-                    <div className="mt-12 px-5 py-6 border-dashed border-2 rounded-md max-w-[700px]">
+                    <div className="my-12 px-5 py-6 border-dashed border-2 rounded-md max-w-[700px]">
                         <h2 className="text-2xl font-semibold">Add Log</h2>
 
                         <div className="mt-4 space-y-4">
@@ -293,7 +301,7 @@ export default function Settings() {
                 {/* Logs Column */}
                 <div className="w-full lg:w-1/3">
                     <h2 className="text-2xl font-semibold mb-6">Logs</h2>
-                    <ScrollArea className="h-[30rem] pr-2">
+                    <ScrollArea className="h-[850px] pr-2">
                         <div className="flex flex-col gap-6">
                             {logs.logs
                                 .sort((a, b) =>

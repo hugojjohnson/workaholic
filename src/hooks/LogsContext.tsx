@@ -12,12 +12,22 @@ export interface AddLogT {
     description: string,
     startedAt: Date,
 }
+const sumMinutes = (arr: Log[]): number => {
+  return arr.reduce((total, current: { duration: number }) => {
+    return total + current.duration;
+  }, 0);
+};
+const filterToday = (arr: Log[]) =>
+  arr.filter(({ startedAt }) => startedAt.toDateString() === new Date().toDateString());
+
 
 interface LogsContextT {
   test: string;
   addLog: ({ subjectId, duration, description, startedAt }: AddLogT) => void;
   deleteLog: (id: string) => Promise<void>;
   logs: Log[];
+  minutesToday: number,
+  minutesToDate: number,
 }
 const LogsContext = createContext<LogsContextT | undefined>(undefined);
 
@@ -78,7 +88,7 @@ export const LogsProvider = ({ children }: { children: React.ReactNode }) => {
           if (!userId) {
               throw new Error("userId is undefined");
           }
-          addLog.mutate({ ...newLog, userId: userId, endedAt: new Date(new Date().getTime() + newLog.duration * 60_000), notes: "" });
+          addLog.mutate({ ...newLog, userId: userId, endedAt: new Date(new Date().getTime() + newLog.duration * 60_000) });
   
       }
 
@@ -89,7 +99,9 @@ export const LogsProvider = ({ children }: { children: React.ReactNode }) => {
         test: "test", // you can remove or replace this with real stuff
         addLog: onAddLog,
         deleteLog,
-        logs: logsQuery.data ? logsQuery.data : []
+        logs: logsQuery.data ? logsQuery.data : [],
+        minutesToday: sumMinutes(filterToday(logsQuery.data ?? [])),
+        minutesToDate: sumMinutes(logsQuery.data ?? [])
       }}
     >
       {children}

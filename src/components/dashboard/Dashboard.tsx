@@ -7,6 +7,7 @@ import { useLogs } from "~/hooks/LogsContext";
 import { useTimer } from "~/hooks/TimerContext";
 import { useState } from "react";
 import { useUser } from "~/hooks/UserContext";
+import LoadingPage from "../welcome/LoadingPage";
 
 export default function Dashboard() {
     const logs = useLogs();
@@ -15,7 +16,7 @@ export default function Dashboard() {
     const [description, setDescription] = useState<string>(timer.timer?.description ?? "");
 
     if (!user.user) {
-        return <p>Loading...</p>
+        return <LoadingPage />
     }
 
     return (
@@ -119,8 +120,7 @@ export default function Dashboard() {
             <div className="text-center">
                 <h1 className="text-xl font-semibold mb-1">Hours studied today</h1>
                 <p className="text-2xl text-red-400">
-                    0h 0min
-                    {/* {timeStudiedToday[0]}h {timeStudiedToday[1]}min */}
+                    {Math.floor(logs.minutesToday/60)}h {Math.floor(logs.minutesToday%60)}min
                 </p>
             </div>
 

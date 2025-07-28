@@ -9,6 +9,7 @@ import { useUser } from '~/hooks/UserContext';
 import { useLogs } from '~/hooks/LogsContext';
 import type { ColourType } from '@prisma/client';
 import { Button } from '~/components/ui/button';
+import LoadingPage from '~/components/welcome/LoadingPage';
 
 
 // TODO: Purple is actually grey here!!
@@ -82,7 +83,7 @@ export default function Reports() {
     // Construct datasets
     const my_datasets = []
     if (!user) {
-        return <p>Loading...</p>
+        return <LoadingPage />
     }
     for (const project of user.subjects) {
         const projectLogs = logs.logs.filter(idk => idk.subjectId === project.id)

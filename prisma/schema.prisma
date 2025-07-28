@@ -67,17 +67,17 @@ model User {
 }
 
 model Timer {
-  id        String  @id @default(cuid())
-  user      User    @relation(fields: [userId], references: [id])
-  userId    String  @unique
-  subject   Subject @relation(fields: [subjectId], references: [id])
-  subjectId String  @unique
-  duration  Int
-  startedAt DateTime?
-  pausedAt  DateTime?
-  deadlineAt DateTime?
-  tags      String[] // Optional: ["flashcards", "lecture"]
-  description     String? // Optional free-form field
+  id          String    @id @default(cuid())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String    @unique
+  subject     Subject   @relation(fields: [subjectId], references: [id])
+  subjectId   String    @unique
+  duration    Int
+  startedAt   DateTime?
+  pausedAt    DateTime?
+  deadlineAt  DateTime?
+  tags        String[] // Optional: ["flashcards", "lecture"]
+  description String? // Optional free-form field
 }
 
 model Preferences {
@@ -93,7 +93,7 @@ model Subject {
   user      User     @relation(fields: [userId], references: [id])
   userId    String
   name      String
-  colour     String
+  colour    String
   order     Int
   logs      Log[]
   timer     Timer?
@@ -113,18 +113,17 @@ enum ColourType {
   PURPLE
 }
 
-
 model Log {
-  id        String   @id @default(cuid())
-  subject   Subject  @relation(fields: [subjectId], references: [id])
-  subjectId String
-  startedAt DateTime
-  endedAt   DateTime
-  tags      String[] // Optional: ["flashcards", "lecture"]
-  notes     String? // Optional free-form field
-  User      User?    @relation(fields: [userId], references: [id])
-  userId    String?
-  duration  Int
+  id          String   @id @default(cuid())
+  subject     Subject  @relation(fields: [subjectId], references: [id])
+  subjectId   String
+  startedAt   DateTime
+  endedAt     DateTime
+  tags        String[] // Optional: ["flashcards", "lecture"]
+  description String? // Optional free-form field
+  User        User?    @relation(fields: [userId], references: [id])
+  userId      String?
+  duration    Int
 
   @@index([subjectId, startedAt])
 }

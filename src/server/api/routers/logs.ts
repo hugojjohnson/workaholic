@@ -24,7 +24,7 @@ export const logsRouter = createTRPCRouter({
                 endedAt: z.date(),
                 duration: z.number(),
                 // tagIds: z.array(z.string()),
-                notes: z.string(),
+                description: z.string(),
             })
         )
         .mutation(async ({ ctx, input }) => {
@@ -48,7 +48,7 @@ export const logsRouter = createTRPCRouter({
                     endedAt: input.endedAt,
                     duration: input.duration,
                     tags: [],
-                    notes: input.notes,
+                    description: input.description,
                     userId: input.userId
                 }
             })
