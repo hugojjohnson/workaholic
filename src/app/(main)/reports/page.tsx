@@ -10,6 +10,7 @@ import { useLogs } from '~/hooks/LogsContext';
 import type { ColourType } from '@prisma/client';
 import { Button } from '~/components/ui/button';
 import LoadingPage from '~/components/welcome/LoadingPage';
+import Heatmap from '~/components/reports/Heatmap';
 
 
 // TODO: Purple is actually grey here!!
@@ -112,7 +113,7 @@ export default function Reports() {
     const stats: [string, number, number][] = [
         ["Total hours", Math.round(totalMinutes / 60 * 10) / 10, 0],
         ["Total intervals", logs.logs.length, 1],
-        ["Streak", streak, 1],
+        [logs.funFact.title, logs.funFact.number, 2]
         // ["Average daily hours", Math.round(totalMinutes / (60 * daysPassed) * 10) / 10, 0]
 
     ]
@@ -141,7 +142,7 @@ export default function Reports() {
             annotation: {
                 annotations: {
                     box1: {
-                    //     // Indicates the type of annotation
+                        //     // Indicates the type of annotation
                         type: "line",
                         yMin: user.preferences.goal,
                         yMax: user.preferences.goal,
@@ -167,6 +168,12 @@ export default function Reports() {
         }
     };
 
+    // Fingers crossed this works
+    const lastMonday = new Date(new Date().setDate(new Date().getDate() - ((new Date().getDay() + 6) % 7) - 3));
+    const now = new Date();
+    const end = new Date(now);
+    end.setDate(now.getDate() + 100);
+
     return <div className='px-7 md:px-32 pt-10'>
         <h1 className="text-4xl mb-5">Reports</h1>
         <div className='flex flex-row justify-around text-center'>
@@ -176,11 +183,14 @@ export default function Reports() {
         </div>
         <div className='mx-auto m-0 md:m-10 md:mx-auto mt-32 max-w-screen-lg'>
             <div className='flex flex-row justify-end gap-2'>
-                <Button variant="outline" onClick={() => changeWeek(false) }>&lt;</Button>
+                <Button variant="outline" onClick={() => changeWeek(false)}>&lt;</Button>
                 <Button variant="outline" onClick={() => changeWeek(true)}>&gt;</Button>
             </div>
 
             <Bar options={options} data={data} />
+            <div className='flex items-center justify-center'>
+                <Heatmap startDate={lastMonday} endDate={end} />
+            </div>
         </div>
     </div>
 }

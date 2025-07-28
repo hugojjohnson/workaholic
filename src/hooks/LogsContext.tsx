@@ -20,6 +20,27 @@ const sumMinutes = (arr: Log[]): number => {
 const filterToday = (arr: Log[]) =>
   arr.filter(({ startedAt }) => startedAt.toDateString() === new Date().toDateString());
 
+const funConversions = [
+  { title: "Ikea candles burned", hours: 4 },
+  { title: "Cups of coffee brewed", hours: 0.08333 },
+  { title: "% of The Lord of the Rings Extended Trilogy", hours: 11.5 },
+  { title: "TikToks watched:", hours: 0.00416667 },
+  { title: "Walking trips from Sydney to Newcastle", hours: 30 },
+  { title: "Heartbeats wasted", hours: 0.0002314815 },
+  { title: "Km walked by Tourtise", hours: 4 },
+  { title: "Walking trips from Athens to Sparta", hours: 20 },
+]
+function getRandomFact(totalMinutes: number) {
+  const funFact = funConversions[Math.floor(Math.random() * funConversions.length)];
+  if (!funFact) {
+    throw new Error("Could not find fun fact");
+  }
+  return {
+    title: funFact.title,
+    number: Number(((totalMinutes/60)/funFact.hours).toFixed(2))
+  }
+}
+
 
 interface LogsContextT {
   test: string;
@@ -28,6 +49,7 @@ interface LogsContextT {
   logs: Log[];
   minutesToday: number,
   minutesToDate: number,
+  funFact: { title: string, number: number },
 }
 const LogsContext = createContext<LogsContextT | undefined>(undefined);
 
@@ -101,7 +123,8 @@ export const LogsProvider = ({ children }: { children: React.ReactNode }) => {
         deleteLog,
         logs: logsQuery.data ? logsQuery.data : [],
         minutesToday: sumMinutes(filterToday(logsQuery.data ?? [])),
-        minutesToDate: sumMinutes(logsQuery.data ?? [])
+        minutesToDate: sumMinutes(logsQuery.data ?? []),
+        funFact: getRandomFact(sumMinutes(logsQuery.data ?? []))
       }}
     >
       {children}
