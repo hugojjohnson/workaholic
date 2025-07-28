@@ -1,23 +1,23 @@
 "use client";
 
-import type { ColourType, User } from "@prisma/client";
+import { ColourType, type User } from "@prisma/client";
 import { api } from "~/trpc/react";
 import { useUser } from "./UserContext";
 import type { inferProcedureOutput } from "@trpc/server";
 import type { AppRouter } from "~/server/api/root";
 import { useSession } from "next-auth/react";
 
-interface AddLogT {
+export interface AddLogT {
     subjectId: string,
     duration: number,
     description: string,
-    startedAt: string,
+    startedAt: Date,
 }
 
 interface UseSettingsT {
     createSubject: (name: string, colour: ColourType, order: number) => void;
     deleteSubject: (subjectId: string) => void;
-    updateSubject: (subjectId: string, newName?: string, newColour?: ColourType) => void;
+    updateSubject: (subjectId: string, newName?: string, newColour?: string) => void;
     updateGoal: (newGoal: number) => void;
     addLog: ({
         subjectId,
@@ -160,8 +160,13 @@ export const useSettings = (): UseSettingsT => {
     function onDeleteSubject(subjectId: string) {
         deleteSubject.mutate({ subjectId });
     }
-    function onUpdateSubject(subjectId: string, newName?: string, newColour?: ColourType) {
-        updateSubject.mutate({ subjectId, newName, newColour });
+    function onUpdateSubject(subjectId: string, newName?: string, newColour?: string) {
+        // const colourArray = Object.values(ColourType) as ColourType[];
+        // if (!newColour || !colourArray.includes(newColour as ColourType)) {
+        //     throw new Error("newColour is invalid");
+        // }
+        // TODO: Add validation
+        updateSubject.mutate({ subjectId, newName, newColour: newColour as ColourType });
     }
     function onUpdateGoal(newGoal: number) {
         updateGoal.mutate({ newGoal });
