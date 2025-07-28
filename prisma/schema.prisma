@@ -124,6 +124,7 @@ model Log {
   notes     String? // Optional free-form field
   User      User?    @relation(fields: [userId], references: [id])
   userId    String?
+  duration  Int
 
   @@index([subjectId, startedAt])
 }

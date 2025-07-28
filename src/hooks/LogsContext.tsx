@@ -9,6 +9,7 @@ interface LogsContextT {
   test: string;
   addLog: (newLog: Log) => Promise<void>;
   deleteLog: (id: string) => Promise<void>;
+  logs: Log[];
 }
 
 const LogsContext = createContext<LogsContextT | undefined>(undefined);
@@ -53,6 +54,7 @@ export const LogsProvider = ({ children }: { children: React.ReactNode }) => {
         test: "test", // you can remove or replace this with real stuff
         addLog,
         deleteLog,
+        logs: logsQuery.data ? logsQuery.data : []
       }}
     >
       {children}
