@@ -4,15 +4,19 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "~
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { useLogs } from "~/hooks/LogsContext";
-import { useUser } from "~/hooks/useUser";
 import { useTimer } from "~/hooks/TimerContext";
 import { useState } from "react";
+import { useUser } from "~/hooks/UserContext";
 
 export default function Dashboard() {
     const logs = useLogs();
     const user = useUser();
     const timer = useTimer();
     const [description, setDescription] = useState<string>(timer.timer?.description ?? "");
+
+    if (!user.user) {
+        return <p>Loading...</p>
+    }
 
     return (
         <div className="flex flex-col gap-8 items-center justify-center max-w-screen-sm mx-auto pt-28 top-20 md:top-0 w-screen fixed md:static">
@@ -31,7 +35,7 @@ export default function Dashboard() {
                         </span>
                     </SelectTrigger>
                     <SelectContent>
-                        {user.subjects.map((s) => (
+                        {user.user.subjects.map((s) => (
                             <SelectItem key={s.id} value={s.id}>
                                 {s.name}
                             </SelectItem>

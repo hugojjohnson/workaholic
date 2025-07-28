@@ -15,13 +15,9 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      preferences?: Preferences;
-      timer?: Timer;
-      subjects?: Subject[];
-      // ...other properties
-      // role: UserRole;
+      hasSetPreferences: boolean;
     } & DefaultSession["user"];
-  }
+  } 
 
   // interface User {
   //   // ...other properties
@@ -44,23 +40,19 @@ export const authConfig = {
   adapter: PrismaAdapter(db),
   callbacks: {
     session: async ({ session, user }): Promise<Session> => {
-      const dbUser = await db.user.findUnique({
-        where: { id: user.id },
-        select: {
-          preferences: true,
-          timer: true,
-          subjects: true
-        },
-      });
-      
+      const userPreferences = await db.preferences.findUnique({
+        where: { userId: user.id }
+      })
+
       return {
         ...session,
         user: {
           ...session.user,
-          id: user.id,
-          preferences: dbUser?.preferences ?? undefined,
-          timer: dbUser?.timer ?? undefined,
-          subjects: dbUser?.subjects ?? undefined
+          hasSetPreferences: !!userPreferences
+          // id: user.id,
+          // preferences: dbUser?.preferences ?? undefined,
+          // timer: dbUser?.timer ?? undefined,
+          // subjects: dbUser?.subjects ?? undefined
         },
       }
     },

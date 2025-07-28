@@ -54,7 +54,7 @@ export const preferencesRouter = createTRPCRouter({
           subjectId: firstSubject.id,
           duration: 30,
           tags: [],
-          notes: ""
+          description: ""
         }
       })
     }),

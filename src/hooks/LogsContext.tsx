@@ -2,8 +2,9 @@
 
 import React, { createContext, useContext } from "react";
 import { api } from "~/trpc/react";
-import { useUser } from "./useUser";
 import type { Log } from "@prisma/client";
+import { useUser } from "./UserContext";
+import { useSession } from "next-auth/react";
 
 interface LogsContextT {
   test: string;
@@ -15,9 +16,14 @@ interface LogsContextT {
 const LogsContext = createContext<LogsContextT | undefined>(undefined);
 
 export const LogsProvider = ({ children }: { children: React.ReactNode }) => {
-  const user = useUser();
+  const session = useSession();
+  const userId = session.data?.user.id;
 
-  const logsQuery = api.logs.getAll.useQuery({ userId: user.id });
+  if (!userId) {
+    throw new Error("session.data is undefined.");
+  }
+
+  const logsQuery = api.logs.getAll.useQuery({ userId });
 
   const utils = api.useUtils(); // for cache invalidation
   const addLogMutation = api.logs.add.useMutation();
@@ -26,7 +32,7 @@ export const LogsProvider = ({ children }: { children: React.ReactNode }) => {
   const addLog = async (newLog: Log) => {
     try {
       await addLogMutation.mutateAsync({
-        userId: user.id,
+        userId,
         subjectId: "", // TODO: update as needed
         startedAt: new Date(), // TODO: update with real data
         endedAt: new Date(),
@@ -40,7 +46,7 @@ export const LogsProvider = ({ children }: { children: React.ReactNode }) => {
 
   const deleteLog = async (id: string) => {
     try {
-      await deleteLogMutation.mutateAsync({ logId: id, userId: user.id });
+      await deleteLogMutation.mutateAsync({ logId: id, userId });
       await utils.logs.getAll.invalidate();
     } catch (err) {
       console.error("deleteLog failed", err);

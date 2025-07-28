@@ -9,10 +9,11 @@ import React, {
     useCallback,
 } from "react";
 import { api } from "~/trpc/react";
-import { useUser } from "./useUser";
 import type { inferProcedureOutput } from "@trpc/server";
 import type { AppRouter } from "~/server/api/root";
 import { env } from "~/env";
+import { useUser } from "./UserContext";
+import { useSession } from "next-auth/react";
 
 interface TimerContextT {
     timer: inferProcedureOutput<AppRouter["timer"]["get"]> | undefined;
@@ -55,20 +56,24 @@ function getTimerStatus(timer: inferProcedureOutput<AppRouter["timer"]["get"]>):
 }
 
 export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
-    const user = useUser();
+    const session = useSession();
+    const userId = session.data?.user.id;
+    if (!userId) {
+        throw new Error("userId is undefined.");
+    }
 
     const utils = api.useUtils();
-    const { data: timer, isLoading } = api.timer.get.useQuery({ userId: user.id });
+    const { data: timer, isLoading } = api.timer.get.useQuery({ userId });
 
     const updateTimerMutation = api.timer.update.useMutation({
         // Optimistically update the cache
         onMutate: async (updatedTimer) => {
             await utils.timer.get.cancel(); // Cancel any outgoing refetches
 
-            const previousData = utils.timer.get.getData({ userId: user.id });
+            const previousData = utils.timer.get.getData({ userId });
 
             // Optimistically update the cached data
-            utils.timer.get.setData({ userId: user.id }, (oldData) => {
+            utils.timer.get.setData({ userId }, (oldData) => {
                 if (!oldData) return oldData;
                 if (!timer) return oldData;
 
@@ -87,13 +92,13 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
         // If it fails, roll back
         onError: (_err, _updatedTimer, context) => {
             if (context?.previousData) {
-                utils.timer.get.setData({ userId: user.id }, context.previousData);
+                utils.timer.get.setData({ userId }, context.previousData);
             }
         },
 
         // Invalidate to revalidate with fresh server data
         onSettled: () => {
-            utils.timer.get.invalidate({ userId: user.id });
+            utils.timer.get.invalidate({ userId });
         },
     });
 
@@ -104,7 +109,7 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
             const previousTimers = utils.timer.get.getData();
 
             // Optimistic update: clone and apply the changes locally
-            utils.timer.get.setData({ userId: user.id }, (timer) => {
+            utils.timer.get.setData({ userId }, (timer) => {
                 if (!timer) return timer;
                 if (timer.id !== newData.timerId) return timer;
 
@@ -131,7 +136,7 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
         // If mutation fails, rollback
         onError: (_err, _newData, context) => {
             if (context?.previousTimers) {
-                utils.timer.get.setData({ userId: user.id }, context.previousTimers);
+                utils.timer.get.setData({ userId }, context.previousTimers);
             }
         },
 

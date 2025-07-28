@@ -7,21 +7,28 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
+import { Separator } from "~/components/ui/separator";
 import { useLogs } from "~/hooks/LogsContext";
-import { useUser } from "~/hooks/useUser";
+import { useUser } from "~/hooks/UserContext";
+// import { useSettings } from "~/hooks/useSettings";
 
 export default function Settings() {
     const user = useUser();
     const logs = useLogs();
+    // const settings = useSettings();
+
+    if (!user.user) {
+        return <p>loading</p> // TODO: replace with loading skeleton.
+    }
 
     const subjectHTML = (subject: Subject, index: number) => (
-        <Card key={index} className="w-full lg:w-96 p-4 flex items-center gap-4 bg-muted">
+        <div key={index} className="flex flex-row gap-4">
             <Input
                 className="text-lg bg-transparent"
                 value={subject.name}
             //   onBlur={() => setUser(user)}
             //   onChange={(e) => {
-            //     const user2 = [...user.projects];
+            //     const user2 = [...user.user.projects];
             //     user2[index].name = e.target.value;
             //     setUserLocal({ ...user, projects: user2 });
             //   }}
@@ -29,7 +36,7 @@ export default function Settings() {
 
             <div className="flex items-center gap-3 ml-auto">
                 {/* <ColourPicker
-        start={user.projects[index].colour}
+        start={user.user.projects[index].colour}
         callback={(colour: Colours) => {
           const user2 = structuredClone(user);
           user2.projects[index].colour = colour;
@@ -49,12 +56,16 @@ export default function Settings() {
                     X
                 </Button>
             </div>
-        </Card>
+
+        </div>
     );
 
-    const logHTML = (log: Log) => (
-        <Card key={log.id} className="w-64 p-4 relative border-dashed border-2">
-            <h1 className="text-xl font-semibold">{user.subjects.find(subject => subject.id === log.subjectId)?.name ?? undefined}</h1>
+    const logHTML = (log: Log) => {
+        if (!user.user) {
+            return <></>
+        }
+        return <Card key={log.id} className="w-64 p-4 relative border-dashed border-2">
+            <h1 className="text-xl font-semibold">{user.user.subjects.find(subject => subject.id === log.subjectId)?.name ?? undefined}</h1>
             <p className="text-muted-foreground">
                 {new Date(log.startedAt).toLocaleString().slice(0, -3)} -{" "}
                 {new Date(
@@ -68,7 +79,7 @@ export default function Settings() {
             </p>
             <p className="text-sm mt-3">{log.notes}</p>
         </Card>
-    );
+    }
 
     return (
         <div className="px-6 lg:px-32 pt-10">
@@ -79,8 +90,11 @@ export default function Settings() {
                 <div className="flex-1">
                     {/* Projects */}
                     <h2 className="text-2xl font-semibold mb-3">Projects</h2>
-                    <div className="flex flex-col gap-4">
-                        {user.subjects.map((subject, index) => subjectHTML(subject, index))}
+                    <Card className="w-full lg:w-96 p-4 flex flex-col gap-4 bg-muted">
+                        {user.user.subjects.map((subject, index) => <>
+                            {subjectHTML(subject, index)}
+                            <Separator />
+                        </>)}
                         <Button
                             variant="secondary"
                             className="w-10 h-10"
@@ -92,13 +106,13 @@ export default function Settings() {
                         >
                             +
                         </Button>
-                    </div>
+                    </Card>
 
                     {/* Daily Goal */}
                     <h2 className="text-2xl font-semibold mt-10 mb-3">Daily goal (hours)</h2>
                     <Input
                         type="number"
-                        defaultValue={user.preferences.goal}
+                        defaultValue={user.user.preferences.goal}
                         className="w-full lg:w-96"
                     //   onBlur={(e) =>
                     //     setUser({ ...user, goal: parseFloat(e.target.value) })
@@ -106,33 +120,33 @@ export default function Settings() {
                     />
 
                     {/* Add Log */}
-                    <Card className="mt-12 px-5 py-6 border-dashed border-2">
+                    <div className="mt-12 px-5 py-6 border-dashed border-2 rounded-md max-w-[700px]">
                         <h2 className="text-2xl font-semibold">Add Log</h2>
 
                         <div className="mt-4 space-y-4">
-                            <div>
-                                <Label>Project</Label>
-                                <Select
-                                value=""
+                            <div className="flex flex-row gap-10">
+                                <div>
+                                    <Label>Project</Label>
+                                    <Select
+                                        value=""
                                     // value={newProject.name}
-                                // onValueChange={(val) =>
-                                //   setNewProject({ name: val, colour: "red" })
-                                // }
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select project" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {user.subjects.map((subject, index) => (
-                                            <SelectItem key={index} value={subject.name}>
-                                                {subject.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            <div>
+                                    // onValueChange={(val) =>
+                                    //   setNewProject({ name: val, colour: "red" })
+                                    // }
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select project" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {user.user.subjects.map((subject, index) => (
+                                                <SelectItem key={index} value={subject.name}>
+                                                    {subject.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div>
                                 <Label>Duration</Label>
                                 <Select
                                     // value={`${newDuration} minutes`}
@@ -166,6 +180,7 @@ export default function Settings() {
                                     </SelectContent>
                                 </Select>
                             </div>
+                            </div>
 
                             <div>
                                 <Label>Description</Label>
@@ -193,7 +208,7 @@ export default function Settings() {
                                 Add
                             </Button>
                         </div>
-                    </Card>
+                    </div>
                 </div>
 
                 {/* Logs Column */}
