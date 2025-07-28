@@ -14,6 +14,7 @@ import { useTimer } from "~/hooks/TimerContext";
 import { useUser } from "~/hooks/UserContext";
 import { useSettings } from "~/hooks/useSettings";
 import DarkModeToggle from "~/components/settings/DarkModeToggle";
+import LoadingPage from "~/components/welcome/LoadingPage";
 
 // TODO: Update these with the actual colours
 const colourOptions: Record<string, { hex: string }> = {
@@ -61,7 +62,7 @@ export default function Settings() {
     }, [timer.timer?.subjectId, timer.timer?.duration])
 
     if (!user.user) {
-        return <p>loading</p> // TODO: replace with loading skeleton.
+        return <LoadingPage />
     }
 
     const SubjectItem = React.memo(function SubjectItem({
