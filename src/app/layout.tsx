@@ -32,7 +32,7 @@ export default async function RootLayout({
 
   if (!session?.user) {
     return <html lang="en" className={geist.variable} suppressHydrationWarning>
-      <body className="dark:bg-[#242424] bg-white h-screen">
+      <body className="h-screen">
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -51,7 +51,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={geist.variable} suppressHydrationWarning>
-      <body className="dark:bg-[#242424] bg-white h-screen">
+      <body className="h-screen">
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

@@ -72,7 +72,7 @@ export default function Dashboard() {
 
             {/* Timer Display & Stop Button */}
             <div className="relative flex flex-row gap-3">
-                <p className="text-8xl font-mono dark:text-white w-[500px] text-center">
+                <p className="text-8xl dark:text-white w-[500px] text-center">
                     {timer.isLoading
                         ? "--:--"
                         : `${timer.minutesLeft}:${timer.secondsLeft.toString().padStart(2, "0")}`}
@@ -118,7 +118,7 @@ export default function Dashboard() {
             {/* Hours Studied */}
             <div className="text-center">
                 <h1 className="text-xl font-semibold mb-1">Hours studied today</h1>
-                <p className="text-2xl text-red-400 font-mono">
+                <p className="text-2xl text-red-400">
                     0h 0min
                     {/* {timeStudiedToday[0]}h {timeStudiedToday[1]}min */}
                 </p>
