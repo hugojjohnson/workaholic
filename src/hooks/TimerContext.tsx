@@ -14,6 +14,8 @@ import type { AppRouter } from "~/server/api/root";
 import { env } from "~/env";
 import { useUser } from "./UserContext";
 import { useSession } from "next-auth/react";
+import { useSettings } from "./useSettings";
+import { useLogs } from "./LogsContext";
 
 interface TimerContextT {
     timer: inferProcedureOutput<AppRouter["timer"]["get"]> | undefined;
@@ -57,6 +59,7 @@ function getTimerStatus(timer: inferProcedureOutput<AppRouter["timer"]["get"]>):
 
 export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     const session = useSession();
+    const logs = useLogs();
     const userId = session.data?.user.id;
     if (!userId) {
         throw new Error("userId is undefined.");
@@ -266,6 +269,15 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
 
             stop()
             // // Send request to the server
+            if (!timer.startedAt) {
+                throw new Error("timer.startedAt should not be null.");
+            }
+            logs.addLog({
+                subjectId: timer.subjectId,
+                duration: timer.duration,
+                description: timer.description ?? "",
+                startedAt: timer.startedAt
+            });
             // async function doStuff() {
             //     if (!user.deadline || !user.timerId) { throw new Error("Timer not set properly.") }
             //     const response = await post<Log>("/add-log", { token: user.token }, { log: {

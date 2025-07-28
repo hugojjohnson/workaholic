@@ -6,13 +6,19 @@ import type { Log } from "@prisma/client";
 import { useUser } from "./UserContext";
 import { useSession } from "next-auth/react";
 
+export interface AddLogT {
+    subjectId: string,
+    duration: number,
+    description: string,
+    startedAt: Date,
+}
+
 interface LogsContextT {
   test: string;
-  addLog: (newLog: Log) => Promise<void>;
+  addLog: ({ subjectId, duration, description, startedAt }: AddLogT) => void;
   deleteLog: (id: string) => Promise<void>;
   logs: Log[];
 }
-
 const LogsContext = createContext<LogsContextT | undefined>(undefined);
 
 export const LogsProvider = ({ children }: { children: React.ReactNode }) => {
@@ -29,20 +35,35 @@ export const LogsProvider = ({ children }: { children: React.ReactNode }) => {
   const addLogMutation = api.logs.add.useMutation();
   const deleteLogMutation = api.logs.delete.useMutation();
 
-  const addLog = async (newLog: Log) => {
-    try {
-      await addLogMutation.mutateAsync({
-        userId,
-        subjectId: "", // TODO: update as needed
-        startedAt: new Date(), // TODO: update with real data
-        endedAt: new Date(),
-        notes: "",
+  const addLog = api.logs.add.useMutation({
+          onMutate: async (newLog) => {
+              if (!userId) {
+                  throw new Error("userId is undefined");
+              }
+              await utils.logs.getAll.cancel(); // cancel any outgoing fetches
+              const previousLogs = utils.logs.getAll.getData();
+              utils.logs.getAll.setData({ userId }, (oldLogs) => {
+                  if (!oldLogs) return oldLogs;
+                  return [
+                      ...oldLogs,
+                      {
+                          ...newLog,
+                          id: "undefined so far", // TODO
+                          tags: []
+                      }
+                  ]
+              });
+              return { previousLogs };
+          },
+          onError: (_err, _newSubject, context) => {
+              if (context?.previousLogs && userId) {
+                  utils.logs.getAll.setData({ userId: userId }, context.previousLogs);
+              }
+          },
+          onSettled: () => {
+              utils.logs.getAll.invalidate();
+          },
       });
-      await utils.logs.getAll.invalidate();
-    } catch (err) {
-      console.error("addLog failed", err);
-    }
-  };
 
   const deleteLog = async (id: string) => {
     try {
@@ -53,12 +74,20 @@ export const LogsProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  function onAddLog(newLog: AddLogT) {
+          if (!userId) {
+              throw new Error("userId is undefined");
+          }
+          addLog.mutate({ ...newLog, userId: userId, endedAt: new Date(new Date().getTime() + newLog.duration * 60_000), notes: "" });
+  
+      }
+
   // Provide the context value with your query data plus your mutations
   return (
     <LogsContext.Provider
       value={{
         test: "test", // you can remove or replace this with real stuff
-        addLog,
+        addLog: onAddLog,
         deleteLog,
         logs: logsQuery.data ? logsQuery.data : []
       }}

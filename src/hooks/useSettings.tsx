@@ -6,29 +6,19 @@ import { useUser } from "./UserContext";
 import type { inferProcedureOutput } from "@trpc/server";
 import type { AppRouter } from "~/server/api/root";
 import { useSession } from "next-auth/react";
-
-export interface AddLogT {
-    subjectId: string,
-    duration: number,
-    description: string,
-    startedAt: Date,
-}
+import { useLogs, type AddLogT } from "./LogsContext";
 
 interface UseSettingsT {
     createSubject: (name: string, colour: ColourType, order: number) => void;
     deleteSubject: (subjectId: string) => void;
     updateSubject: (subjectId: string, newName?: string, newColour?: string) => void;
     updateGoal: (newGoal: number) => void;
-    addLog: ({
-        subjectId,
-        duration,
-        description,
-        startedAt,
-    }: AddLogT) => void;
+    addLog: ({ subjectId, duration, description, startedAt }: AddLogT) => void;
 }
 export const useSettings = (): UseSettingsT => {
     const utils = api.useUtils();
     const user = useUser();
+    const logs = useLogs();
 
     const createSubject = api.settings.createSubject.useMutation({
         onMutate: async (newSubject) => {
@@ -153,37 +143,6 @@ export const useSettings = (): UseSettingsT => {
         },
     });
 
-    const addLog = api.logs.add.useMutation({
-        onMutate: async (newLog) => {
-            const userId = user.user?.id;
-            if (!userId) {
-                throw new Error("userId is undefined");
-            }
-            await utils.logs.getAll.cancel(); // cancel any outgoing fetches
-            const previousLogs = utils.logs.getAll.getData();
-            utils.logs.getAll.setData({ userId }, (oldLogs) => {
-                if (!oldLogs) return oldLogs;
-                return [
-                    ...oldLogs,
-                    {
-                        ...newLog,
-                        id: "undefined so far", // TODO
-                        tags: []
-                    }
-                ]
-            });
-            return { previousLogs };
-        },
-        onError: (_err, _newSubject, context) => {
-            if (context?.previousLogs && user.user?.id) {
-                utils.logs.getAll.setData({ userId: user.user?.id }, context.previousLogs);
-            }
-        },
-        onSettled: () => {
-            utils.logs.getAll.invalidate();
-        },
-    });
-
 
     function onCreateSubject(name: string, colour: ColourType, order: number) {
         createSubject.mutate({ name, colour, order });
@@ -203,12 +162,7 @@ export const useSettings = (): UseSettingsT => {
         updateGoal.mutate({ newGoal });
     }
     function onAddLog(newLog: AddLogT) {
-        const userId = user.user?.id;
-        if (!userId) {
-            throw new Error("userId is undefined");
-        }
-        addLog.mutate({ ...newLog, userId: userId, endedAt: new Date(new Date().getTime() + newLog.duration * 60_000), notes: "" });
-
+        logs.addLog(newLog);
     }
 
     return {
