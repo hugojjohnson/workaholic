@@ -39,6 +39,10 @@ export const authConfig = {
   ],
   adapter: PrismaAdapter(db),
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Customize this logic as needed
+      return `/`; // or any page you want
+    },
     session: async ({ session, user }): Promise<Session> => {
       const userPreferences = await db.preferences.findUnique({
         where: { userId: user.id }

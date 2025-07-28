@@ -2,6 +2,7 @@
 
 import { signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
 
@@ -28,14 +29,14 @@ export default function Signup() {
         </CardHeader>
         <CardContent className="mx-auto">
           {Object.values(providers).map((provider) => (
-            <button key={provider.name} onClick={() => signIn(provider.id)} className="border-[2px] border-gray-300 inline-block rounded-md px-3 py-3 transition bg-white hover:bg-gray-50">
+            <Button key={provider.name} onClick={() => signIn(provider.id)} className="p-5">
               Sign up with {provider.name}
               <img
                 src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
                 alt="Google logo"
-                className="inline-block w-5 h-5 ml-5"
+                className="inline-block w-6 h-6 ml-5"
               />
-            </button>
+            </Button>
           ))}
         </CardContent>
       </Card>

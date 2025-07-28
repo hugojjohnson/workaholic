@@ -14,6 +14,5 @@ export default async function Home() {
   if (!session.user.hasSetPreferences) {
     return <SetUpPreferences />;
   }
-
   return <Dashboard />;
 }

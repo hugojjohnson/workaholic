@@ -30,6 +30,25 @@ export default async function RootLayout({
 }) {
   const session = await auth();
 
+  if (!session?.user) {
+    return <html lang="en" className={geist.variable} suppressHydrationWarning>
+      <body className="dark:bg-[#242424] bg-white h-screen">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TRPCReactProvider>
+            <HydrateClient>
+                {children}
+            </HydrateClient>
+          </TRPCReactProvider>
+        </ThemeProvider>
+      </body>
+    </html>
+  }
+
   return (
     <html lang="en" className={geist.variable} suppressHydrationWarning>
       <body className="dark:bg-[#242424] bg-white h-screen">

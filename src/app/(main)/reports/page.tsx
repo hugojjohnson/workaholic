@@ -8,6 +8,7 @@ import { MatrixController, MatrixElement } from 'chartjs-chart-matrix';
 import { useUser } from '~/hooks/UserContext';
 import { useLogs } from '~/hooks/LogsContext';
 import type { ColourType } from '@prisma/client';
+import { Button } from '~/components/ui/button';
 
 
 // TODO: Purple is actually grey here!!
@@ -174,8 +175,8 @@ export default function Reports() {
         </div>
         <div className='mx-auto m-0 md:m-10 md:mx-auto mt-32 max-w-screen-lg'>
             <div className='flex flex-row justify-end gap-2'>
-                <button className='px-2 bg-gray-700 rounded-md text-center' onClick={() => changeWeek(false) }>&lt;</button>
-                <button className='px-2 bg-gray-700 rounded-md text-center' onClick={() => changeWeek(true)}>&gt;</button>
+                <Button variant="outline" onClick={() => changeWeek(false) }>&lt;</Button>
+                <Button variant="outline" onClick={() => changeWeek(true)}>&gt;</Button>
             </div>
 
             <Bar options={options} data={data} />
