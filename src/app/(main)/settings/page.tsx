@@ -24,6 +24,21 @@ const colourOptions: Record<string, { hex: string }> = {
     "PINK": { hex: "#EC4899" },
     "ORANGE": { hex: "#F97316" }
 };
+function toDatetimeLocal(date: Date): string {
+    const pad = (n: number) => n.toString().padStart(2, "0");
+
+    return (
+        date.getFullYear() +
+        "-" +
+        pad(date.getMonth() + 1) +
+        "-" +
+        pad(date.getDate()) +
+        "T" +
+        pad(date.getHours()) +
+        ":" +
+        pad(date.getMinutes())
+    );
+}
 
 export default function Settings() {
     const user = useUser();
@@ -32,7 +47,7 @@ export default function Settings() {
     const timer = useTimer();
 
     const [tempLog, setTempLog] = useState<AddLogT>({
-        subjectId: timer.timer?.subjectId ?? "",
+        subjectId: timer.timer?.subjectId ?? user.user?.subjects[0]?.id ?? "",
         duration: timer.timer?.duration ?? 30,
         description: "",
         startedAt: new Date()
@@ -181,20 +196,17 @@ export default function Settings() {
                                 <div>
                                     <Label>Project</Label>
                                     <Select
-                                        value={user.user.subjects.find(s => s.id === tempLog.subjectId)?.name ?? ""}
+                                        value={tempLog.subjectId}
                                         onValueChange={(val) => {
-                                            const newId = user.user?.subjects.find(s => s.id === tempLog.subjectId)?.id
-                                            if (newId) {
-                                                setTempLog({ ...tempLog, subjectId: newId })
-                                            }
+                                            setTempLog({ ...tempLog, subjectId: val });
                                         }}
                                     >
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select project" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {user.user.subjects.map((subject, index) => (
-                                                <SelectItem key={index} value={subject.name.length > 0 ? subject.name : "test"}>
+                                            {user.user.subjects.map((subject) => (
+                                                <SelectItem key={subject.id} value={subject.id}>
                                                     {subject.name}
                                                 </SelectItem>
                                             ))}
@@ -214,8 +226,7 @@ export default function Settings() {
                                             setTempLog({
                                                 ...tempLog,
                                                 duration: myMins,
-                                                startedAt: new Date(
-                                                    Date.now() - new Date().getTimezoneOffset() * 60_000 - myMins * 60_000)
+                                                startedAt: new Date(Date.now() - myMins * 60_000)
                                             })
                                         }}
                                     >
@@ -255,7 +266,7 @@ export default function Settings() {
                                 <Input
                                     type="datetime-local"
                                     className="text-lg"
-                                    value={tempLog.startedAt.toDateString()}
+                                    value={toDatetimeLocal(tempLog.startedAt)}
                                     onChange={(e) => {
                                         const temp = structuredClone(tempLog)
                                         temp.startedAt = new Date(e.target.value)
