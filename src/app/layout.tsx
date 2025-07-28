@@ -28,7 +28,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={geist.variable} suppressHydrationWarning>
-      <body className="bg-[#242424] h-screen">
+      <body className="dark:bg-[#242424] bg-white h-screen">
         <ThemeProvider
                 attribute="class"
                 defaultTheme="light"

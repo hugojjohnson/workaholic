@@ -24,8 +24,11 @@ export default function Dashboard() {
                         timer.onUpdateTimerInfo({ subjectId });
                     }}
                 >
-                    <SelectTrigger className="text-lg w-64 justify-center">
-                        <SelectValue placeholder="Select project" className="text-center" />
+                    <SelectTrigger className="text-lg w-64 relative">
+                        <span className="ml-32"></span> {/* To move the chevron to the other side */}
+                        <span className="absolute left-1/2 -translate-x-1/2 pointer-events-none">
+                            <SelectValue placeholder="Select project" />
+                        </span>
                     </SelectTrigger>
                     <SelectContent>
                         {user.subjects.map((s) => (
@@ -50,7 +53,7 @@ export default function Dashboard() {
                         timer.onUpdateTimerInfo({ duration });
                     }}
                 >
-                    <SelectTrigger className="text-lg w-24">
+                    <SelectTrigger className="text-lg w-28">
                         <SelectValue placeholder="Duration" />
                     </SelectTrigger>
                     <SelectContent>
@@ -65,10 +68,10 @@ export default function Dashboard() {
 
             {/* Timer Display & Stop Button */}
             <div className="relative flex flex-row gap-3">
-                <p className="text-8xl font-mono text-white w-[500px] text-center">
-                    { timer.isLoading
-                    ? "--:--"
-                    : `${timer.minutesLeft}:${timer.secondsLeft.toString().padStart(2, "0")}`}
+                <p className="text-8xl font-mono dark:text-white w-[500px] text-center">
+                    {timer.isLoading
+                        ? "--:--"
+                        : `${timer.minutesLeft}:${timer.secondsLeft.toString().padStart(2, "0")}`}
                 </p>
 
                 <Button
@@ -86,7 +89,7 @@ export default function Dashboard() {
             <div className="w-full max-w-screen-sm px-5">
                 <p className="text-sm text-gray-400 mb-1">I made progress on</p>
                 <Input
-                    className="bg-[#323232] text-lg rounded-md"
+                    className="dark:bg-[#323232] text-lg rounded-md"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     onBlur={(e) => timer.onUpdateTimerInfo({ description })}

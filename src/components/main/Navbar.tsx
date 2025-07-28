@@ -21,7 +21,7 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Nav */}
-      <div className="w-full h-20 text-xl text-gray-300 bg-[#242424] flex md:hidden justify-around items-center py-3 fixed bottom-0">
+      <div className="w-full h-20 text-xl text-gray-300 flex md:hidden justify-around items-center py-3 fixed bottom-0">
         <Link className={`flex flex-col items-center gap-1 active:scale-75 transition-all ease-in-out duration-100 ${isActive("/")}`} href="/">
           <img src="/icons/timer.png" className="w-8 invert" />
           <p className="text-xs">Timer</p>
