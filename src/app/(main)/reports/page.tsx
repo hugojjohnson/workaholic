@@ -189,7 +189,9 @@ export default function Reports() {
 
             <Bar options={options} data={data} />
             <div className='flex items-center justify-center'>
-                <Heatmap startDate={lastMonday} endDate={end} />
+                <div className='w-[600px] my-20'>
+                    <Heatmap startDate={lastMonday} endDate={end} />
+                </div>
             </div>
         </div>
     </div>

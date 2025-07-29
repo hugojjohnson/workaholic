@@ -1,5 +1,6 @@
 import React from 'react';
 import CalendarHeatmap from 'react-calendar-heatmap';
+import { Tooltip } from 'react-tooltip';
 import { useLogs } from '~/hooks/LogsContext';
 import 'react-calendar-heatmap/dist/styles.css';
 import '~/styles/heatmap.css';
@@ -10,6 +11,13 @@ type Props = {
   startDate: Date;
   endDate: Date;
 };
+
+function formatDateAU(date: Date): string {
+  const d = date.getDate().toString().padStart(2, '0');
+  const m = (date.getMonth() + 1).toString().padStart(2, '0');
+  const y = date.getFullYear();
+  return `${d}/${m}/${y}`;
+}
 
 
 // startedAt: string; // ISO date string, e.g. '2024-07-28T15:30:00Z'
@@ -26,28 +34,56 @@ const Heatmap: React.FC<Props> = ({ startDate, endDate }) => {
     countsByDate[date] = (countsByDate[date] || 0) + duration;
   });
 
-  // Step 2: Convert aggregated map to array format react-calendar-heatmap wants
-  const values = Object.entries(countsByDate).map(([date, count]) => ({
-    date: new Date(new Date(date).setDate(new Date(date).getDate() - 1)).toISOString().slice(0, 10),
-    count: Math.min(Math.floor(count/(user?.preferences.goal ?? 1) * 5 / 60 + 0.5), 4), // TODO: Could be better
-  }));
+  // Step 2: Fill in all dates with 0 if they don't exist in logs
+  const allDates: { date: string; count: number, tooltip: string }[] = [];
+  const current = new Date(startDate);
 
-  console.log(values)
+  while (current <= endDate) {
+    const isoDate = current.toISOString().slice(0, 10);
+    const rawCount = countsByDate[isoDate] || 0;
 
-  return (
+    let tooltip = formatDateAU(current);
+    if (rawCount > 0) {
+      tooltip += " |";
+      if (rawCount > 60) {
+        tooltip += " " + Math.floor(rawCount/60) + "hr"
+      }
+      if (rawCount % 60 !== 0) {
+        tooltip += " " + Math.floor(rawCount%60) + "min"
+      }
+    }
+
+    allDates.push({
+      date: isoDate,
+      count: Math.min(
+        Math.floor(((rawCount / (user?.preferences.goal ?? 1)) * 5) / 60 + 0.5),
+        4
+      ),
+      tooltip
+    });
+
+    current.setDate(current.getDate() + 1);
+  }
+
+  console.log(allDates)
+
+  return (<>
     <CalendarHeatmap
       startDate={startDate}
       endDate={endDate}
-      values={values}
-      // classForValue={(value) => {
-      //   if (!value || !value.count) return 'color-empty';
-      //   const intensity = Math.floor((value.count / 1) * 4); // 0 to 4 scale
-      //   return `color-scale-${intensity}`;
-      // }}
+      values={allDates}
       // You can add optional props like:
       classForValue={(value) => value?.count ? `color-github-${value.count}` : 'color-empty'}
+      // showMonthLabels={false}  // <- THIS hides the months
       // showWeekdayLabels
+      tooltipDataAttrs={(value) => ({
+        'data-tooltip-id': 'my-tooltip',
+        'data-tooltip-content': value?.tooltip,
+      })}
+
     />
+    <Tooltip id="my-tooltip" />
+  </>
   );
 };
 

@@ -5,3 +5,14 @@
 .react-calendar-heatmap .color-empty {
   fill: #444444;
 }
+.react-calendar-heatmap .hello {
+  stroke: gray;
+  stroke-width: 1.5px;
+  animation: pulse-border 2s infinite;
+}
+
+@keyframes pulse-border {
+  0% { stroke-opacity: 0.5; }
+  50% { stroke-opacity: 1; }
+  100% { stroke-opacity: 0.5; }
+}
