@@ -6,15 +6,15 @@ export const timerRouter = createTRPCRouter({
   get: protectedProcedure
     .input(
       z.object({
-        userId: z.string()
-      })
+        userId: z.string(),
+      }),
     )
     .query(async ({ ctx, input }) => {
-      const timer = ctx.db.timer.findFirst({
+      const timer = await ctx.db.timer.findFirst({
         where: {
-          userId: input.userId
-        }
-      })
+          userId: input.userId,
+        },
+      });
       if (!timer) {
         throw new Error("Timer could not be found.");
       }
@@ -28,42 +28,42 @@ export const timerRouter = createTRPCRouter({
         startedAt: z.date().nullable(),
         pausedAt: z.date().nullable(),
         deadlineAt: z.date().nullable(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       await ctx.db.timer.update({
         where: {
-          id: input.timerId
+          id: input.timerId,
         },
         data: {
           startedAt: input.startedAt,
           pausedAt: input.pausedAt,
-          deadlineAt: input.deadlineAt
-        }
-      })
+          deadlineAt: input.deadlineAt,
+        },
+      });
     }),
 
-    updateInfo: protectedProcedure
+  updateInfo: protectedProcedure
     .input(
       z.object({
         timerId: z.string(),
         description: z.optional(z.string()),
         duration: z.optional(z.number().int()),
         tags: z.optional(z.array(z.string())),
-        subjectId: z.optional(z.string())
-      })
+        subjectId: z.optional(z.string()),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       await ctx.db.timer.update({
         where: {
-          id: input.timerId
+          id: input.timerId,
         },
         data: {
           description: input.description,
           duration: input.duration,
           tags: input.tags,
-          subjectId: input.subjectId
-        }
-      })
+          subjectId: input.subjectId,
+        },
+      });
     }),
 });

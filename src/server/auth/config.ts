@@ -1,6 +1,9 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import type { Preferences, Subject, Timer } from "@prisma/client";
-import { type DefaultSession, type NextAuthConfig, type Session } from "next-auth";
+import {
+  type DefaultSession,
+  type NextAuthConfig,
+  type Session,
+} from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
 import { db } from "~/server/db";
@@ -17,7 +20,7 @@ declare module "next-auth" {
       id: string;
       hasSetPreferences: boolean;
     } & DefaultSession["user"];
-  } 
+  }
 
   // interface User {
   //   // ...other properties
@@ -34,31 +37,31 @@ export const authConfig = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET
-    })
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
   ],
   adapter: PrismaAdapter(db),
   callbacks: {
-    async redirect({ url, baseUrl }) {
+    async redirect() {
       // Customize this logic as needed
       return `/`; // or any page you want
     },
     session: async ({ session, user }): Promise<Session> => {
       const userPreferences = await db.preferences.findUnique({
-        where: { userId: user.id }
-      })
+        where: { userId: user.id },
+      });
 
       return {
         ...session,
         user: {
           ...session.user,
-          hasSetPreferences: !!userPreferences
+          hasSetPreferences: !!userPreferences,
           // id: user.id,
           // preferences: dbUser?.preferences ?? undefined,
           // timer: dbUser?.timer ?? undefined,
           // subjects: dbUser?.subjects ?? undefined
         },
-      }
+      };
     },
   },
 } satisfies NextAuthConfig;

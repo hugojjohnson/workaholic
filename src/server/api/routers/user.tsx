@@ -5,19 +5,19 @@ export const userRouter = createTRPCRouter({
   get: protectedProcedure
     .input(
       z.object({
-        userId: z.string()
-      })
+        userId: z.string(),
+      }),
     )
     .query(async ({ ctx, input }) => {
       const user = await ctx.db.user.findFirst({
         where: {
-          id: input.userId
+          id: input.userId,
         },
         include: {
           preferences: true,
           subjects: true,
-        }
-      })
+        },
+      });
       if (!user) {
         throw new Error("User could not be found.");
       }
@@ -27,7 +27,7 @@ export const userRouter = createTRPCRouter({
       // Convince the compiler preferences is safe.
       return {
         ...user,
-        preferences: user.preferences
+        preferences: user.preferences,
       };
     }),
 });

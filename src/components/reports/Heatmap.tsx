@@ -1,11 +1,10 @@
-import React from 'react';
-import CalendarHeatmap from 'react-calendar-heatmap';
-import { Tooltip } from 'react-tooltip';
-import { useLogs } from '~/hooks/LogsContext';
-import 'react-calendar-heatmap/dist/styles.css';
-import '~/styles/heatmap.css';
-import { useUser } from '~/hooks/UserContext';
-
+import React from "react";
+import CalendarHeatmap, { type TooltipDataAttrs } from "react-calendar-heatmap";
+import { Tooltip } from "react-tooltip";
+import { useLogs } from "~/hooks/LogsContext";
+import "react-calendar-heatmap/dist/styles.css";
+import "~/styles/heatmap.css";
+import { useUser } from "~/hooks/UserContext";
 
 type Props = {
   startDate: Date;
@@ -13,12 +12,11 @@ type Props = {
 };
 
 function formatDateAU(date: Date): string {
-  const d = date.getDate().toString().padStart(2, '0');
-  const m = (date.getMonth() + 1).toString().padStart(2, '0');
+  const d = date.getDate().toString().padStart(2, "0");
+  const m = (date.getMonth() + 1).toString().padStart(2, "0");
   const y = date.getFullYear();
   return `${d}/${m}/${y}`;
 }
-
 
 // startedAt: string; // ISO date string, e.g. '2024-07-28T15:30:00Z'
 //   duration: number;  // in minutes (or seconds, whatever you got)
@@ -31,25 +29,25 @@ const Heatmap: React.FC<Props> = ({ startDate, endDate }) => {
 
   logs.forEach(({ startedAt, duration }) => {
     const date = startedAt.toISOString().slice(0, 10); // quick YYYY-MM-DD from ISO string
-    countsByDate[date] = (countsByDate[date] || 0) + duration;
+    countsByDate[date] = (countsByDate[date] ?? 0) + duration;
   });
 
   // Step 2: Fill in all dates with 0 if they don't exist in logs
-  const allDates: { date: string; count: number, tooltip: string }[] = [];
+  const allDates: { date: string; count: number; tooltip: string }[] = [];
   const current = new Date(startDate);
 
   while (current <= endDate) {
     const isoDate = current.toISOString().slice(0, 10);
-    const rawCount = countsByDate[isoDate] || 0;
+    const rawCount = countsByDate[isoDate] ?? 0;
 
     let tooltip = formatDateAU(current);
     if (rawCount > 0) {
       tooltip += " |";
       if (rawCount > 60) {
-        tooltip += " " + Math.floor(rawCount/60) + "hr"
+        tooltip += " " + Math.floor(rawCount / 60) + "hr";
       }
       if (rawCount % 60 !== 0) {
-        tooltip += " " + Math.floor(rawCount%60) + "min"
+        tooltip += " " + Math.floor(rawCount % 60) + "min";
       }
     }
 
@@ -57,33 +55,38 @@ const Heatmap: React.FC<Props> = ({ startDate, endDate }) => {
       date: isoDate,
       count: Math.min(
         Math.floor(((rawCount / (user?.preferences.goal ?? 1)) * 5) / 60 + 0.5),
-        4
+        4,
       ),
-      tooltip
+      tooltip,
     });
 
     current.setDate(current.getDate() + 1);
   }
 
-  console.log(allDates)
+  console.log(allDates);
 
-  return (<>
-    <CalendarHeatmap
-      startDate={startDate}
-      endDate={endDate}
-      values={allDates}
-      // You can add optional props like:
-      classForValue={(value) => value?.count ? `color-github-${value.count}` : 'color-empty'}
-      // showMonthLabels={false}  // <- THIS hides the months
-      // showWeekdayLabels
-      tooltipDataAttrs={(value) => ({
-        'data-tooltip-id': 'my-tooltip',
-        'data-tooltip-content': value?.tooltip,
-      })}
-
-    />
-    <Tooltip id="my-tooltip" />
-  </>
+  return (
+    <>
+      <CalendarHeatmap
+        startDate={startDate}
+        endDate={endDate}
+        values={allDates}
+        // You can add optional props like:
+        classForValue={(value) =>
+          value?.count ? `color-github-${value.count}` : "color-empty"
+        }
+        // showMonthLabels={false}  // <- THIS hides the months
+        // showWeekdayLabels
+        tooltipDataAttrs={(value): TooltipDataAttrs => {
+          const tooltipContent = typeof value?.tooltip === "string" ? value.tooltip : "";
+          return {
+            "data-tooltip-id": "my-tooltip",
+            "data-tooltip-content": tooltipContent,
+          } as TooltipDataAttrs;
+        }}
+      />
+      <Tooltip id="my-tooltip" />
+    </>
   );
 };
 

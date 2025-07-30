@@ -1,60 +1,56 @@
 "use client";
 
 import React, {
-    createContext,
-    useContext,
-    useEffect,
-    useState,
-    useRef,
-    useCallback,
+  createContext,
+  useContext,
 } from "react";
 import { api } from "~/trpc/react";
 import type { inferProcedureOutput } from "@trpc/server";
 import type { AppRouter } from "~/server/api/root";
-import { env } from "~/env";
 import { useSession } from "next-auth/react";
 
 interface UserContextT {
-    user: inferProcedureOutput<AppRouter["user"]["get"]> | undefined;
+  user: inferProcedureOutput<AppRouter["user"]["get"]> | undefined;
 }
 
 const UserContext = createContext<UserContextT | undefined>(undefined);
 
-
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-    const session = useSession();
-    const utils = api.useUtils();
-    if (!session.data) {
-        throw new Error("Session data is undefined.");
-    }
-    const { data: user } = api.user.get.useQuery({ userId: session.data.user.id })
+  const session = useSession();
 
-    return (
-        <UserContext.Provider
-            value={{
-                user
-            }}
-        >
-            {children}
-        </UserContext.Provider>
-    );
+  if (!session.data) {
+    throw new Error("Session data is undefined.");
+  }
+  const { data: user } = api.user.get.useQuery({
+    userId: session.data.user.id,
+  });
+
+  return (
+    <UserContext.Provider
+      value={{
+        user,
+      }}
+    >
+      {children}
+    </UserContext.Provider>
+  );
 };
 
 export const useUser = (): UserContextT => {
-    const context = useContext(UserContext);
-    if (!context) {
-        throw new Error("useTimer must be used within a UserProvider");
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("useTimer must be used within a UserProvider");
+  }
+  if (context.user) {
+    if (!context?.user.preferences) {
+      throw new Error("Preferences are not set up.");
     }
-    if (context.user) {
-        if (!context?.user.preferences) {
-            throw new Error("Preferences are not set up.");
-        }
-        if (!context?.user.subjects) {
-            throw new Error("Subjects is undefined.");
-        }
-        if (context?.user.subjects?.length == 0) {
-            throw new Error("The user has no subjects.");
-        }
+    if (!context?.user.subjects) {
+      throw new Error("Subjects is undefined.");
     }
-    return context;
+    if (context?.user.subjects?.length == 0) {
+      throw new Error("The user has no subjects.");
+    }
+  }
+  return context;
 };

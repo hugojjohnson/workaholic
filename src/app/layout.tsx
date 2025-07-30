@@ -8,9 +8,7 @@ import { type Metadata } from "next";
 import Navbar from "~/components/main/Navbar";
 import { ThemeProvider } from "~/components/main/ThemeProvider";
 import { ProviderWrapper } from "~/components/main/ProviderWrapper";
-import { SessionProvider } from "next-auth/react";
 import { HydrateClient } from "~/trpc/server";
-import { useUser } from "~/hooks/UserContext";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -31,22 +29,22 @@ export default async function RootLayout({
   const session = await auth();
 
   if (!session?.user) {
-    return <html lang="en" className={geist.variable} suppressHydrationWarning>
-      <body className="h-screen">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <TRPCReactProvider>
-            <HydrateClient>
-                {children}
-            </HydrateClient>
-          </TRPCReactProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+    return (
+      <html lang="en" className={geist.variable} suppressHydrationWarning>
+        <body className="h-screen">
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <TRPCReactProvider>
+              <HydrateClient>{children}</HydrateClient>
+            </TRPCReactProvider>
+          </ThemeProvider>
+        </body>
+      </html>
+    );
   }
 
   return (

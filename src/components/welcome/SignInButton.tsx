@@ -1,14 +1,15 @@
 "use client";
 
 import { signIn } from "next-auth/react";
+import Image from "next/image";
+import type { ClientSafeProvider } from "node_modules/next-auth/lib/client";
 import { useEffect, useState } from "react";
 
-
 export default function SignInButton() {
-  const [providers, setProviders] = useState<Record<string, any> | null>(null);
+  const [providers, setProviders] = useState<Record<string, ClientSafeProvider> | null>(null);
 
   useEffect(() => {
-    fetch("/api/auth/providers")
+    void fetch("/api/auth/providers")
       .then((res) => res.json())
       .then(setProviders);
   }, []);
@@ -18,12 +19,16 @@ export default function SignInButton() {
   return (
     <div>
       {Object.values(providers).map((provider) => (
-        <button key={provider.name} onClick={() => signIn(provider.id)} className="border-[2px] border-gray-300 inline-block rounded-md px-3 py-3 transition bg-white hover:bg-gray-50">
+        <button
+          key={provider.name}
+          onClick={() => signIn(provider.id)}
+          className="inline-block rounded-md border-[2px] border-gray-300 bg-white px-3 py-3 transition hover:bg-gray-50"
+        >
           Sign in with {provider.name}
-          <img
+          <Image
             src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
             alt="Google logo"
-            className="inline-block w-5 h-5 ml-5"
+            className="ml-5 inline-block h-5 w-5"
           />
         </button>
       ))}

@@ -43,19 +43,22 @@ export default function SetUpPreferences() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-muted flex items-center justify-center p-4">
-      <Card className="w-full max-w-xl shadow-2xl border-2 border-border">
+    <div className="to-muted flex min-h-screen items-center justify-center bg-gradient-to-b from-white p-4">
+      <Card className="border-border w-full max-w-xl border-2 shadow-2xl">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">
             Welcome, {session?.user?.name?.split(" ")[0]} 👋
           </CardTitle>
-          <p className="text-muted-foreground text-sm mt-2">
-            Before you dive in, let’s get a few things set up so we can help you build better study habits this semester.
+          <p className="text-muted-foreground mt-2 text-sm">
+            Before you dive in, let’s get a few things set up so we can help you
+            build better study habits this semester.
           </p>
         </CardHeader>
         <CardContent className="space-y-6">
           <div>
-            <Label htmlFor="goal">🎯 What’s your weekly study goal (hours)?</Label>
+            <Label htmlFor="goal">
+              🎯 What’s your weekly study goal (hours)?
+            </Label>
             <Input
               id="goal"
               type="number"
@@ -68,9 +71,12 @@ export default function SetUpPreferences() {
 
           <div className="flex items-center justify-between">
             <div>
-              <Label htmlFor="share">📣 Share your study activity with friends?</Label>
+              <Label htmlFor="share">
+                📣 Share your study activity with friends?
+              </Label>
               <p className="text-muted-foreground text-sm">
-                They’ll see your current subjects, when you’re studying, and kudos in the weekly recap.
+                They’ll see your current subjects, when you’re studying, and
+                kudos in the weekly recap.
               </p>
             </div>
             <Switch
@@ -81,10 +87,10 @@ export default function SetUpPreferences() {
           </div>
 
           <div>
-            <Label className="block mb-2">📚 Your Subjects</Label>
+            <Label className="mb-2 block">📚 Your Subjects</Label>
             <div className="space-y-2">
               {subjects.map((subject, idx) => (
-                <div key={idx} className="flex gap-2 items-center">
+                <div key={idx} className="flex items-center gap-2">
                   <Input
                     placeholder={`Subject ${idx + 1}`}
                     value={subject}
@@ -97,7 +103,7 @@ export default function SetUpPreferences() {
                     onClick={() => handleRemoveSubject(idx)}
                     disabled={subjects.length === 1}
                   >
-                    <Trash2 className="h-4 w-4 text-destructive" />
+                    <Trash2 className="text-destructive h-4 w-4" />
                   </Button>
                 </div>
               ))}
@@ -109,17 +115,18 @@ export default function SetUpPreferences() {
               type="button"
               onClick={handleAddSubject}
             >
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="mr-2 h-4 w-4" />
               Add subject
             </Button>
           </div>
 
-          <div className="bg-muted rounded-xl p-4 text-sm text-muted-foreground">
-            This isn’t a competition. There are no leaderboards or public rankings. It’s just you, your goals, and a way to stay accountable.
+          <div className="bg-muted text-muted-foreground rounded-xl p-4 text-sm">
+            This isn’t a competition. There are no leaderboards or public
+            rankings. It’s just you, your goals, and a way to stay accountable.
           </div>
 
           <Button
-            className="w-full text-md"
+            className="text-md w-full"
             onClick={handleContinue}
             // disabled={create.status === "pending"}
           >
