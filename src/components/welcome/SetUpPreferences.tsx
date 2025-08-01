@@ -1,139 +1,82 @@
 "use client";
 
-import { useSession } from "next-auth/react";
-import { useState } from "react";
-import { api } from "~/trpc/react";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { Switch } from "../ui/switch";
+import React, { useState } from "react";
 import { Button } from "../ui/button";
-import { Trash2, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-export default function SetUpPreferences() {
-  const { data: session } = useSession();
-  const [shareActivity, setShareActivity] = useState(true);
-  const [goal, setGoal] = useState(24);
-  const [subjects, setSubjects] = useState<string[]>([""]);
+const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
-  const utils = api.useUtils();
-  const create = api.preferences.upsert.useMutation({
-    onSuccess: async () => {
-      await utils.invalidate();
-    },
-  });
+export default function FadeComponent() {
+  const [pageIndex, setPageIndex] = useState<number>(0);
+  const [visible, setVisible] = useState<boolean>(true);
 
-  const handleSubjectChange = (index: number, value: string) => {
-    const updated = [...subjects];
-    updated[index] = value;
-    setSubjects(updated);
+  const [transitionNum, transitionTailwind] = [500, "duration-500"]
+
+
+  const hoursPage = <div>
+    <p>How many hours do you want?</p>
+  </div>
+
+  const nextPage = <div>
+    <p>This is the next page.</p>
+  </div>
+
+  const lastPage = <div>
+    <p>This is the last page.</p>
+  </div>
+
+  const pages = [hoursPage, nextPage, lastPage];
+  const animatePageTransition = async (currentIndex: number, offset: 1 | -1): Promise<void> => {
+    setVisible(false);
+    await sleep(transitionNum + 500);
+    setPageIndex((currentIndex + 1)%pages.length);
+    setVisible(true);
   };
-
-  const handleAddSubject = () => {
-    setSubjects((prev) => [...prev, ""]);
-  };
-
-  const handleRemoveSubject = (index: number) => {
-    setSubjects((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const handleContinue = () => {
-    const filteredSubjects = subjects.filter((s) => s.trim() !== "");
-    create.mutate({ shareActivity, goal, subjects: filteredSubjects });
-  };
+  const canGoBack = pageIndex > 0;
+  const canGoForward = pageIndex < pages.length-1;
 
   return (
-    <div className="to-muted flex min-h-screen items-center justify-center bg-gradient-to-b from-white p-4">
-      <Card className="border-border w-full max-w-xl border-2 shadow-2xl">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">
-            Welcome, {session?.user?.name?.split(" ")[0]} 👋
-          </CardTitle>
-          <p className="text-muted-foreground mt-2 text-sm">
-            Before you dive in, let’s get a few things set up so we can help you
-            build better study habits this semester.
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div>
-            <Label htmlFor="goal">
-              🎯 What’s your weekly study goal (hours)?
-            </Label>
-            <Input
-              id="goal"
-              type="number"
-              min={1}
-              max={100}
-              value={goal}
-              onChange={(e) => setGoal(Number(e.target.value))}
-            />
-          </div>
+    <div className="flex flex-col justify-center items-center mt-32">
+      <div
+        className={`transition-opacity ${transitionTailwind} ${visible ? "opacity-100" : "opacity-0"
+          }`}
+      >
+        {
+          pages[pageIndex]
+        }
+      </div>
 
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="share">
-                📣 Share your study activity with friends?
-              </Label>
-              <p className="text-muted-foreground text-sm">
-                They’ll see your current subjects, when you’re studying, and
-                kudos in the weekly recap.
-              </p>
-            </div>
-            <Switch
-              id="share"
-              checked={shareActivity}
-              onCheckedChange={setShareActivity}
-            />
-          </div>
+       <div className="flex items-center space-x-2">
+      <Button
+        variant="outline"
+        onClick={() => canGoBack && animatePageTransition(pageIndex, -1)}
+        disabled={!canGoBack}
+        className={`transition-colors ${
+          canGoBack
+            ? "text-black hover:bg-muted"
+            : "text-muted-foreground cursor-not-allowed"
+        }`}
+      >
+        <ChevronLeft className="h-5 w-5" />
+      </Button>
 
-          <div>
-            <Label className="mb-2 block">📚 Your Subjects</Label>
-            <div className="space-y-2">
-              {subjects.map((subject, idx) => (
-                <div key={idx} className="flex items-center gap-2">
-                  <Input
-                    placeholder={`Subject ${idx + 1}`}
-                    value={subject}
-                    onChange={(e) => handleSubjectChange(idx, e.target.value)}
-                  />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    type="button"
-                    onClick={() => handleRemoveSubject(idx)}
-                    disabled={subjects.length === 1}
-                  >
-                    <Trash2 className="text-destructive h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="mt-2"
-              type="button"
-              onClick={handleAddSubject}
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Add subject
-            </Button>
-          </div>
+      <span className="text-sm text-muted-foreground">
+        Page {pageIndex + 1} / {pages.length}
+      </span>
 
-          <div className="bg-muted text-muted-foreground rounded-xl p-4 text-sm">
-            This isn’t a competition. There are no leaderboards or public
-            rankings. It’s just you, your goals, and a way to stay accountable.
-          </div>
-
-          <Button
-            className="text-md w-full"
-            onClick={handleContinue}
-            // disabled={create.status === "pending"}
-          >
-            Let’s get started 🚀
-          </Button>
-        </CardContent>
-      </Card>
+      <Button
+        variant="outline"
+        onClick={() => canGoForward && animatePageTransition(pageIndex, 1)}
+        disabled={!canGoForward}
+        className={`transition-colors ${
+          canGoForward
+            ? "text-black hover:bg-muted"
+            : "text-muted-foreground cursor-not-allowed"
+        }`}
+      >
+        <ChevronRight className="h-5 w-5" />
+      </Button>
+    </div>
     </div>
   );
 }
