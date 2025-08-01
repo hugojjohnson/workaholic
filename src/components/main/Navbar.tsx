@@ -34,28 +34,28 @@ export default function Navbar() {
           className={`flex flex-col items-center gap-1 transition-all duration-100 ease-in-out active:scale-75 ${isActive("/")}`}
           href="/"
         >
-          <Image src="/icons/timer.png" className="w-8 invert" alt="timer" />
+          <Image src="/icons/timer.png" width={8} height={8} className="w-8 invert" alt="timer" />
           <p className="text-xs">Timer</p>
         </Link>
         <Link
           className={`flex flex-col items-center gap-1 transition-all duration-100 ease-in-out active:scale-75 ${isActive("/settings")}`}
           href="/settings"
         >
-          <Image src="/icons/settings.png" className="w-8 invert" alt="settings" />
+          <Image src="/icons/settings.png" width={8} height={8} className="w-8 invert" alt="settings" />
           <p className="text-xs">Settings</p>
         </Link>
         <Link
           className={`flex flex-col items-center gap-1 transition-all duration-100 ease-in-out active:scale-75 ${isActive("/reports")}`}
           href="/reports"
         >
-          <Image src="/icons/reports.png" className="w-8 invert" alt="reports" />
+          <Image src="/icons/reports.png" width={8} height={8} className="w-8 invert" alt="reports" />
           <p className="text-xs">Reports</p>
         </Link>
         <Link
           className={`flex flex-col items-center gap-1 transition-all duration-100 ease-in-out active:scale-75 ${isActive("/profile")}`}
           href="/profile"
         >
-          <Image src="/icons/profile.png" className="w-8 invert" alt="profile" />
+          <Image src="/icons/profile.png" width={8} height={8} className="w-8 invert" alt="profile" />
           <p className="text-xs">Profile</p>
         </Link>
       </div>

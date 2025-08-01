@@ -69,7 +69,7 @@ export default function Settings() {
         duration: timer.timer.duration,
       });
     }
-  }, [timer.timer?.subjectId, timer.timer?.duration, tempLog]);
+  }, [timer.timer?.subjectId, timer.timer?.duration]);
 
   if (!user.user) {
     return <LoadingPage />;

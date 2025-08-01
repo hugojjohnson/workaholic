@@ -97,6 +97,8 @@ export default function LandingPage() {
           look back on your term, and compare habits to grades.
         </p>
         <Image
+          width={8}
+          height={8}
           src="/demo-heatmap.png"
           alt="Study Heatmap Demo"
           className="mx-auto rounded-xl shadow-md"

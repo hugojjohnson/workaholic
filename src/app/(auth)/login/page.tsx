@@ -16,7 +16,7 @@ export default function Signin() {
       .then(setProviders);
   }, []);
 
-  if (!providers) return <p>Loading sign-in options...</p>;
+  if (!providers) return <p></p>;
 
   // return <AuthForm mode="signup" />
 
@@ -37,6 +37,8 @@ export default function Signin() {
             >
               Log in with {provider.name}
               <Image
+                width={8}
+                height={8}
                 src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
                 alt="Google logo"
                 className="ml-5 inline-block h-6 w-6"
