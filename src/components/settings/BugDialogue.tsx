@@ -13,45 +13,74 @@ import {
 } from "~/components/ui/dialog"
 import { Input } from "~/components/ui/input"
 import { Textarea } from "~/components/ui/textarea"
+import { api } from '~/trpc/react'
 
-export default function BugDialogue() {
+export default function BugDialogue({ userId }: { userId: string }) {
+  const [finished, setFinished] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
   const [title, setTitle] = React.useState("")
   const [description, setDescription] = React.useState("")
 
+  const sendBug = api.feedback.sendBug.useMutation({
+    onMutate: () => {
+      setFinished(true);
+      setTimeout(() => {
+        setOpen(false);
+      }, 2000);
+    },
+    onSuccess: () => {
+      console.log("success!")
+      // setOpen(false);
+    }
+  });
+
   const handleSubmit = () => {
-    alert(`Feedback submitted!\n\nTitle: ${title}\nDescription: ${description}`)
+    sendBug.mutate({
+      userId,
+      title,
+      body: description
+    })
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" className="hover:cursor-pointer w-10 h-10 mr-3">
           <BugIcon />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Submit a bug</DialogTitle>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <p className='text-sm'>Something not working? Send me a message and I'll get it fixed as soon as I can!</p>
-          <Input
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <Textarea
-            placeholder="Describe your feedback..."
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </div>
-        <DialogFooter>
-          <DialogTrigger asChild>
-            <Button variant="ghost">Cancel</Button>
-          </DialogTrigger>
-          <Button onClick={handleSubmit}>Submit</Button>
-        </DialogFooter>
+        {finished
+          ? <>
+            <DialogHeader>
+              Thank you!
+            </DialogHeader>
+            <p>I'll get back to you as soon as I can!</p>
+          </>
+          : <><DialogHeader>
+            <DialogTitle>Submit a bug</DialogTitle>
+          </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <p className='text-sm'>Something not working? Send me a message and I'll get it fixed as soon as I can!</p>
+              <Input
+                placeholder="Title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+              <Textarea
+                placeholder="Describe your feedback..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </div>
+            <DialogFooter>
+              <DialogTrigger asChild>
+                <Button variant="ghost">Cancel</Button>
+              </DialogTrigger>
+              <Button onClick={handleSubmit}>Submit</Button>
+            </DialogFooter>
+          </>
+        }
       </DialogContent>
     </Dialog>
   )

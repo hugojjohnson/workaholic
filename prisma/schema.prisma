@@ -88,6 +88,8 @@ model Preferences {
   goal          Int
   semesterStart DateTime
   semesterFinish DateTime
+  completedIntro DateTime?
+  showHeatmap Boolean @default(false)
 }
 
 model Subject {

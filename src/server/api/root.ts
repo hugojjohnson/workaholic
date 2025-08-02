@@ -4,6 +4,7 @@ import { logsRouter } from "./routers/logs";
 import { timerRouter } from "./routers/timer";
 import { settingsRouter } from "./routers/settings";
 import { userRouter } from "./routers/user";
+import { feedbackRouter } from "./routers/feedback";
 
 /**
  * This is the primary router for your server.
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
   timer: timerRouter,
   settings: settingsRouter,
   user: userRouter,
+  feedback: feedbackRouter,
 });
 
 // export type definition of API

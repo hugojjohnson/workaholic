@@ -208,7 +208,7 @@ export default function Settings() {
               </Card>
             </div>
             <div>
-              <BugDialogue />
+              <BugDialogue userId={user.user.id} />
               <FeatureDialogue />
             </div>
           </div>

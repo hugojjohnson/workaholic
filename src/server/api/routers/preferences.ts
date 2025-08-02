@@ -68,9 +68,20 @@ export const preferencesRouter = createTRPCRouter({
 
     completeIntro: protectedProcedure
     .mutation(async ({ ctx }) => {
-      // await ctx.db.user.update({
-      //   where: { id: ctx.session.user.id },
-      //   data: { completedIntro: true },
-      // });
+      await ctx.db.preferences.update({
+        where: { userId: ctx.session.user.id },
+        data: { completedIntro: new Date() },
+      });
+    }),
+
+    updateShowHeatmap: protectedProcedure
+    .input(z.object({
+      newVal: z.boolean()
+    }))
+    .mutation(async ({ input, ctx }) => {
+      await ctx.db.preferences.update({
+        where: { userId: ctx.session.user.id },
+        data: { showHeatmap: input.newVal },
+      });
     }),
 });
