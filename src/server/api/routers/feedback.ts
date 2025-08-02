@@ -11,7 +11,8 @@ export async function sendTelegramMessage(message: string): Promise<void> {
     throw new Error("Missing Telegram config");
   }
 
-  await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+  // Who would need to await this? XD
+  fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

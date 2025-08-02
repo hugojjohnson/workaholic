@@ -137,11 +137,13 @@ export default function Dashboard() {
         </p>
       </div>
 
-      <div className="flex items-center justify-center">
-        <div className="my-20 w-[400px]">
-          <Heatmap />
+      {
+        user.user.preferences.showHeatmap && <div className="flex items-center justify-center">
+          <div className="my-20 w-[400px]">
+            <Heatmap />
+          </div>
         </div>
-      </div>
+      }
 
       {/* Confetti */}
       {/* <img

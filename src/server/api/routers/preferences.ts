@@ -1,5 +1,6 @@
 import z from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { sendTelegramMessage } from "./feedback";
 
 export const preferencesRouter = createTRPCRouter({
   // Upsert preferences for current user
@@ -54,6 +55,8 @@ export const preferencesRouter = createTRPCRouter({
       if (!firstSubject) {
         throw new Error("could not find firstSubject.");
       }
+
+      sendTelegramMessage(`Welcome, ${user.name}!`)
 
       await ctx.db.timer.create({
         data: {

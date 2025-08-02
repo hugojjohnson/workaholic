@@ -4,8 +4,10 @@
 import { useState, useEffect } from "react";
 import IntroModal from "./IntroModal";
 import { api } from "~/trpc/react";
+import { useUser } from "~/hooks/UserContext";
 
 export default function ClientIntroWrapper() {
+  const user = useUser();
   const [showIntro, setShowIntro] = useState(false);
 
   const completeIntro = api.preferences.completeIntro.useMutation({
@@ -13,9 +15,9 @@ export default function ClientIntroWrapper() {
   });
 
   useEffect(() => {
-    // if (!isLoading && user?.completedIntro === false) {
+    if (user && user?.user?.preferences.completedIntro) {
       setShowIntro(true);
-    // }
+    }
   }, []);
 
   if (!showIntro) return null;
