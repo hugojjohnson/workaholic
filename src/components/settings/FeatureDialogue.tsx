@@ -1,6 +1,6 @@
 'use client'
 
-import { BlocksIcon } from 'lucide-react'
+import { Activity, BlocksIcon } from 'lucide-react'
 import * as React from 'react'
 import { Button } from "~/components/ui/button"
 import {
@@ -17,21 +17,32 @@ import { RadioGroup, RadioGroupItem } from '../ui/radio-group'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import { api } from '~/trpc/react'
 
+
 const FEATURES = [
     {
-        value: "multiplayer",
-        label: "Multiplayer",
-        description: "Play with or against other people in real-time",
+        value: "Friend Activity",
+        label: "friendActivity",
+        description: "Add friends and see live when they're studying - motivate each other and grow together.",
     },
     {
-        value: "gamification",
-        label: "Gamification",
-        description: "Add points, badges, and levels to keep users engaged",
+        value: "Export to csv/json",
+        label: "csv",
+        description: "Download your data and analyse it yourself!",
+    },
+    {
+        value: "Weekly emails",
+        label: "weeklyEmails",
+        description: "Optional weekly emails breaking down your habits for the week, analysed with ai. Option to out at any time.",
+    },
+    {
+        value: "Sign up with email",
+        label: "emailSignUp",
+        description: "Sign up with your email instead of Google.",
     },
     {
         value: "other",
         label: "Other",
-        description: "Suggest your own feature idea",
+        description: "Suggest your own feature!",
     },
 ] as const
 
@@ -114,10 +125,10 @@ export default function FeatureDialogue({ userId, vote }: { userId: string, vote
 
                             {feature === "other" && (
                                 <div className="grid gap-2">
-                                    <Label htmlFor="otherText">Tell us more</Label>
+                                    <Label htmlFor="otherText">Suggest a feature</Label>
                                     <Input
                                         id="otherText"
-                                        placeholder="Your custom idea..."
+                                        placeholder="Your idea..."
                                         value={otherText}
                                         onChange={(e) => setOtherText(e.target.value)}
                                     />
