@@ -14,7 +14,7 @@ import ClientIntroWrapper from "~/components/welcome/ClientIntroWrapper";
 export const metadata: Metadata = {
   title: "Workaholic",
   description: "Make study a science.",
-  icons: [{ rel: "icon", url: "/logo.jpg" }],
+  icons: [{ rel: "icon", url: "/logo.png" }],
 };
 
 const geist = Geist({

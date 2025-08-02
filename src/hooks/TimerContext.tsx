@@ -13,6 +13,7 @@ import type { inferProcedureOutput } from "@trpc/server";
 import type { AppRouter } from "~/server/api/root";
 import { env } from "~/env";
 import { useSession } from "next-auth/react";
+import useSound from 'use-sound'
 import { useLogs } from "./LogsContext";
 
 interface TimerContextT {
@@ -73,6 +74,8 @@ function getTimerStatus(
 export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
   const session = useSession();
   const logs = useLogs();
+  const [playSound] = useSound("/alarm.wav")
+
   const userId = session.data?.user.id;
   if (!userId) {
     throw new Error("userId is undefined.");
@@ -306,16 +309,16 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (timeLeft < 1.1 * SECOND && timer.startedAt !== undefined) {
       setTimeLeft(0);
-      // try {
-      //     playSound()
-      // } catch (e) {
-      //     console.error(e)
-      // }
-      // if (typeof Notification !== "undefined") {
-      //     Notification.requestPermission?.().then(p => {
-      //     if (p === "granted") new Notification("Timer finished", { body: "Take a break!", icon: "/vite.svg" });
-      //     })
-      // }
+      try {
+          playSound()
+      } catch (e) {
+          console.error(e)
+      }
+      if (typeof Notification !== "undefined") {
+          Notification.requestPermission?.().then(p => {
+          if (p === "granted") new Notification("Timer finished", { body: "Take a break!", icon: "/logo.png" });
+          })
+      }
 
       stop();
       // // Send request to the server
