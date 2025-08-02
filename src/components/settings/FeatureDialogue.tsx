@@ -21,27 +21,22 @@ import { api } from '~/trpc/react'
 const FEATURES = [
     {
         value: "Friend Activity",
-        label: "friendActivity",
         description: "Add friends and see live when they're studying - motivate each other and grow together.",
     },
     {
         value: "Export to csv/json",
-        label: "csv",
         description: "Download your data and analyse it yourself!",
     },
     {
-        value: "Weekly emails",
-        label: "weeklyEmails",
+        value: "Weekly Emails",
         description: "Optional weekly emails breaking down your habits for the week, analysed with ai. Option to out at any time.",
     },
     {
-        value: "Sign up with email",
-        label: "emailSignUp",
+        value: "Sign Up With Email",
         description: "Sign up with your email instead of Google.",
     },
     {
-        value: "other",
-        label: "Other",
+        value: "Other",
         description: "Suggest your own feature!",
     },
 ] as const
@@ -113,7 +108,7 @@ export default function FeatureDialogue({ userId, vote }: { userId: string, vote
                                                 className="flex items-center gap-3 border rounded-md px-4 py-2 hover:bg-muted cursor-pointer"
                                             >
                                                 <RadioGroupItem id={f.value} value={f.value} />
-                                                <span className="capitalize">{f.label}</span>
+                                                <span className="">{f.value}</span>
                                             </Label>
                                         </TooltipTrigger>
                                         <TooltipContent side="top" className="max-w-xs">

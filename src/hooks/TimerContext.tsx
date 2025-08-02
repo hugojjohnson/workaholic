@@ -302,8 +302,7 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     // Update tab
     const minutes = Math.floor(timeLeft / MINUTE);
     const seconds = Math.floor(timeLeft % SECOND);
-    document.title =
-      "Workaholic - " + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+    document.title = "Workaholic - " + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
 
     if (timeLeft < 1.1 * SECOND && timer.startedAt !== undefined) {
       setTimeLeft(0);
