@@ -1,7 +1,9 @@
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import { ArrowRight, Flame, HeartHandshake, Clock } from "lucide-react";
+import DemoHeatmap from "~/components/reports/DemoHeatmap";
 import Link from "next/link";
+import DemoReport from "../reports/DemoReport";
 
 export default function LandingPage() {
   return (
@@ -64,7 +66,7 @@ export default function LandingPage() {
               </h2>
             </div>
             <p className="text-muted-foreground">
-              Seeing your study log grow keeps you honest and driven. 
+              Seeing your study log grow keeps you honest and driven.
               Celebrate your progress and turn consistency into a habit you actually stick to.
             </p>
           </CardContent>
@@ -79,7 +81,7 @@ export default function LandingPage() {
               </h2>
             </div>
             <p className="text-muted-foreground">
-              Analyze your study patterns to find what’s working—and what’s not. 
+              Analyze your study patterns to find what’s working—and what’s not.
               Adapt your strategy based on real data, not just guesswork, for smarter learning.
             </p>
           </CardContent>
@@ -92,14 +94,13 @@ export default function LandingPage() {
           Every minute you log contributes to your heatmap. Maximise your consistency,
           look back on your term, and compare habits to grades.
         </p>
-        {/* <Image
-          width={8}
-          height={8}
-          src="/demo-heatmap.png"
-          alt="Study Heatmap Demo"
-          className="mx-auto rounded-xl shadow-md"
-        /> */}
+        <DemoReport />
+        <DemoHeatmap />
       </section>
+
+      <Link href="/signup">
+        <Button size="lg">Get Started</Button>
+      </Link>
 
       <footer className="text-muted-foreground mt-16 text-center text-sm">
         &copy; {new Date().getFullYear()} Workaholic
