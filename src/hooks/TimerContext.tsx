@@ -70,6 +70,13 @@ function getTimerStatus(
   }
   return TimerStatus.Error;
 }
+async function notification() {
+  if (typeof Notification !== "undefined") {
+    await Notification.requestPermission?.().then(p => {
+      if (p === "granted") new Notification("Timer finished", { body: "Take a break!", icon: "/logo.png" });
+    })
+  }
+}
 
 export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
   const session = useSession();
@@ -310,15 +317,11 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     if (timeLeft < 1.1 * SECOND && timer.startedAt !== undefined) {
       setTimeLeft(0);
       try {
-          playSound()
+        playSound()
       } catch (e) {
-          console.error(e)
+        console.error(e)
       }
-      if (typeof Notification !== "undefined") {
-          Notification.requestPermission?.().then(p => {
-          if (p === "granted") new Notification("Timer finished", { body: "Take a break!", icon: "/logo.png" });
-          })
-      }
+      void notification();
 
       stop();
       // // Send request to the server
@@ -332,7 +335,7 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
         startedAt: timer.startedAt,
       });
     }
-  }, [timeLeft, timer, logs, stop]);
+  }, [timeLeft, timer, logs, stop, playSound]);
 
   return (
     <TimerContext.Provider
