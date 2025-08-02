@@ -51,11 +51,6 @@ export default function IntroModal({ onComplete }: IntroModalProps) {
     const [currentSlide, setCurrentSlide] = useState(0);
     const isLast = currentSlide === slides.length - 1;
 
-    const goToRoute = (route: string) => {
-        setOpen(false);
-        router.push(route);
-    };
-
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent className="max-w-md p-6 text-center">

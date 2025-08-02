@@ -1,6 +1,6 @@
 'use client'
 
-import { BlocksIcon, BugIcon } from 'lucide-react'
+import { BlocksIcon } from 'lucide-react'
 import * as React from 'react'
 import { Button } from "~/components/ui/button"
 import {
@@ -12,8 +12,6 @@ import {
     DialogTrigger,
 } from "~/components/ui/dialog"
 import { Input } from "~/components/ui/input"
-import { Textarea } from "~/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { Label } from '../ui/label'
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
@@ -46,7 +44,7 @@ export default function FeatureDialogue({ userId, vote }: { userId: string, vote
 
 
     const sendVote = api.feedback.featureVote.useMutation({
-        onMutate: feature => {
+        onMutate: () => {
             setFinished(true);
             setTimeout(() => {
                 setOpen(false);

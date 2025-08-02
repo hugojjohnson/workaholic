@@ -2,11 +2,10 @@
 
 import React, { useState } from "react";
 import { Button } from "../ui/button";
-import { ChevronLeft, ChevronRight, Plus, Trash2, UserIcon, UsersIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { api } from "~/trpc/react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 
 
@@ -14,7 +13,7 @@ const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout
 
 export default function FadeComponent() {
   const { data: session } = useSession();
-  const [shareActivity, setShareActivity] = useState(false); // Just gonna leave like this
+  const [shareActivity] = useState(false); // Just gonna leave like this
   const [goal, setGoal] = useState(4);
   const [subjects, setSubjects] = useState<string[]>([""]);
   const [semesterStart, setSemesterStart] = useState<Date>(new Date());
@@ -24,7 +23,6 @@ export default function FadeComponent() {
   const [pageIndex, setPageIndex] = useState<number>(0);
   const [visible, setVisible] = useState<boolean>(true);
   const [hidePage, setHidePage] = useState(false);
-  const utils = api.useUtils();
   const [transitionNum, transitionTailwind] = [500, "duration-500"]
 
   const create = api.preferences.upsert.useMutation({
@@ -61,7 +59,7 @@ export default function FadeComponent() {
         Welcome, {session?.user?.name?.split(" ")[0]}!
       </CardTitle>
       <p className="text-muted-foreground mt-2 text-sm">
-        Before you dive in, let’s get a few things set up so we can help you
+        Before you dive in, let&apos;s get a few things set up so we can help you
         build better study habits this semester.
       </p>
     </CardHeader>
@@ -105,7 +103,7 @@ export default function FadeComponent() {
         2. Add your subjects
       </CardTitle>
       <p className="text-muted-foreground mt-2 text-sm mb-2">
-        Add the subjects you're doing this sem, e.g. MATH1002
+        Add the subjects you&apos;re doing this sem, e.g. MATH1002
       </p>
     </CardHeader>
     <CardContent className="space-y-6">

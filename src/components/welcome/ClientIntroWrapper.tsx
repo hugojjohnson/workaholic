@@ -15,10 +15,11 @@ export default function ClientIntroWrapper() {
   });
 
   useEffect(() => {
-    if (user && user?.user?.preferences.completedIntro) {
+    console.log(user)
+    if (user.user?.preferences && !user.user?.preferences.completedIntro) {
       setShowIntro(true);
     }
-  }, []);
+  }, [user, user.user]);
 
   if (!showIntro) return null;
 

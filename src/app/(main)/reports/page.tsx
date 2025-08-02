@@ -20,7 +20,6 @@ import { useLogs } from "~/hooks/LogsContext";
 import type { ColourType } from "@prisma/client";
 import { Button } from "~/components/ui/button";
 import LoadingPage from "~/components/welcome/LoadingPage";
-import Heatmap from "~/components/reports/Heatmap";
 
 // TODO: Purple is actually grey here!!
 const borderColours: Record<ColourType, string> = {

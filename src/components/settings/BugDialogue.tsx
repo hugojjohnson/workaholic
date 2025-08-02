@@ -55,13 +55,13 @@ export default function BugDialogue({ userId }: { userId: string }) {
             <DialogHeader>
               Thank you!
             </DialogHeader>
-            <p>I'll get back to you as soon as I can!</p>
+            <p>I&apos;ll get back to you as soon as I can!</p>
           </>
           : <><DialogHeader>
             <DialogTitle>Submit a bug</DialogTitle>
           </DialogHeader>
             <div className="grid gap-4 py-4">
-              <p className='text-sm'>Something not working? Send me a message and I'll get it fixed as soon as I can!</p>
+              <p className='text-sm'>Something not working? Send me a message and I&apos;ll get it fixed as soon as I can!</p>
               <Input
                 placeholder="Title"
                 value={title}

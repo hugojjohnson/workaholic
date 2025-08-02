@@ -3,7 +3,6 @@
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
 import { useUser } from "~/hooks/UserContext";
 
 export default function Profile() {

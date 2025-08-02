@@ -1,7 +1,7 @@
 // app/layout.tsx
 import "~/styles/globals.css";
 import { Geist } from "next/font/google";
-import { api, TRPCReactProvider } from "~/trpc/react";
+import { TRPCReactProvider } from "~/trpc/react";
 import { auth } from "~/server/auth";
 import { type Metadata } from "next";
 import Navbar from "~/components/main/Navbar";

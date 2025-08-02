@@ -21,9 +21,9 @@ import { useUser } from "~/hooks/UserContext";
 import { useSettings } from "~/hooks/useSettings";
 import DarkModeToggle from "~/components/settings/DarkModeToggle";
 import LoadingPage from "~/components/welcome/LoadingPage";
-import { Bug, BugIcon, MessageSquareIcon } from "lucide-react";
 import BugDialogue from "~/components/settings/BugDialogue";
 import FeatureDialogue from "~/components/settings/FeatureDialogue";
+import ShowHeatmap from "~/components/settings/ShowHeatmap";
 
 // TODO: Update these with the actual colours
 const colourOptions: Record<string, { hex: string }> = {
@@ -57,7 +57,6 @@ export default function Settings() {
   const settings = useSettings();
   const timer = useTimer();
 
-  const [feedbackDialogue, showFeedbackDialogue] = useState<string>("bug");
   const [tempLog, setTempLog] = useState<AddLogT>({
     subjectId: timer.timer?.subjectId ?? user.user?.subjects[0]?.id ?? "",
     duration: timer.timer?.duration ?? 30,
@@ -66,14 +65,15 @@ export default function Settings() {
   });
 
   useEffect(() => {
-    if (timer.timer?.subjectId && timer.timer?.duration) {
-      setTempLog({
-        ...tempLog,
-        subjectId: timer.timer.subjectId,
-        duration: timer.timer.duration,
-      });
+    const t = timer.timer;
+    if (t?.subjectId && t?.duration) {
+      setTempLog(prev => ({
+        ...prev,
+        subjectId: t.subjectId,
+        duration: t.duration,
+      }));
     }
-  }, [timer.timer?.subjectId, timer.timer?.duration]);
+  }, [timer.timer, timer.timer?.subjectId, timer.timer?.duration]);
 
   if (!user.user) {
     return <LoadingPage />;
@@ -210,6 +210,7 @@ export default function Settings() {
             <div>
               <BugDialogue userId={user.user.id} />
               <FeatureDialogue userId={user.user.id} vote={user.user.preferences.lastFeatureVote} />
+              <ShowHeatmap />
             </div>
           </div>
 

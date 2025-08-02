@@ -74,10 +74,9 @@ export const settingsRouter = createTRPCRouter({
       if (!userId) throw new Error("Unauthorized");
 
       // Upsert user preferences with new goal
-      await ctx.db.preferences.upsert({
+      await ctx.db.preferences.update({
         where: { userId },
-        update: { goal: input.newGoal },
-        create: { userId, goal: input.newGoal, shareActivity: false },
+        data: { goal: input.newGoal },
       });
     }),
 });

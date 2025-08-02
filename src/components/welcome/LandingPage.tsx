@@ -2,7 +2,6 @@ import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import { ArrowRight, Flame, HeartHandshake, Clock } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 
 export default function LandingPage() {
   return (
@@ -12,9 +11,8 @@ export default function LandingPage() {
           Study smarter. Stay consistent.
         </h1>
         <p className="text-muted-foreground mb-8 text-lg">
-          Track your study habits, stay accountable, and reflect at the end of
-          the semester. No leaderboards. No pressure. Just you, your goals, and
-          your friends cheering you on.
+          Turn studying into a science this semester by systematically tracking your study sessions.
+          Log when and what you study, then analyze your habits over time to optimize your learning strategy.
         </p>
         <div className="flex flex-col justify-center gap-4 sm:flex-row">
           <Link href="/signup">
@@ -34,12 +32,12 @@ export default function LandingPage() {
             <div className="mb-4 flex items-center gap-3">
               <Clock className="text-primary" />
               <h2 className="text-xl font-semibold">
-                Pomodoro & Free-form Timing
+                Identify peak productivity times
               </h2>
             </div>
             <p className="text-muted-foreground">
-              Whether you&apos;re a Pomodoro pro or just want to log a chill two-hour
-              sesh, we&apos;ve got you. You choose how you track.
+              Discover the hours when your brain is firing on all cylinders.
+              Use this insight to schedule your toughest study sessions for maximum focus and efficiency.
             </p>
           </CardContent>
         </Card>
@@ -48,12 +46,11 @@ export default function LandingPage() {
           <CardContent className="p-6">
             <div className="mb-4 flex items-center gap-3">
               <HeartHandshake className="text-primary" />
-              <h2 className="text-xl font-semibold">Friend Accountability</h2>
+              <h2 className="text-xl font-semibold">Manage your subject spread</h2>
             </div>
             <p className="text-muted-foreground">
-              Add friends, share what you&apos;re working on, and hype each other up
-              through the weekly GenAI email summaries. No rankings. Just good
-              vibes.
+              Keep a balanced approach by tracking how much time you spend on each subject.
+              Avoid last-minute cramming by distributing your effort evenly across all topics.
             </p>
           </CardContent>
         </Card>
@@ -63,13 +60,12 @@ export default function LandingPage() {
             <div className="mb-4 flex items-center gap-3">
               <Flame className="text-primary" />
               <h2 className="text-xl font-semibold">
-                Heatmaps, Streaks & End-of-Sem Insights
+                Stay accountable and motivated
               </h2>
             </div>
             <p className="text-muted-foreground">
-              Visualise your grind with semester heatmaps and streaks. Get a
-              nerdy breakdown at the end of the term like &quot;Weeks &lt;15hrs
-              averaged 68%.&quot; Use it to reflect & improve.
+              Seeing your study log grow keeps you honest and driven. 
+              Celebrate your progress and turn consistency into a habit you actually stick to.
             </p>
           </CardContent>
         </Card>
@@ -79,12 +75,12 @@ export default function LandingPage() {
             <div className="mb-4 flex items-center gap-3">
               <ArrowRight className="text-primary" />
               <h2 className="text-xl font-semibold">
-                Put Money Where Your Study Is
+                Make data-driven adjustments
               </h2>
             </div>
             <p className="text-muted-foreground">
-              Feeling brave? Pledge a donation if you don&apos;t hit your goal. If
-              you slack off, the money goes to a cause. Motivation = maxed.
+              Analyze your study patterns to find what’s working—and what’s not. 
+              Adapt your strategy based on real data, not just guesswork, for smarter learning.
             </p>
           </CardContent>
         </Card>
@@ -93,21 +89,20 @@ export default function LandingPage() {
       <section className="max-w-4xl text-center">
         <h2 className="mb-4 text-3xl font-bold">Your semester, visualised</h2>
         <p className="text-muted-foreground mb-4">
-          Every minute you log contributes to your heatmap. Share it on socials,
+          Every minute you log contributes to your heatmap. Maximise your consistency,
           look back on your term, and compare habits to grades.
         </p>
-        <Image
+        {/* <Image
           width={8}
           height={8}
           src="/demo-heatmap.png"
           alt="Study Heatmap Demo"
           className="mx-auto rounded-xl shadow-md"
-        />
+        /> */}
       </section>
 
       <footer className="text-muted-foreground mt-16 text-center text-sm">
-        &copy; {new Date().getFullYear()} StudyTrack. No ads. No spam. Just
-        study.
+        &copy; {new Date().getFullYear()} Workaholic
       </footer>
     </main>
   );

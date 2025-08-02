@@ -1,6 +1,9 @@
 import z from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { sendTelegramMessage } from "./feedback";
+import type { ColourType } from "@prisma/client";
+
+const COLOURS: ColourType[] = ["RED", "ORANGE", "YELLOW", "GREEN", "BLUE", "PINK", "PURPLE"]
 
 export const preferencesRouter = createTRPCRouter({
   // Upsert preferences for current user
@@ -44,7 +47,7 @@ export const preferencesRouter = createTRPCRouter({
         data: input.subjects.map((subject, i) => ({
           userId,
           name: subject,
-          colour: "RED",
+          colour: COLOURS[i] ?? "RED",
           order: i,
         })),
       });

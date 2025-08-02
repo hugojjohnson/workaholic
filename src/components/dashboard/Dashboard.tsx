@@ -14,7 +14,6 @@ import { useTimer } from "~/hooks/TimerContext";
 import { useState } from "react";
 import { useUser } from "~/hooks/UserContext";
 import LoadingPage from "../welcome/LoadingPage";
-import { ChevronDownIcon } from "lucide-react";
 import Heatmap from "../reports/Heatmap";
 
 export default function Dashboard() {
