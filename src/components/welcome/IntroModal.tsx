@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation"; // or "next/router" if pre-next13
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "../ui/dialog";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Keyboard, Mousewheel, Navigation, Pagination } from "swiper/modules";
@@ -12,6 +12,8 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { DialogTitle } from "@radix-ui/react-dialog";
+import { api } from "~/trpc/react";
+import { useSession } from "next-auth/react";
 
 
 // import required modules
@@ -47,12 +49,45 @@ interface IntroModalProps {
 
 export default function IntroModal({ onComplete }: IntroModalProps) {
     const router = useRouter();
+    const session = useSession();
     const [open, setOpen] = useState(true);
     const [currentSlide, setCurrentSlide] = useState(0);
     const isLast = currentSlide === slides.length - 1;
 
+    const utils = api.useUtils();
+
+    const finishIntro = api.preferences.completeIntro.useMutation({
+        onMutate: async () => {
+            await utils.user.get.cancel();
+            const previousData = utils.user.get.getData();
+            // Optimistically update
+            utils.user.get.setData({ userId: session.data?.user.id ?? "" }, (old) => {
+                if (!old) {
+                    return old;
+                }
+                return {
+                    ...old,
+                    preferences: {
+                        ...old.preferences,
+                        finishIntro: true
+                    }
+                }
+            })
+            return { previousData }; // pass context to onError
+        },
+        onError: (_err, _input, context) => {
+            if (context?.previousData) {
+                utils.user.get.setData({ userId: session.data?.user.id ?? "" }, context.previousData);
+            }
+        },
+        onSettled: () => {
+            utils.user.get.invalidate();
+        },
+    });
+
+    
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={v => { finishIntro.mutate(); setOpen(v) }}>
             <DialogContent className="max-w-md p-6 text-center">
                 <div
                     className={`
