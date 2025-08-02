@@ -65,4 +65,12 @@ export const preferencesRouter = createTRPCRouter({
         },
       });
     }),
+
+    completeIntro: protectedProcedure
+    .mutation(async ({ ctx }) => {
+      // await ctx.db.user.update({
+      //   where: { id: ctx.session.user.id },
+      //   data: { completedIntro: true },
+      // });
+    }),
 });

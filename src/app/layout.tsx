@@ -1,14 +1,15 @@
 // app/layout.tsx
 import "~/styles/globals.css";
-
 import { Geist } from "next/font/google";
-import { TRPCReactProvider } from "~/trpc/react";
+import { api, TRPCReactProvider } from "~/trpc/react";
 import { auth } from "~/server/auth";
 import { type Metadata } from "next";
 import Navbar from "~/components/main/Navbar";
 import { ThemeProvider } from "~/components/main/ThemeProvider";
 import { ProviderWrapper } from "~/components/main/ProviderWrapper";
 import { HydrateClient } from "~/trpc/server";
+import ClientIntroWrapper from "~/components/welcome/ClientIntroWrapper";
+
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -60,6 +61,8 @@ export default async function RootLayout({
             <HydrateClient>
               <ProviderWrapper session={session}>
                 <Navbar />
+                {/* Client component to handle intro modal logic */}
+                <ClientIntroWrapper />
                 {children}
               </ProviderWrapper>
             </HydrateClient>
