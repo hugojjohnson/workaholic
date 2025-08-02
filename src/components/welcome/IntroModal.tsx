@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation"; // or "next/router" if pre-next13
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Dialog, DialogContent } from "../ui/dialog";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Keyboard, Mousewheel, Navigation, Pagination } from "swiper/modules";
@@ -80,12 +80,12 @@ export default function IntroModal({ onComplete }: IntroModalProps) {
                 utils.user.get.setData({ userId: session.data?.user.id ?? "" }, context.previousData);
             }
         },
-        onSettled: () => {
-            utils.user.get.invalidate();
+        onSettled: async () => {
+            await utils.user.get.invalidate();
         },
     });
 
-    
+
     return (
         <Dialog open={open} onOpenChange={v => { finishIntro.mutate(); setOpen(v) }}>
             <DialogContent className="max-w-md p-6 text-center">
