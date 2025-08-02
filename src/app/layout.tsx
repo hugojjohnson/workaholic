@@ -35,7 +35,7 @@ export default async function RootLayout({
         <body className="h-screen">
           <ThemeProvider
             attribute="class"
-            defaultTheme="light"
+            defaultTheme="dark"
             enableSystem
             disableTransitionOnChange
           >
@@ -53,7 +53,7 @@ export default async function RootLayout({
       <body className="h-screen">
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >

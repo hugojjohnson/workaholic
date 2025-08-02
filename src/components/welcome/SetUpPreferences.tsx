@@ -74,7 +74,7 @@ export default function FadeComponent() {
         1. Choose your goal
       </CardTitle>
       <p className="text-muted-foreground mt-2 text-sm">
-        Choose how many hours to aim for each day. The most important part is to <em>not 
+        Choose how many hours to aim for each day. The most important part is to <em>not
           overestimate it!</em> &nbsp; 3-4 is more than enough. You can change this later in settings.
         {/* <ul className="list-disc list-inside">
           <li>2 hours (14 hours / week): Pass your subjects</li>
@@ -157,7 +157,12 @@ export default function FadeComponent() {
         <Input
           type="date"
           value={semesterStart.toISOString().split("T")[0]}
-          onChange={(e) => setSemesterStart(new Date(e.target.value))}
+          onChange={(e) => {
+            const newDate = new Date(e.target.value);
+            if (!isNaN(newDate.getTime())) {
+              setSemesterStart(newDate);
+            }
+          }}
         />
         <label className="text-sm font-medium text-muted-foreground">
           Semester end date
@@ -165,7 +170,13 @@ export default function FadeComponent() {
         <Input
           type="date"
           value={semesterFinish.toISOString().split("T")[0]}
-          onChange={(e) => new Date(e.target.value) > semesterStart && setSemesterFinish(new Date(e.target.value))}
+          onChange={(e) => {
+            const newDate = new Date(e.target.value);
+            if (!isNaN(newDate.getTime()) && newDate > semesterStart) {
+              setSemesterFinish(newDate);
+            }
+          }}
+
         />
       </div>
       <Button
@@ -253,24 +264,24 @@ export default function FadeComponent() {
 
           {
             canGoForward
-            ? <Button
-              variant="outline"
-              onClick={() => canGoForward && animatePageTransition(pageIndex, 1)}
-              // disabled={!canGoForward}
-              className={`transition-colors ml-auto ${canGoForward
-                ? "text-black hover:bg-muted"
-                : "text-muted-foreground cursor-not-allowed"
-                }`}
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
-            : <Button
-              variant="default"
-              onClick={handleContinue}
-              className="transition-colors text-black hover:bg-muted"
-            >
-              Finish
-            </Button>
+              ? <Button
+                variant="outline"
+                onClick={() => canGoForward && animatePageTransition(pageIndex, 1)}
+                // disabled={!canGoForward}
+                className={`transition-colors ml-auto ${canGoForward
+                  ? "text-black hover:bg-muted"
+                  : "text-muted-foreground cursor-not-allowed"
+                  }`}
+              >
+                <ChevronRight className="h-5 w-5" />
+              </Button>
+              : <Button
+                variant="default"
+                onClick={handleContinue}
+                className="transition-colors text-black hover:bg-muted"
+              >
+                Finish
+              </Button>
           }
         </div>
       </Card>
