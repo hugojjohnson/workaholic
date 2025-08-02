@@ -14,6 +14,7 @@ import { useTimer } from "~/hooks/TimerContext";
 import { useState } from "react";
 import { useUser } from "~/hooks/UserContext";
 import LoadingPage from "../welcome/LoadingPage";
+import { ChevronDownIcon } from "lucide-react";
 
 export default function Dashboard() {
   const logs = useLogs();
@@ -37,13 +38,13 @@ export default function Dashboard() {
             timer.onUpdateTimerInfo({ subjectId });
           }}
         >
-          <SelectTrigger className="relative w-64 text-lg">
-            <span className="ml-32"></span>{" "}
-            {/* To move the chevron to the other side */}
-            <span className="pointer-events-none absolute left-1/2 -translate-x-1/2">
+          <SelectTrigger className="flex items-center justify-between px-3 py-2 text-lg min-w-[200px] max-w-full">
+            {/* Centered text */}
+            <div className="flex-1 text-center truncate ml-5">
               <SelectValue placeholder="Select project" />
-            </span>
+            </div>
           </SelectTrigger>
+
           <SelectContent>
             {user.user.subjects.map((s) => (
               <SelectItem key={s.id} value={s.id}>
@@ -119,7 +120,7 @@ export default function Dashboard() {
             : "default"
         }
         onClick={() => timer.pause()}
-        // disabled={timer.paused && timer.timer.id !== undefined}
+      // disabled={timer.paused && timer.timer.id !== undefined}
       >
         {timer.paused && timer.timer?.startedAt !== undefined
           ? "Pause"

@@ -6,6 +6,7 @@ import type { ClientSafeProvider } from "node_modules/next-auth/lib/client";
 import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import LoadingPage from "~/components/welcome/LoadingPage";
 
 export default function Signup() {
   const [providers, setProviders] = useState<Record<string, ClientSafeProvider> | null>(null);
@@ -16,7 +17,7 @@ export default function Signup() {
       .then(setProviders);
   }, []);
 
-  if (!providers) return <p>Loading sign-in options...</p>;
+  // if (!providers) return <p>Loading sign-in options...</p>;
 
   // return <AuthForm mode="signup" />
 
@@ -29,7 +30,8 @@ export default function Signup() {
           </CardTitle>
         </CardHeader>
         <CardContent className="mx-auto">
-          {Object.values(providers).map((provider) => (
+          {providers
+          ? Object.values(providers).map((provider) => (
             <Button
               key={provider.name}
               onClick={() => signIn(provider.id)}
@@ -44,7 +46,9 @@ export default function Signup() {
                 className="ml-5 inline-block h-6 w-6"
               />
             </Button>
-          ))}
+          ))
+          : <LoadingPage />
+        }
         </CardContent>
       </Card>
     </main>
