@@ -44,9 +44,28 @@ ${input.title}
 ${input.body}
       `
       await sendTelegramMessage(msg)
-      const logs = await ctx.db.log.findMany({
+    }),
+
+    featureVote: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        feature: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findFirst({
+        where: { id: input.userId },
+      })
+      const msg = `${ user?.name } voted for a feature:
+
+${input.feature}
+      `
+
+      await ctx.db.preferences.update({
         where: { userId: input.userId },
-      });
-      return logs;
+        data: { lastFeatureVote: input.feature }
+      })
+      await sendTelegramMessage(msg)
     }),
 });

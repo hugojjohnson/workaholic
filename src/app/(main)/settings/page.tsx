@@ -209,7 +209,7 @@ export default function Settings() {
             </div>
             <div>
               <BugDialogue userId={user.user.id} />
-              <FeatureDialogue />
+              <FeatureDialogue userId={user.user.id} vote={user.user.preferences.lastFeatureVote} />
             </div>
           </div>
 

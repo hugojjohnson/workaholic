@@ -90,6 +90,7 @@ model Preferences {
   semesterFinish DateTime
   completedIntro DateTime?
   showHeatmap Boolean @default(false)
+  lastFeatureVote String?
 }
 
 model Subject {
