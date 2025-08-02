@@ -24,40 +24,6 @@ export default function Profile() {
         {/* <p>Profile photo</p> */}
       </div>
 
-      <div>
-        <h3 className="mt-4 text-2xl">Security</h3>
-        {/* <Separator className="w-[35%] mt-2" /> */}
-        <div className="mt-2 grid gap-4">
-          <div className="flex flex-col gap-1">
-            <label htmlFor="currentPassword">Current password</label>
-            <Input
-              id="currentPassword"
-              type="password"
-              placeholder="•••••••••••"
-            />
-          </div>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="newPassword">New password</label>
-            <Input id="newPassword" type="password" placeholder="•••••••••••" />
-          </div>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="confirmPassword">Confirm new password</label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              placeholder="•••••••••••"
-            />
-          </div>
-        </div>
-
-        <Button
-          variant="outline"
-          className="mt-4 w-40 border-gray-500 text-gray-500 hover:text-white"
-        >
-          Change password
-        </Button>
-      </div>
-
       {/* Sign out */}
       {/* <h3 className="text-2xl mt-8">Sign Out</h3> */}
       {/* <Separator className="w-[35%] mt-2" /> */}

@@ -15,6 +15,7 @@ import { useState } from "react";
 import { useUser } from "~/hooks/UserContext";
 import LoadingPage from "../welcome/LoadingPage";
 import { ChevronDownIcon } from "lucide-react";
+import Heatmap from "../reports/Heatmap";
 
 export default function Dashboard() {
   const logs = useLogs();
@@ -134,6 +135,12 @@ export default function Dashboard() {
           {Math.floor(logs.minutesToday / 60)}h{" "}
           {Math.floor(logs.minutesToday % 60)}min
         </p>
+      </div>
+
+      <div className="flex items-center justify-center">
+        <div className="my-20 w-[400px]">
+          <Heatmap />
+        </div>
       </div>
 
       {/* Confetti */}

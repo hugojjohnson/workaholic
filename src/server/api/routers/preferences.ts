@@ -9,6 +9,8 @@ export const preferencesRouter = createTRPCRouter({
         shareActivity: z.boolean(),
         goal: z.number().min(1).max(168), // max hours/week = 7*24
         subjects: z.array(z.string()).min(1),
+        semesterStart: z.date(),
+        semesterFinish: z.date(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -18,6 +20,9 @@ export const preferencesRouter = createTRPCRouter({
       });
       if (!user) {
         throw new Error("User could not be found.");
+      }
+      if (input.semesterStart >= input.semesterFinish) {
+        throw new Error("semesterFinish must be after semesterStart.");
       }
 
       await ctx.db.preferences.upsert({
@@ -30,6 +35,8 @@ export const preferencesRouter = createTRPCRouter({
           userId: userId,
           shareActivity: input.shareActivity,
           goal: input.goal,
+          semesterStart: input.semesterStart,
+          semesterFinish: input.semesterFinish
         },
       });
       await ctx.db.subject.createMany({

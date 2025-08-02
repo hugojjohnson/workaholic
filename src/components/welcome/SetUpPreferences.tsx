@@ -17,6 +17,10 @@ export default function FadeComponent() {
   const [shareActivity, setShareActivity] = useState(false); // Just gonna leave like this
   const [goal, setGoal] = useState(4);
   const [subjects, setSubjects] = useState<string[]>([""]);
+  const [semesterStart, setSemesterStart] = useState<Date>(new Date());
+  const [semesterFinish, setSemesterFinish] = useState<Date>(new Date(Date.now() + 13 * 7 * 24 * 60 * 60 * 1000)); // 13 weeks
+
+
   const [pageIndex, setPageIndex] = useState<number>(0);
   const [visible, setVisible] = useState<boolean>(true);
   const [hidePage, setHidePage] = useState(false);
@@ -47,7 +51,7 @@ export default function FadeComponent() {
   const handleContinue = () => {
     setHidePage(true);
     const filteredSubjects = subjects.filter((s) => s.trim() !== "");
-    create.mutate({ shareActivity, goal, subjects: filteredSubjects });
+    create.mutate({ shareActivity, goal, subjects: filteredSubjects, semesterStart, semesterFinish });
   };
 
 
@@ -138,6 +142,47 @@ export default function FadeComponent() {
     </CardContent>
   </>
 
+  const semesterDatesPage = <>
+    <CardHeader>
+      <CardTitle className="text-2xl font-bold">
+        3. Add your semester dates
+      </CardTitle>
+      <p className="text-muted-foreground mt-2 text-sm mb-2">
+        Add the start and end date of your semester - you can change these later in settings.
+      </p>
+    </CardHeader>
+    <CardContent className="space-y-6">
+      <div className="flex flex-col gap-1">
+        <label className="text-sm font-medium text-muted-foreground">
+          Semester start date
+        </label>
+        <Input
+          type="date"
+          value={semesterStart.toISOString().split("T")[0]}
+          onChange={(e) => setSemesterStart(new Date(e.target.value))}
+        />
+        <label className="text-sm font-medium text-muted-foreground">
+          Semester end date
+        </label>
+        <Input
+          type="date"
+          value={semesterFinish.toISOString().split("T")[0]}
+          onChange={(e) => new Date(e.target.value) > semesterStart && setSemesterFinish(new Date(e.target.value))}
+        />
+      </div>
+      <Button
+        variant="outline"
+        size="sm"
+        className="mt-2"
+        type="button"
+        onClick={handleAddSubject}
+      >
+        <Plus className="mr-2 h-4 w-4" />
+        Add subject
+      </Button>
+    </CardContent>
+  </>
+
 
   // const sharePage = <>
   //     <CardHeader>
@@ -169,7 +214,7 @@ export default function FadeComponent() {
   //     </CardContent>
   //   </>
 
-  const pages = [welcomePage, hoursPage, subjectsPage];
+  const pages = [welcomePage, hoursPage, subjectsPage, semesterDatesPage];
   const animatePageTransition = async (currentIndex: number, offset: 1 | -1): Promise<void> => {
     setVisible(false);
     await sleep(transitionNum + 500);
@@ -222,7 +267,7 @@ export default function FadeComponent() {
               <ChevronRight className="h-5 w-5" />
             </Button>
             : <Button
-              variant="outline"
+              variant="default"
               onClick={handleContinue}
               className="transition-colors text-black hover:bg-muted"
             >

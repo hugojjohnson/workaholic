@@ -6,10 +6,6 @@ import "react-calendar-heatmap/dist/styles.css";
 import "~/styles/heatmap.css";
 import { useUser } from "~/hooks/UserContext";
 
-type Props = {
-  startDate: Date;
-  endDate: Date;
-};
 
 function formatDateAU(date: Date): string {
   const d = date.getDate().toString().padStart(2, "0");
@@ -20,10 +16,17 @@ function formatDateAU(date: Date): string {
 
 // startedAt: string; // ISO date string, e.g. '2024-07-28T15:30:00Z'
 //   duration: number;  // in minutes (or seconds, whatever you got)
-
-const Heatmap: React.FC<Props> = ({ startDate, endDate }) => {
+const Heatmap: React.FC = () => {
   const { logs } = useLogs();
   const { user } = useUser();
+
+  const startDate = user?.preferences.semesterStart ?? new Date();
+  const endDate = user?.preferences.semesterFinish ?? new Date();
+  console.log("--")
+  console.log(startDate.toISOString().slice(0, 10))
+  console.log(endDate.toISOString().slice(0, 10))
+  console.log("--")
+
   // Step 1: Aggregate logs by date string (YYYY-MM-DD)
   const countsByDate: Record<string, number> = {};
 
@@ -35,6 +38,7 @@ const Heatmap: React.FC<Props> = ({ startDate, endDate }) => {
   // Step 2: Fill in all dates with 0 if they don't exist in logs
   const allDates: { date: string; count: number; tooltip: string }[] = [];
   const current = new Date(startDate);
+
 
   while (current <= endDate) {
     const isoDate = current.toISOString().slice(0, 10);

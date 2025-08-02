@@ -21,6 +21,9 @@ import { useUser } from "~/hooks/UserContext";
 import { useSettings } from "~/hooks/useSettings";
 import DarkModeToggle from "~/components/settings/DarkModeToggle";
 import LoadingPage from "~/components/welcome/LoadingPage";
+import { Bug, BugIcon, MessageSquareIcon } from "lucide-react";
+import BugDialogue from "~/components/settings/BugDialogue";
+import FeatureDialogue from "~/components/settings/FeatureDialogue";
 
 // TODO: Update these with the actual colours
 const colourOptions: Record<string, { hex: string }> = {
@@ -54,6 +57,7 @@ export default function Settings() {
   const settings = useSettings();
   const timer = useTimer();
 
+  const [feedbackDialogue, showFeedbackDialogue] = useState<string>("bug");
   const [tempLog, setTempLog] = useState<AddLogT>({
     subjectId: timer.timer?.subjectId ?? user.user?.subjects[0]?.id ?? "",
     duration: timer.timer?.duration ?? 30,
@@ -170,37 +174,44 @@ export default function Settings() {
   return (
     <div className="px-6 pt-10 lg:px-32">
       <h1 className="mb-6 text-4xl font-bold">Settings</h1>
-
-      <div className="flex flex-col justify-between gap-16 lg:flex-row">
-        {/* Settings Column */}
-        <div className="flex-1">
-          {/* Projects */}
-          <h2 className="mb-3 text-2xl font-semibold">Projects</h2>
-          <Card className="bg-muted flex w-full flex-col gap-4 p-4 lg:w-96">
-            {user.user.subjects.map((subject, index) => (
-              <div key={index}>
-                <SubjectItem
-                  subject={subject}
-                  updateSubject={settings.updateSubject}
-                  deleteSubject={settings.deleteSubject}
-                />
-                <Separator className="mt-4" />
-              </div>
-            ))}
-            <Button
-              variant="secondary"
-              className="h-10 w-10"
-              onClick={() =>
-                settings.createSubject(
-                  "",
-                  "RED",
-                  user.user?.subjects.length ?? 0,
-                )
-              }
-            >
-              +
-            </Button>
-          </Card>
+      <div className="flex flex-row justify-between">
+        <div>
+          <div className="flex flex-col justify-between gap-16 lg:flex-row">
+            {/* Settings Column */}
+            <div className="flex-1">
+              {/* Projects */}
+              <h2 className="mb-3 text-2xl font-semibold">Projects</h2>
+              <Card className="bg-muted flex w-full flex-col gap-4 p-4 lg:w-96">
+                {user.user.subjects.map((subject, index) => (
+                  <div key={index}>
+                    <SubjectItem
+                      subject={subject}
+                      updateSubject={settings.updateSubject}
+                      deleteSubject={settings.deleteSubject}
+                    />
+                    <Separator className="mt-4" />
+                  </div>
+                ))}
+                <Button
+                  variant="secondary"
+                  className="h-10 w-10"
+                  onClick={() =>
+                    settings.createSubject(
+                      "",
+                      "RED",
+                      user.user?.subjects.length ?? 0,
+                    )
+                  }
+                >
+                  +
+                </Button>
+              </Card>
+            </div>
+            <div>
+              <BugDialogue />
+              <FeatureDialogue />
+            </div>
+          </div>
 
           <div className="flex flex-row gap-32">
             <div>

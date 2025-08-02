@@ -85,7 +85,9 @@ model Preferences {
   user          User    @relation(fields: [userId], references: [id])
   userId        String  @unique
   shareActivity Boolean
-  goal          Int // Avg hours per *week*, right?
+  goal          Int
+  semesterStart DateTime
+  semesterFinish DateTime
 }
 
 model Subject {

@@ -206,16 +206,6 @@ export default function Reports() {
     },
   };
 
-  // Fingers crossed this works
-  const lastMonday = new Date(
-    new Date().setDate(
-      new Date().getDate() - ((new Date().getDay() + 6) % 7) - 3,
-    ),
-  );
-  const now = new Date();
-  const end = new Date(now);
-  end.setDate(now.getDate() + 100);
-
   return (
     <div className="px-7 pt-10 md:px-32">
       <h1 className="mb-5 text-4xl">Reports</h1>
@@ -231,12 +221,8 @@ export default function Reports() {
             &gt;
           </Button>
         </div>
-
-        <Bar options={options} data={data} />
-        <div className="flex items-center justify-center">
-          <div className="my-20 w-[600px]">
-            <Heatmap startDate={lastMonday} endDate={end} />
-          </div>
+        <div className="w-[80%]">
+          <Bar options={options} data={data} />
         </div>
       </div>
     </div>
