@@ -2,8 +2,10 @@
 
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { DeleteAccountDialogue } from "~/components/settings/DeleteAccountDialogue";
 import { Button } from "~/components/ui/button";
 import { useUser } from "~/hooks/UserContext";
+import { api } from "~/trpc/react";
 
 export default function Profile() {
   const user = useUser();
@@ -33,27 +35,13 @@ export default function Profile() {
           await signOut();
           router.replace("/");
         }}
-        // onClick={async () => {
-        //   try {
-        //     await get("users/sign-out", { token: user?.token })
-        //   } catch (err) {
-        //     console.error(err)
-        //   }
-        //   setUser(null)
-        //   navigate("/")
-        // }}
       >
         Sign out
       </Button>
 
       <div>
         <h3 className="mt-8 text-2xl">Danger</h3>
-        <Button
-          variant="outline"
-          className="mt-2 w-40 border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-        >
-          Delete account
-        </Button>
+        <DeleteAccountDialogue userId={user.user?.id ?? ""} />
       </div>
     </div>
   );

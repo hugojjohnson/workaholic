@@ -68,7 +68,7 @@ model User {
 
 model Timer {
   id          String    @id @default(cuid())
-  user        User      @relation(fields: [userId], references: [id])
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String    @unique
   subject     Subject   @relation(fields: [subjectId], references: [id])
   subjectId   String    @unique
@@ -82,7 +82,7 @@ model Timer {
 
 model Preferences {
   id            String  @id @default(cuid())
-  user          User    @relation(fields: [userId], references: [id])
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        String  @unique
   shareActivity Boolean @default(false)
   goal          Int
@@ -95,7 +95,7 @@ model Preferences {
 
 model Subject {
   id        String   @id @default(cuid())
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   name      String
   colour    String
@@ -126,7 +126,7 @@ model Log {
   endedAt     DateTime
   tags        String[] // Optional: ["flashcards", "lecture"]
   description String? // Optional free-form field
-  User        User?    @relation(fields: [userId], references: [id])
+  User        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String?
   duration    Int
 
