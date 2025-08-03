@@ -26,6 +26,11 @@ const slides = [
         route: "/",
     },
     {
+        title: "Log everything",
+        description: "Log your lectures, tutorials, private study and anything else you do - so long as it's focused work.",
+        route: "/",
+    },
+    {
         title: "Make it your own",
         description: "Customise your subjects, request bugs and features, and add logs if you forgot to log them.",
         route: "/settings",

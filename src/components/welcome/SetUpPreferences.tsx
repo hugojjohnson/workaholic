@@ -103,7 +103,7 @@ export default function FadeComponent() {
         2. Add your subjects
       </CardTitle>
       <p className="text-muted-foreground mt-2 text-sm mb-2">
-        Add the subjects you&apos;re doing this sem, e.g. MATH1002
+        Add the subjects you&apos;re doing this sem, e.g. MATH1002. You can change these later in settings.
       </p>
     </CardHeader>
     <CardContent className="space-y-6">
