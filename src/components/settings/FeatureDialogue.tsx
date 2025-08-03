@@ -118,7 +118,7 @@ export default function FeatureDialogue({ userId, vote }: { userId: string, vote
                                 ))}
                             </RadioGroup>
 
-                            {feature === "other" && (
+                            {feature === "Other" && (
                                 <div className="grid gap-2">
                                     <Label htmlFor="otherText">Suggest a feature</Label>
                                     <Input
