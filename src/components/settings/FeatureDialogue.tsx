@@ -28,8 +28,8 @@ const FEATURES = [
         description: "Download your data and analyse it yourself!",
     },
     {
-        value: "Weekly Emails",
-        description: "Optional weekly emails breaking down your habits for the week, analysed with ai. Option to out at any time.",
+        value: "Mobile version",
+        description: "Use Workaholic from your phone with an iOS/Android app.",
     },
     {
         value: "Sign Up With Email",

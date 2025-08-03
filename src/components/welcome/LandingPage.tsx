@@ -14,7 +14,7 @@ export default function LandingPage() {
         </h1>
         <p className="text-muted-foreground mb-8 text-lg">
           Turn studying into a science this semester by systematically tracking your study sessions.
-          Log when and what you study, then analyze your habits over time to optimize your learning strategy.
+          Log when and what you study, then analyze your habits over time to optimize the way you learn.
         </p>
         <div className="flex flex-col justify-center gap-4 sm:flex-row">
           <Link href="/signup">
