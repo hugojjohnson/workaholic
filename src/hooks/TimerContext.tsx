@@ -47,16 +47,6 @@ export const useTimer = (): TimerContextT => {
   if (!context) {
     throw new Error("useTimer must be used within a UserProvider");
   }
-  // if (context.user) {
-  //   if (!context?.user.preferences) {
-  //     throw new Error("Preferences are not set up.");
-  //   }
-  //   if (!context?.user.subjects) {
-  //     throw new Error("Subjects is undefined.");
-  //   }
-  //   if (context?.user.subjects?.length == 0) {
-  //     throw new Error("The user has no subjects.");
-  //   }
-  // }
+  
   return context;
 };

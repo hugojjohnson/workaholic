@@ -10,7 +10,7 @@ import {
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { useLogs } from "~/hooks/LogsContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "~/hooks/UserContext";
 import LoadingPage from "../welcome/LoadingPage";
 import Heatmap from "../reports/Heatmap";
@@ -24,9 +24,16 @@ export default function Dashboard() {
     timer.timer?.description ?? "",
   );
 
+  useEffect(() => {
+    if (timer.timer?.description !== undefined && timer.timer?.description !== null) {
+      setDescription(timer.timer.description);
+    }
+  }, [timer, timer.timer?.description])
+
   if (!user.user) {
     return <LoadingPage />;
   }
+
 
   return (
     <div className="fixed top-20 mx-auto flex w-screen max-w-screen-sm flex-col items-center justify-center gap-8 pt-28 md:static md:top-0">

@@ -1,18 +1,15 @@
 "use client";
 
-import type { Log, Subject } from "@prisma/client";
-import React, { useEffect, useState } from "react";
+import type { Subject } from "@prisma/client";
+import React, { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { ScrollArea } from "~/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "~/components/ui/select";
 import { Separator } from "~/components/ui/separator";
 import { useLogs, type AddLogT } from "~/hooks/LogsContext";
@@ -24,6 +21,9 @@ import LoadingPage from "~/components/welcome/LoadingPage";
 import BugDialogue from "~/components/settings/BugDialogue";
 import FeatureDialogue from "~/components/settings/FeatureDialogue";
 import ShowHeatmap from "~/components/settings/ShowHeatmap";
+import { DeleteAccountDialogue } from "~/components/settings/DeleteAccountDialogue";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 // TODO: Update these with the actual colours
 const colourOptions: Record<string, { hex: string }> = {
@@ -52,15 +52,10 @@ function toDatetimeLocal(date: Date): string {
 }
 
 export default function Settings() {
-  const user = useUser();
-  const logs = useLogs();
-  const settings = useSettings();
-  const timer = useTimer();
-
   const tabs = [
     { id: "timer", label: "Timer" },
     { id: "bugs", label: "Bugs and Features" },
-    { id: "notifications", label: "Notifications" },
+    { id: "profile", label: "Profile" },
   ]
 
   const [activeTab, setActiveTab] = useState<string>("timer")
@@ -87,7 +82,7 @@ export default function Settings() {
         <div className="flex-1 p-6">
           {activeTab === "timer" && <TimerTab />}
           {activeTab === "bugs" && <BugsTab />}
-          {activeTab === "notifications" && <NotificationsTab />}
+          {activeTab === "profile" && <ProfileTab />}
         </div>
       </div>
     </div>
@@ -183,10 +178,9 @@ function TimerTab() {
 
     <div>
       {/* Theme */}
-      <h2 className="mt-10 mb-3 text-2xl font-semibold">
-        Change Theme
-      </h2>
+      <h2 className="mt-10 mb-3 text-2xl font-semibold">Change Theme</h2>
       <DarkModeToggle />
+      <ShowHeatmap />
     </div>
 
     <h2 className="mt-10 mb-3 text-2xl font-semibold">Change Projects</h2>
@@ -220,22 +214,55 @@ function TimerTab() {
 
 function BugsTab() {
   const user = useUser();
-  const logs = useLogs();
-  const settings = useSettings();
-  const timer = useTimer();
 
   if (!user.user) {
     return <p>Loading user...</p>
   }
 
   return <div>
-    <h2 className="text-3xl font-semibold">Account Settings</h2>
+    <h2 className="text-3xl font-semibold mb-5">Account Settings</h2>
     <BugDialogue userId={user.user.id} />
     <FeatureDialogue userId={user.user.id} vote={user.user.preferences.lastFeatureVote} />
-    <ShowHeatmap />
   </div>
 }
 
-function NotificationsTab() {
-  return <div><h2 className="text-xl font-semibold">Notification Settings</h2></div>
+function ProfileTab() {
+  const user = useUser();
+  const router = useRouter();
+
+  return (
+    <div>
+      <h2 className="text-3xl font-semibold">Profile</h2>
+
+      <div>
+        <h3 className="text-xl mt-5 mb-1">Personal information</h3>
+        {/* <Separator className="w-[35%] mt-2" /> */}
+        <p className="text-muted-foreground">
+          Username: {user.user?.name}
+        </p>
+        {/* <p>Email: {user?.email}</p> */}
+        {/* <p>Profile photo</p> */}
+      </div>
+
+      {/* Sign out */}
+      {/* <h3 className="text-2xl mt-8">Sign Out</h3> */}
+      {/* <Separator className="w-[35%] mt-2" /> */}
+      <Button
+        variant="outline"
+        className="mt-4 w-40 border-white text-white"
+        onClick={async () => {
+          await signOut();
+          router.replace("/");
+        }}
+      >
+        Sign out
+      </Button>
+
+      <div>
+        <h3 className="mt-8 text-2xl">Danger</h3>
+        <DeleteAccountDialogue userId={user.user?.id ?? ""} />
+      </div>
+    </div>
+  );
+
 }

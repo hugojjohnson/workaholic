@@ -45,7 +45,7 @@ export default function ShowHeatmap() {
 
   return (
     <div className="mt-10">
-      <p className="mb-2">Show heatmap <span className="text-xs">(Dashboard)</span></p>
+      <h2 className="mt-10 mb-3 text-2xl font-semibold">Show Dashboard Heatmap</h2>
       <Switch
         checked={user.user?.preferences.showHeatmap}
         onCheckedChange={(checked) => updateShowHeatmap.mutate({ newVal: checked })}

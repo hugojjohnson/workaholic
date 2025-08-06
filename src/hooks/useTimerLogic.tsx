@@ -156,6 +156,7 @@ export function useTimerLogic(): TimerContextT | undefined {
       pausedAt: null,
       deadlineAt: null,
     });
+    updateInfo.mutate({ timerId: timer.id, description: "" })
     setTimeLeft(minutesToMs(timer.duration));
   }, [timer, updateTimer]);
 
