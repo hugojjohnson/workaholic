@@ -22,10 +22,6 @@ const Heatmap: React.FC = () => {
 
   const startDate = user?.preferences.semesterStart ?? new Date();
   const endDate = user?.preferences.semesterFinish ?? new Date();
-  console.log("--")
-  console.log(startDate.toISOString().slice(0, 10))
-  console.log(endDate.toISOString().slice(0, 10))
-  console.log("--")
 
   // Step 1: Aggregate logs by date string (YYYY-MM-DD)
   const countsByDate: Record<string, number> = {};
@@ -66,8 +62,6 @@ const Heatmap: React.FC = () => {
 
     current.setDate(current.getDate() + 1);
   }
-
-  console.log(allDates);
 
   return (
     <>

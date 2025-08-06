@@ -112,7 +112,6 @@ export default function IntroModal({ onComplete }: IntroModalProps) {
                         modules={[Navigation, Pagination, Mousewheel, Keyboard]}
                         className="mySwiper"
                         onSlideChange={(swiper) => {
-                            console.log('Slide changed to', swiper.activeIndex);
                             const newRoute = slides[swiper.activeIndex]?.route;
                             if (newRoute) {
                                 router.push(newRoute);

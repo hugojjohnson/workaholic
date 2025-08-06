@@ -56,9 +56,6 @@ export default function FeatureDialogue({ userId, vote }: { userId: string, vote
                 setOpen(false);
             }, 2000);
         },
-        onSuccess: () => {
-            console.log("success!")
-        }
     });
 
 

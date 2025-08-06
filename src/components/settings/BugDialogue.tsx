@@ -28,10 +28,6 @@ export default function BugDialogue({ userId }: { userId: string }) {
         setOpen(false);
       }, 2000);
     },
-    onSuccess: () => {
-      console.log("success!")
-      // setOpen(false);
-    }
   });
 
   const handleSubmit = () => {

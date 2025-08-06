@@ -337,6 +337,8 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [timeLeft, timer, logs, stop, playSound]);
 
+  console.log(`${timer?.pausedAt}, ${timer?.startedAt}, ${timer?.deadlineAt}`)
+
   return (
     <TimerContext.Provider
       value={{
@@ -346,7 +348,7 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
         secondsLeft: Math.floor((timeLeft / SECOND) % 60),
         pause: togglePause,
         stop,
-        paused: !!timer?.pausedAt,
+        paused: !timer?.pausedAt && !!timer?.startedAt,
         disabled: timer?.startedAt === null,
         status: ["Unset", "Paused", "Playing", "Error"][
           getTimerStatus(timer!)

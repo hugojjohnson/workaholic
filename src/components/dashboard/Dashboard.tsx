@@ -115,14 +115,14 @@ export default function Dashboard() {
       <Button
         className="w-28 rounded-md text-lg"
         variant={
-          timer.paused && timer.timer?.startedAt !== undefined
+          timer.paused
             ? "secondary"
             : "default"
         }
         onClick={() => timer.pause()}
       // disabled={timer.paused && timer.timer.id !== undefined}
       >
-        {timer.paused && timer.timer?.startedAt !== undefined
+        {timer.paused
           ? "Pause"
           : "Start"}
       </Button>

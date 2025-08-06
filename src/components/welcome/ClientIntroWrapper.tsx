@@ -15,7 +15,6 @@ export default function ClientIntroWrapper() {
   });
 
   useEffect(() => {
-    console.log(user)
     if (user.user?.preferences && !user.user?.preferences.completedIntro) {
       setShowIntro(true);
     }
