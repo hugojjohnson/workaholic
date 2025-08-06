@@ -57,27 +57,50 @@ export default function Settings() {
   const settings = useSettings();
   const timer = useTimer();
 
-  const [tempLog, setTempLog] = useState<AddLogT>({
-    subjectId: timer.timer?.subjectId ?? user.user?.subjects[0]?.id ?? "",
-    duration: timer.timer?.duration ?? 30,
-    description: "",
-    startedAt: new Date(),
-  });
+  const tabs = [
+    { id: "timer", label: "Timer" },
+    { id: "bugs", label: "Bugs and Features" },
+    { id: "notifications", label: "Notifications" },
+  ]
 
-  useEffect(() => {
-    const t = timer.timer;
-    if (t?.subjectId && t?.duration) {
-      setTempLog(prev => ({
-        ...prev,
-        subjectId: t.subjectId,
-        duration: t.duration,
-      }));
-    }
-  }, [timer.timer, timer.timer?.subjectId, timer.timer?.duration]);
+  const [activeTab, setActiveTab] = useState<string>("timer")
 
-  if (!user.user) {
-    return <LoadingPage />;
-  }
+  return (
+    <div className="h-full flex flex-col">
+      <h1 className="mb-6 text-4xl lg:px-32 px-6 pt-10">Settings</h1>
+      <div className="flex flex-1 border-t">
+        {/* Sidebar */}
+        <div className="w-64 border-r p-4 space-y-2">
+          {tabs.map((tab) => (
+            <Button
+              key={tab.id}
+              variant={activeTab === tab.id ? "default" : "ghost"}
+              className="w-full justify-start"
+              onClick={() => setActiveTab(tab.id)}
+            >
+              {tab.label}
+            </Button>
+          ))}
+        </div>
+
+        {/* Main content */}
+        <div className="flex-1 p-6">
+          {activeTab === "timer" && <TimerTab />}
+          {activeTab === "bugs" && <BugsTab />}
+          {activeTab === "notifications" && <NotificationsTab />}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+
+// 👇 Dummy tab components
+function TimerTab() {
+  const user = useUser();
+  const logs = useLogs();
+  const settings = useSettings();
+  const timer = useTimer();
 
   const SubjectItem = React.memo(function SubjectItem({
     subject,
@@ -138,227 +161,81 @@ export default function Settings() {
     );
   });
 
-  const LogCard = React.memo(function LogCard({
-    log,
-    subjects,
-  }: {
-    log: Log;
-    subjects: Subject[] | undefined;
-  }) {
-    if (!subjects) {
-      return <p></p>;
-    }
-    const subjectName = subjects.find((s) => s.id === log.subjectId)?.name;
-
-    return (
-      <Card
-        key={log.id}
-        className="bg-muted relative w-full gap-0 border-2 border-dashed p-4"
-      >
-        <h1 className="text-xl font-semibold">{subjectName ?? "Unknown"}</h1>
-        <p className="text-muted-foreground">
-          {new Date(log.startedAt).toLocaleString().slice(0, 10)} |{" "}
-          {new Date(log.startedAt).toLocaleString().slice(-8, -3)} -{" "}
-          {new Date(log.startedAt.getTime() + log.duration * 60_000)
-            .toLocaleString()
-            .slice(-8, -3)}
-        </p>
-        <p className="text-muted-foreground absolute top-2 right-3 italic">
-          {log.duration} min
-        </p>
-        <p className="mt-2 text-sm">{log.description}</p>
-      </Card>
-    );
-  });
-
-  return (
-    <div className="px-6 pt-10 lg:px-32">
-      <h1 className="mb-6 text-4xl font-bold">Settings</h1>
-      <div className="flex flex-row justify-between">
-        <div>
-          <div className="flex flex-col justify-between gap-16 lg:flex-row">
-            {/* Settings Column */}
-            <div className="flex-1">
-              {/* Projects */}
-              <h2 className="mb-3 text-2xl font-semibold">Projects</h2>
-              <Card className="bg-muted flex w-full flex-col gap-4 p-4 lg:w-96">
-                {user.user.subjects.map((subject, index) => (
-                  <div key={index}>
-                    <SubjectItem
-                      subject={subject}
-                      updateSubject={settings.updateSubject}
-                      deleteSubject={settings.deleteSubject}
-                    />
-                    <Separator className="mt-4" />
-                  </div>
-                ))}
-                <Button
-                  variant="secondary"
-                  className="h-10 w-10"
-                  onClick={() =>
-                    settings.createSubject(
-                      "",
-                      "RED",
-                      user.user?.subjects.length ?? 0,
-                    )
-                  }
-                >
-                  +
-                </Button>
-              </Card>
-            </div>
-            <div>
-              <BugDialogue userId={user.user.id} />
-              <FeatureDialogue userId={user.user.id} vote={user.user.preferences.lastFeatureVote} />
-              <ShowHeatmap />
-            </div>
-          </div>
-
-          <div className="flex flex-row gap-32">
-            <div>
-              {/* Daily Goal */}
-              <h2 className="mt-10 mb-3 text-2xl font-semibold">
-                Daily goal (hours)
-              </h2>
-              <Input
-                type="number"
-                defaultValue={user.user.preferences.goal}
-                className="w-full lg:w-96"
-                onBlur={(e) => {
-                  const goalNum = parseInt(e.target.value);
-                  if (!isNaN(goalNum)) {
-                    settings.updateGoal(goalNum);
-                  }
-                }}
-              />
-            </div>
-
-            <div>
-              {/* Theme */}
-              <h2 className="mt-10 mb-3 text-2xl font-semibold">
-                Change theme
-              </h2>
-              <DarkModeToggle />
-            </div>
-          </div>
-
-          {/* Add Log */}
-          <div className="my-12 max-w-[700px] rounded-md border-2 border-dashed px-5 py-6">
-            <h2 className="text-2xl font-semibold">Add Log</h2>
-
-            <div className="mt-4 space-y-4">
-              <div className="flex flex-row gap-10">
-                <div>
-                  <Label>Project</Label>
-                  <Select
-                    value={tempLog.subjectId}
-                    onValueChange={(val) => {
-                      setTempLog({ ...tempLog, subjectId: val });
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select project" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {user.user.subjects.map((subject) => (
-                        <SelectItem key={subject.id} value={subject.id}>
-                          {subject.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label>Duration</Label>
-                  <Select
-                    value={`${tempLog.duration} minutes`}
-                    onValueChange={(val) => {
-                      const myMins = parseInt(val.split(" ")[0] ?? ""); // returns NaN anyway
-                      if (isNaN(myMins)) {
-                        return;
-                      }
-
-                      setTempLog({
-                        ...tempLog,
-                        duration: myMins,
-                        startedAt: new Date(Date.now() - myMins * 60_000),
-                      });
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select duration" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Array.from({ length: 12 }, (_, i) => {
-                        const val = (i + 1) * 5;
-                        return (
-                          <SelectItem key={val} value={`${val} minutes`}>
-                            {val} minutes
-                          </SelectItem>
-                        );
-                      })}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div>
-                <Label>Description</Label>
-                <Input
-                  className="text-lg"
-                  defaultValue={tempLog.description}
-                  onBlur={(e) => {
-                    setTempLog({ ...tempLog, description: e.target.value });
-                  }}
-                // TODO: Implement this instead
-                // value={tempLog.description}
-                // onChange={(e) => setTempLog({ ...tempLog, description: e.target.value })}
-                />
-              </div>
-
-              <div>
-                <Label>Time Started</Label>
-                <Input
-                  type="datetime-local"
-                  className="text-lg"
-                  value={toDatetimeLocal(tempLog.startedAt)}
-                  onChange={(e) => {
-                    const temp = structuredClone(tempLog);
-                    temp.startedAt = new Date(e.target.value);
-                    setTempLog(temp);
-                  }}
-                />
-              </div>
-
-              {/* <Button className="mt-4" onClick={addLog}> */}
-              <Button className="mt-4" onClick={() => settings.addLog(tempLog)}>
-                Add
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Logs Column */}
-        <div className="w-full lg:w-1/3">
-          <h2 className="mb-6 text-2xl font-semibold">Logs</h2>
-          <ScrollArea className="h-[850px] pr-2">
-            <div className="flex flex-col gap-6">
-              {logs.logs
-                .sort((a, b) =>
-                  new Date(a.startedAt) > new Date(b.startedAt) ? -1 : 1,
-                )
-                .slice(0, Math.min(logs.logs.length, 5))
-                .map((log) => (
-                  <LogCard
-                    key={log.id}
-                    log={log}
-                    subjects={user.user?.subjects}
-                  />
-                ))}
-            </div>
-          </ScrollArea>
-        </div>
-      </div>
+  return <div>
+    <h2 className="text-3xl font-semibold">Timer Settings</h2>
+    <div>
+      {/* Daily Goal */}
+      <h2 className="mt-10 mb-3 text-2xl font-semibold">
+        Daily goal (hours)
+      </h2>
+      <Input
+        type="number"
+        defaultValue={user.user?.preferences.goal}
+        className="w-full lg:w-96"
+        onBlur={(e) => {
+          const goalNum = parseInt(e.target.value);
+          if (!isNaN(goalNum)) {
+            settings.updateGoal(goalNum);
+          }
+        }}
+      />
     </div>
-  );
+
+    <div>
+      {/* Theme */}
+      <h2 className="mt-10 mb-3 text-2xl font-semibold">
+        Change Theme
+      </h2>
+      <DarkModeToggle />
+    </div>
+
+    <h2 className="mt-10 mb-3 text-2xl font-semibold">Change Projects</h2>
+    <Card className="bg-muted flex w-full flex-col gap-4 p-4 lg:w-[600px]">
+      {user.user?.subjects.map((subject, index) => (
+        <div key={index}>
+          <SubjectItem
+            subject={subject}
+            updateSubject={settings.updateSubject}
+            deleteSubject={settings.deleteSubject}
+          />
+          <Separator className="mt-4" />
+        </div>
+      ))}
+      <Button
+        variant="secondary"
+        className="h-10 w-10"
+        onClick={() =>
+          settings.createSubject(
+            "",
+            "RED",
+            user.user?.subjects.length ?? 0,
+          )
+        }
+      >
+        +
+      </Button>
+    </Card>
+  </div>
+}
+
+function BugsTab() {
+  const user = useUser();
+  const logs = useLogs();
+  const settings = useSettings();
+  const timer = useTimer();
+
+  if (!user.user) {
+    return <p>Loading user...</p>
+  }
+
+  return <div>
+    <h2 className="text-3xl font-semibold">Account Settings</h2>
+    <BugDialogue userId={user.user.id} />
+    <FeatureDialogue userId={user.user.id} vote={user.user.preferences.lastFeatureVote} />
+    <ShowHeatmap />
+  </div>
+}
+
+function NotificationsTab() {
+  return <div><h2 className="text-xl font-semibold">Notification Settings</h2></div>
 }

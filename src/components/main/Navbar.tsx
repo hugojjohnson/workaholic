@@ -17,14 +17,14 @@ export default function Navbar() {
         <Link className={isActive("/")} href="/">
           Timer
         </Link>
-        <Link className={isActive("/settings")} href="/settings">
-          Settings
+        <Link className={isActive("/logs")} href="/logs">
+          Logs
         </Link>
         <Link className={isActive("/reports")} href="/reports">
           Reports
         </Link>
-        <Link className={isActive("/profile")} href="/profile">
-          Profile
+        <Link className={isActive("/settings")} href="/settings">
+          Settings
         </Link>
       </div>
 
@@ -42,7 +42,7 @@ export default function Navbar() {
           href="/settings"
         >
           <Image src="/icons/settings.png" width={8} height={8} className="w-8 invert" alt="settings" />
-          <p className="text-xs">Settings</p>
+          <p className="text-xs">Logs</p>
         </Link>
         <Link
           className={`flex flex-col items-center gap-1 transition-all duration-100 ease-in-out active:scale-75 ${isActive("/reports")}`}
@@ -56,7 +56,7 @@ export default function Navbar() {
           href="/profile"
         >
           <Image src="/icons/profile.png" width={8} height={8} className="w-8 invert" alt="profile" />
-          <p className="text-xs">Profile</p>
+          <p className="text-xs">Settings</p>
         </Link>
       </div>
     </>

@@ -1,0 +1,161 @@
+"use client";
+
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "~/components/ui/dialog";
+import { Button } from "~/components/ui/button";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "~/components/ui/select";
+import { Label } from "~/components/ui/label";
+import { Input } from "~/components/ui/input";
+import { useEffect, useState } from "react";
+import { useUser } from "~/hooks/UserContext";
+import { useSettings } from "~/hooks/useSettings";
+import { useTimer } from "~/hooks/TimerContext";
+
+
+
+export function AddLogDialogue() {
+  const user = useUser();
+  const timer = useTimer();
+  const settings = useSettings();
+
+  const [open, setOpen] = useState(false);
+
+  const [tempLog, setTempLog] = useState({
+    subjectId: "",
+    duration: 0,
+    description: "",
+    startedAt: new Date(),
+  });
+
+  useEffect(() => {
+    const t = timer.timer;
+    if (t?.subjectId && t?.duration) {
+      setTempLog(prev => ({
+        ...prev,
+        subjectId: t.subjectId,
+        duration: t.duration,
+      }));
+    }
+  }, [timer.timer, timer.timer?.subjectId, timer.timer?.duration]);
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline">Add Log</Button>
+      </DialogTrigger>
+
+      <DialogContent className="sm:max-w-[600px]">
+        <DialogHeader>
+          <DialogTitle>Add Log Entry</DialogTitle>
+          <DialogDescription>
+            Fill in the details below to add a new time log.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4 mt-2">
+          <div className="flex flex-row gap-10">
+            <div className="flex-1">
+              <Label>Project</Label>
+              <Select
+                value={tempLog.subjectId}
+                onValueChange={(val) => {
+                  setTempLog({ ...tempLog, subjectId: val });
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select project" />
+                </SelectTrigger>
+                <SelectContent>
+                  {user.user?.subjects.map((subject: any) => (
+                    <SelectItem key={subject.id} value={subject.id}>
+                      {subject.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex-1">
+              <Label>Duration</Label>
+              <Select
+                value={`${tempLog.duration} minutes`}
+                onValueChange={(val) => {
+                  const myMins = parseInt(val.split(" ")[0] ?? "");
+                  if (isNaN(myMins)) return;
+
+                  setTempLog({
+                    ...tempLog,
+                    duration: myMins,
+                    startedAt: new Date(Date.now() - myMins * 60_000),
+                  });
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select duration" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 12 }, (_, i) => {
+                    const val = (i + 1) * 5;
+                    return (
+                      <SelectItem key={val} value={`${val} minutes`}>
+                        {val} minutes
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div>
+            <Label>Description</Label>
+            <Input
+              className="text-lg"
+              defaultValue={tempLog.description}
+              onBlur={(e) => {
+                setTempLog({ ...tempLog, description: e.target.value });
+              }}
+            // Recommended: make this a controlled input instead
+            // value={tempLog.description}
+            // onChange={(e) => setTempLog({ ...tempLog, description: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <Label>Time Started</Label>
+            <Input
+              type="datetime-local"
+              className="text-lg"
+              value={toDatetimeLocal(tempLog.startedAt)}
+              onChange={(e) => {
+                const temp = structuredClone(tempLog);
+                temp.startedAt = new Date(e.target.value);
+                setTempLog(temp);
+              }}
+            />
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button onClick={() => {
+            settings.addLog(tempLog);
+            setOpen(false);
+          }}>Add</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// Utility
+function toDatetimeLocal(date: Date): string {
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
