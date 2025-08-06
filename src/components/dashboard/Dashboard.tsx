@@ -10,11 +10,11 @@ import {
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { useLogs } from "~/hooks/LogsContext";
-import { useTimer } from "~/hooks/TimerContext";
 import { useState } from "react";
 import { useUser } from "~/hooks/UserContext";
 import LoadingPage from "../welcome/LoadingPage";
 import Heatmap from "../reports/Heatmap";
+import { useTimer } from "~/hooks/TimerContext";
 
 export default function Dashboard() {
   const logs = useLogs();

@@ -1,6 +1,10 @@
 import z from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
+export function sleepServer(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export const timerRouter = createTRPCRouter({
   // Upsert preferences for current user
   get: protectedProcedure
