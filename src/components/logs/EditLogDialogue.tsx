@@ -2,7 +2,6 @@
 
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -94,7 +93,6 @@ export function EditLogDialogue({ log, onClose }: { log: Log | null, onClose: ()
                   setTempLog({
                     ...tempLog,
                     duration: myMins,
-                    startedAt: new Date(Date.now() - myMins * 60_000),
                   });
                 }}
               >
@@ -146,9 +144,15 @@ export function EditLogDialogue({ log, onClose }: { log: Log | null, onClose: ()
 
         <DialogFooter>
           <Button onClick={() => {
-            logs.addLog(tempLog);
+            logs.editLog({
+              ...log,
+              subjectId: tempLog.subjectId,
+              duration: tempLog.duration,
+              description: tempLog.description ?? "",
+              startedAt: tempLog.startedAt,
+            });
             onClose()
-          }}>Add</Button>
+          }}>Edit</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

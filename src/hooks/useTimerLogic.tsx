@@ -88,8 +88,15 @@ export function useTimerLogic(): TimerContextT | undefined {
 
       utils.timer.get.setData({ userId }, (t) => {
         if (!t || t.id !== newData.timerId) return t;
-        return { ...t, ...newData };
+
+        return {
+          ...t,
+          ...(newData.description !== undefined && { description: newData.description }),
+          ...(newData.subjectId !== undefined && { subjectId: newData.subjectId }),
+          ...(newData.duration !== undefined && { duration: newData.duration }),
+        };
       });
+
 
       return { previousTimers: prev };
     },
@@ -122,8 +129,8 @@ export function useTimerLogic(): TimerContextT | undefined {
         pausedAt = null;
         deadlineAt = new Date(
           Date.now() +
-            timer.duration *
-              (env.NEXT_PUBLIC_ENV === "development" ? SECOND : MINUTE),
+          timer.duration *
+          (env.NEXT_PUBLIC_ENV === "development" ? SECOND : MINUTE),
         );
         break;
       case TimerStatus.Paused:

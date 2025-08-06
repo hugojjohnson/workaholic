@@ -41,9 +41,10 @@ export function AddLogDialogue() {
         ...prev,
         subjectId: t.subjectId,
         duration: t.duration,
+        startedAt: new Date(new Date().getTime() - t.duration * 60_000)
       }));
     }
-  }, [timer.timer, timer.timer?.subjectId, timer.timer?.duration]);
+  }, [timer.timer, timer.timer?.subjectId, timer.timer?.duration, open]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

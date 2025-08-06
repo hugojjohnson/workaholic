@@ -220,7 +220,7 @@ function BugsTab() {
   }
 
   return <div>
-    <h2 className="text-3xl font-semibold mb-5">Account Settings</h2>
+    <h2 className="text-3xl font-semibold mb-5">Bugs and Features</h2>
     <BugDialogue userId={user.user.id} />
     <FeatureDialogue userId={user.user.id} vote={user.user.preferences.lastFeatureVote} />
   </div>
