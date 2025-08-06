@@ -47,7 +47,7 @@ interface LogsContextT {
   test: string;
   addLog: ({ subjectId, duration, description, startedAt }: AddLogT) => void;
   editLog: (log: Log) => void;
-  deleteLog: (id: string) => Promise<void>;
+  deleteLog: (id: string) => void;
   logs: Log[];
   minutesToday: number;
   minutesToDate: number;
@@ -127,15 +127,44 @@ export const LogsProvider = ({ children }: { children: React.ReactNode }) => {
     },
   });
 
+  const deleteLog = api.logs.delete.useMutation({
+    onMutate: async ({ userId, logId }) => {
+      if (!userId) throw new Error("userId is undefined");
 
-  const deleteLog = async (id: string) => {
-    try {
-      await deleteLogMutation.mutateAsync({ logId: id, userId });
-      await utils.logs.getAll.invalidate();
-    } catch (err) {
-      console.error("deleteLog failed", err);
+      await utils.logs.getAll.cancel(); // cancel ongoing fetches
+
+      // Snapshot previous logs
+      const previousLogs = utils.logs.getAll.getData({ userId });
+
+      // Optimistically remove the log from cache
+      utils.logs.getAll.setData({ userId }, (oldLogs) => {
+        if (!oldLogs) return oldLogs;
+        return oldLogs.filter((log) => log.id !== logId);
+      });
+
+      return { previousLogs };
+    },
+    onError: (_err, _variables, context) => {
+      // Rollback if mutation fails
+      if (context?.previousLogs && userId) {
+        utils.logs.getAll.setData({ userId }, context.previousLogs);
+      }
+    },
+    onSettled: async () => {
+      await utils.logs.getAll.invalidate({ userId });
+    },
+  });
+
+  function onDeleteLog(logId: string) {
+    if (!userId) {
+      throw new Error("userId is undefined");
     }
-  };
+    deleteLog.mutate({
+      userId,
+      logId
+    })
+
+  }
 
   function onAddLog(newLog: AddLogT) {
     if (!userId) {
@@ -167,7 +196,7 @@ export const LogsProvider = ({ children }: { children: React.ReactNode }) => {
         test: "test", // you can remove or replace this with real stuff
         addLog: onAddLog,
         editLog: onEditLog,
-        deleteLog,
+        deleteLog: onDeleteLog,
         logs: logsQuery.data ?? [],
         minutesToday: sumMinutes(filterToday(logsQuery.data ?? [])),
         minutesToDate: sumMinutes(logsQuery.data ?? []),

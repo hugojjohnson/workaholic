@@ -53,9 +53,9 @@ export function EditLogDialogue({ log, onClose }: { log: Log | null, onClose: ()
     <Dialog open={!!log} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Add Log Entry</DialogTitle>
+          <DialogTitle>Edit Log Entry</DialogTitle>
           <DialogDescription>
-            Fill in the details below to add a new time log.
+            Change in the details below to edit.
           </DialogDescription>
         </DialogHeader>
 
@@ -143,6 +143,7 @@ export function EditLogDialogue({ log, onClose }: { log: Log | null, onClose: ()
         </div>
 
         <DialogFooter>
+          <Button variant="destructive" className="mr-auto">Delete</Button>
           <Button onClick={() => {
             logs.editLog({
               ...log,
@@ -152,7 +153,7 @@ export function EditLogDialogue({ log, onClose }: { log: Log | null, onClose: ()
               startedAt: tempLog.startedAt,
             });
             onClose()
-          }}>Edit</Button>
+          }}>Save</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

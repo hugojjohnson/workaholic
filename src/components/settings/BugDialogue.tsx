@@ -41,7 +41,7 @@ export default function BugDialogue({ userId }: { userId: string }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="hover:cursor-pointer h-10 mr-3">Report a bug</Button>
+        <Button variant="outline" className="h-10 mr-3">Report a bug</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         {finished

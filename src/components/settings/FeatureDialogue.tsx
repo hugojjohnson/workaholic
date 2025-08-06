@@ -71,7 +71,7 @@ export default function FeatureDialogue({ userId, vote }: { userId: string, vote
             return () => clearTimeout(timeout);
         }}>
             <DialogTrigger asChild>
-                <Button variant="outline" className="hover:cursor-pointer h-10 mr-8">Request a feature</Button>
+                <Button variant="outline" className="h-10 mr-8">Request a feature</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
                 {finished
