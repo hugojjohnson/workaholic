@@ -46,6 +46,7 @@ function getRandomFact(totalMinutes: number) {
 interface LogsContextT {
   test: string;
   addLog: ({ subjectId, duration, description, startedAt }: AddLogT) => void;
+  editLog: (log: Log) => void;
   deleteLog: (id: string) => Promise<void>;
   logs: Log[];
   minutesToday: number;
@@ -97,6 +98,36 @@ export const LogsProvider = ({ children }: { children: React.ReactNode }) => {
     },
   });
 
+  const editLog = api.logs.edit.useMutation({
+    onMutate: async (updatedLog) => {
+      const userId = updatedLog.userId;
+      await utils.user.get.cancel();
+      const previousUser = utils.user.get.getData();
+      utils.logs.getAll.setData({ userId }, (oldlogs) => {
+        if (!oldlogs) return oldlogs;
+        return oldlogs.map((log) =>
+          log.id === updatedLog.logId
+            ? {
+              ...log,
+              ...updatedLog,
+            }
+            : log,
+        );
+      });
+      return { previousUser };
+    },
+    onError: (_err, _updatedLog, context) => {
+      const userId = _updatedLog.userId;
+      if (context?.previousUser && userId) {
+        utils.user.get.setData({ userId }, context.previousUser);
+      }
+    },
+    onSettled: async () => {
+      await utils.user.get.invalidate();
+    },
+  });
+
+
   const deleteLog = async (id: string) => {
     try {
       await deleteLogMutation.mutateAsync({ logId: id, userId });
@@ -117,12 +148,25 @@ export const LogsProvider = ({ children }: { children: React.ReactNode }) => {
     });
   }
 
+  function onEditLog(log: Log) {
+    if (!userId) {
+      throw new Error("userId is undefined");
+    }
+    editLog.mutate({
+      ...log,
+      logId: log.id,
+      userId,
+      description: log.description ? log.description : undefined
+    });
+  }
+
   // Provide the context value with your query data plus your mutations
   return (
     <LogsContext.Provider
       value={{
         test: "test", // you can remove or replace this with real stuff
         addLog: onAddLog,
+        editLog: onEditLog,
         deleteLog,
         logs: logsQuery.data ?? [],
         minutesToday: sumMinutes(filterToday(logsQuery.data ?? [])),

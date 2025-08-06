@@ -1,6 +1,6 @@
 "use client";
 
-import { type ColourType } from "@prisma/client";
+import { type ColourType, type Log } from "@prisma/client";
 import { api } from "~/trpc/react";
 import { useUser } from "./UserContext";
 import { useLogs, type AddLogT } from "./LogsContext";
@@ -184,6 +184,6 @@ export const useSettings = (): UseSettingsT => {
     deleteSubject: onDeleteSubject,
     updateSubject: onUpdateSubject,
     updateGoal: onUpdateGoal,
-    addLog: onAddLog,
+    addLog: onAddLog
   };
 };
