@@ -143,7 +143,14 @@ export function EditLogDialogue({ log, onClose }: { log: Log | null, onClose: ()
         </div>
 
         <DialogFooter>
-          <Button variant="destructive" className="mr-auto">Delete</Button>
+          <Button
+          variant="destructive"
+          className="mr-auto"
+          onClick={() => {
+            logs.deleteLog(log.id);
+            onClose();
+          }}
+          >Delete</Button>
           <Button onClick={() => {
             logs.editLog({
               ...log,
