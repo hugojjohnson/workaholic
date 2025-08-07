@@ -12,12 +12,9 @@ import {
   SelectTrigger,
 } from "~/components/ui/select";
 import { Separator } from "~/components/ui/separator";
-import { useLogs, type AddLogT } from "~/hooks/LogsContext";
-import { useTimer } from "~/hooks/TimerContext";
 import { useUser } from "~/hooks/UserContext";
 import { useSettings } from "~/hooks/useSettings";
 import DarkModeToggle from "~/components/settings/DarkModeToggle";
-import LoadingPage from "~/components/welcome/LoadingPage";
 import BugDialogue from "~/components/settings/BugDialogue";
 import FeatureDialogue from "~/components/settings/FeatureDialogue";
 import ShowHeatmap from "~/components/settings/ShowHeatmap";
@@ -35,21 +32,6 @@ const colourOptions: Record<string, { hex: string }> = {
   PINK: { hex: "#EC4899" },
   ORANGE: { hex: "#F97316" },
 };
-function toDatetimeLocal(date: Date): string {
-  const pad = (n: number) => n.toString().padStart(2, "0");
-
-  return (
-    date.getFullYear() +
-    "-" +
-    pad(date.getMonth() + 1) +
-    "-" +
-    pad(date.getDate()) +
-    "T" +
-    pad(date.getHours()) +
-    ":" +
-    pad(date.getMinutes())
-  );
-}
 
 export default function Settings() {
   const tabs = [
@@ -93,9 +75,7 @@ export default function Settings() {
 // 👇 Dummy tab components
 function TimerTab() {
   const user = useUser();
-  const logs = useLogs();
   const settings = useSettings();
-  const timer = useTimer();
 
   const SubjectItem = React.memo(function SubjectItem({
     subject,

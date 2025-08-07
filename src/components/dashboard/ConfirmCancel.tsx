@@ -34,11 +34,11 @@ export function ConfirmCancel() {
   };
 
   React.useEffect(() => {
-    console.log(`${open}, ${!timer.paused}`)
+    console.log(`${open}, ${!timer.paused}`);
     if (open && !timer.paused) {
         timer.pause();
     }
-  }, [open])
+  }, [open, timer]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -55,7 +55,7 @@ export function ConfirmCancel() {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Do you want to log the time you've spent so far?</DialogTitle>
+          <DialogTitle>Do you want to log the time you&apos;ve spent so far?</DialogTitle>
           <DialogDescription>
             You can log your work now or choose not to log it.
           </DialogDescription>

@@ -66,7 +66,6 @@ export const LogsProvider = ({ children }: { children: React.ReactNode }) => {
   const logsQuery = api.logs.getAll.useQuery({ userId });
 
   const utils = api.useUtils(); // for cache invalidation
-  const deleteLogMutation = api.logs.delete.useMutation();
 
   const addLog = api.logs.add.useMutation({
     onMutate: async (newLog) => {
@@ -185,7 +184,7 @@ export const LogsProvider = ({ children }: { children: React.ReactNode }) => {
       ...log,
       logId: log.id,
       userId,
-      description: log.description ? log.description : undefined
+      description: log.description ?? undefined
     });
   }
 

@@ -14,17 +14,13 @@ import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import { useEffect, useState } from "react";
 import { useUser } from "~/hooks/UserContext";
-import { useSettings } from "~/hooks/useSettings";
-import { useTimer } from "~/hooks/TimerContext";
-import type { Log } from "@prisma/client";
+import type { Log, Subject } from "@prisma/client";
 import { useLogs } from "~/hooks/LogsContext";
 
 
 
 export function EditLogDialogue({ log, onClose }: { log: Log | null, onClose: () => void }) {
   const user = useUser();
-  const timer = useTimer();
-  const settings = useSettings();
   const logs = useLogs();
 
   const [tempLog, setTempLog] = useState({
@@ -73,7 +69,7 @@ export function EditLogDialogue({ log, onClose }: { log: Log | null, onClose: ()
                   <SelectValue placeholder="Select project" />
                 </SelectTrigger>
                 <SelectContent>
-                  {user.user?.subjects.map((subject: any) => (
+                  {user.user?.subjects.map((subject: Subject) => (
                     <SelectItem key={subject.id} value={subject.id}>
                       {subject.name}
                     </SelectItem>

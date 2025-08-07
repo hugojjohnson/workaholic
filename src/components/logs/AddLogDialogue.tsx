@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { useUser } from "~/hooks/UserContext";
 import { useSettings } from "~/hooks/useSettings";
 import { useTimer } from "~/hooks/TimerContext";
+import type { Subject } from "@prisma/client";
 
 
 
@@ -74,7 +75,7 @@ export function AddLogDialogue() {
                   <SelectValue placeholder="Select project" />
                 </SelectTrigger>
                 <SelectContent>
-                  {user.user?.subjects.map((subject: any) => (
+                  {user.user?.subjects.map((subject: Subject) => (
                     <SelectItem key={subject.id} value={subject.id}>
                       {subject.name}
                     </SelectItem>

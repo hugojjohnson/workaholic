@@ -1,63 +1,20 @@
 "use client";
 
 import type { Log, Subject } from "@prisma/client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
 import { ScrollArea } from "~/components/ui/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
-import { Separator } from "~/components/ui/separator";
-import { useLogs, type AddLogT } from "~/hooks/LogsContext";
-import { useTimer } from "~/hooks/TimerContext";
+import { useLogs } from "~/hooks/LogsContext";
 import { useUser } from "~/hooks/UserContext";
-import { useSettings } from "~/hooks/useSettings";
-import DarkModeToggle from "~/components/settings/DarkModeToggle";
 import LoadingPage from "~/components/welcome/LoadingPage";
-import BugDialogue from "~/components/settings/BugDialogue";
-import FeatureDialogue from "~/components/settings/FeatureDialogue";
-import ShowHeatmap from "~/components/settings/ShowHeatmap";
 import { AddLogDialogue } from "~/components/logs/AddLogDialogue";
 import { EditLogDialogue } from "~/components/logs/EditLogDialogue";
 
 // TODO: Update these with the actual colours
-const colourOptions: Record<string, { hex: string }> = {
-  RED: { hex: "#EF4444" },
-  BLUE: { hex: "#3B82F6" },
-  GREEN: { hex: "#10B981" },
-  YELLOW: { hex: "#FACC15" },
-  PURPLE: { hex: "#8B5CF6" },
-  PINK: { hex: "#EC4899" },
-  ORANGE: { hex: "#F97316" },
-};
-function toDatetimeLocal(date: Date): string {
-  const pad = (n: number) => n.toString().padStart(2, "0");
-
-  return (
-    date.getFullYear() +
-    "-" +
-    pad(date.getMonth() + 1) +
-    "-" +
-    pad(date.getDate()) +
-    "T" +
-    pad(date.getHours()) +
-    ":" +
-    pad(date.getMinutes())
-  );
-}
-
 export default function LogsTab() {
   const user = useUser();
   const logs = useLogs();
-  const settings = useSettings();
-  const timer = useTimer();
   const [editingLog, setEditingLog] = useState<Log | null>(null);
 
 

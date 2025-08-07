@@ -1,6 +1,6 @@
 "use client";
 
-import { type ColourType, type Log } from "@prisma/client";
+import { type ColourType } from "@prisma/client";
 import { api } from "~/trpc/react";
 import { useUser } from "./UserContext";
 import { useLogs, type AddLogT } from "./LogsContext";

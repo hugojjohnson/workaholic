@@ -51,9 +51,7 @@ export function useTimerLogic(): TimerContextT | undefined {
   const utils = api.useUtils();
   const intervalRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
-  if (status !== "authenticated" || !session?.user.id) return undefined;
-
-  const userId = session.user.id;
+  const userId = session!.user.id; // TODO: Sus
   const { data: timer } = api.timer.get.useQuery({ userId });
 
   const updateTimer = api.timer.update.useMutation({
@@ -165,7 +163,7 @@ export function useTimerLogic(): TimerContextT | undefined {
     });
     updateInfo.mutate({ timerId: timer.id, description: "" })
     setTimeLeft(minutesToMs(timer.duration));
-  }, [timer, updateTimer]);
+  }, [timer, updateTimer, updateInfo]);
 
   const onUpdateTimerInfo = useCallback(
     ({
@@ -259,10 +257,12 @@ export function useTimerLogic(): TimerContextT | undefined {
         subjectId: timer.subjectId,
         duration: timer.duration,
         description: timer.description ?? "",
-        startedAt: timer.startedAt!,
+        startedAt: timer.startedAt,
       });
     }
   }, [timeLeft, timer, playSound, stop, logs]);
+
+  if (status !== "authenticated" || !session?.user.id) return undefined;
 
   return {
     timer,

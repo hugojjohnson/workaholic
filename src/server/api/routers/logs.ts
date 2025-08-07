@@ -94,7 +94,7 @@ export const logsRouter = createTRPCRouter({
       }
 
       // Only include fields that are defined
-      const data: any = {};
+      const data: { subjectId?: string, startedAt?: Date, endedAt?: Date, duration?: number, description?: string } = {};
       if (input.subjectId) data.subjectId = input.subjectId;
       if (input.startedAt) data.startedAt = input.startedAt;
       if (input.endedAt) data.endedAt = input.endedAt;
