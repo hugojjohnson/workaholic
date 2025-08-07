@@ -130,7 +130,7 @@ export function useTimerLogic(): TimerContextT | undefined {
         deadlineAt = new Date(
           Date.now() +
           timer.duration *
-          (env.NEXT_PUBLIC_ENV === "development" ? SECOND : MINUTE),
+          (env.NEXT_PUBLIC_ENV === "development" ? MINUTE : MINUTE),
         );
         break;
       case TimerStatus.Paused:
@@ -190,6 +190,23 @@ export function useTimerLogic(): TimerContextT | undefined {
     },
     [timer, updateInfo],
   );
+
+  const addHalfLog = (timeLeft: number) => {
+    if (!timer) {
+      throw new Error("Timer is undefined");
+    }
+    // console.log(`${Math.round(timeLeft / 5) * 5} minutes since timer started.`);
+    const timeToAdd = Math.round(timeLeft); // Round to the nearest 1 or 5 minutes.
+    if (timeToAdd > 0) {
+      logs.addLog({
+        subjectId: timer.subjectId,
+        duration: timeToAdd,
+        description: timer.description ?? "",
+        startedAt: timer.startedAt!,
+      });
+    }
+    stop();
+  }
 
   useEffect(() => {
     if (!timer) return;
@@ -254,7 +271,8 @@ export function useTimerLogic(): TimerContextT | undefined {
     secondsLeft: Math.floor((timeLeft / SECOND) % 60),
     pause,
     stop,
-    paused: !timer?.pausedAt && !!timer?.startedAt,
+    addHalfLog,
+    paused: !!timer?.pausedAt || !timer?.startedAt,
     disabled: timer?.startedAt === null,
     status: timer ? getTimerStatus(timer) : TimerStatus.Error,
     onUpdateTimerInfo,

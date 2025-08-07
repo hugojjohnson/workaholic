@@ -10,6 +10,7 @@ export interface TimerContextT {
   minutesLeft: number;
   pause: () => void;
   stop: () => void;
+  addHalfLog: (timeLeft: number) => void;
   paused: boolean;
   disabled: boolean;
   status: string;

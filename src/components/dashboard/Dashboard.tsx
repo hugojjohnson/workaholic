@@ -15,6 +15,7 @@ import { useUser } from "~/hooks/UserContext";
 import LoadingPage from "../welcome/LoadingPage";
 import Heatmap from "../reports/Heatmap";
 import { useTimer } from "~/hooks/TimerContext";
+import { ConfirmCancel } from "./ConfirmCancel";
 
 export default function Dashboard() {
   const logs = useLogs();
@@ -95,15 +96,18 @@ export default function Dashboard() {
             : `${timer.minutesLeft}:${timer.secondsLeft.toString().padStart(2, "0")}`}
         </p>
 
-        <Button
-          variant="outline"
-          size="sm"
-          className="absolute right-10 mt-9 h-10 w-10 rounded-full"
-          onClick={() => timer.stop()}
-          disabled={timer.disabled}
-        >
-          X
-        </Button>
+        {
+          timer.status === "Unset"
+            ? <Button
+              variant="outline"
+              size="sm"
+              className="absolute right-10 mt-9 h-10 w-10 rounded-full"
+              disabled
+            >
+              X
+            </Button>
+            : <ConfirmCancel />
+        }
       </div>
 
       {/* Description Input */}
@@ -123,15 +127,15 @@ export default function Dashboard() {
         className="w-28 rounded-md text-lg"
         variant={
           timer.paused
-            ? "secondary"
-            : "default"
+            ? "default"
+            : "secondary"
         }
         onClick={() => timer.pause()}
       // disabled={timer.paused && timer.timer.id !== undefined}
       >
         {timer.paused
-          ? "Pause"
-          : "Start"}
+          ? "Start"
+          : "Pause"}
       </Button>
 
       {/* Hours Studied */}
