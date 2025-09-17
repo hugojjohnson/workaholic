@@ -108,8 +108,7 @@ export default function LogsTab() {
           </Button>
         </div>
       </div>
-      <ScrollArea className="h-[850px] pr-2 mt-10">
-        <div className="flex flex-row flex-wrap gap-6">
+        <div className="flex flex-row flex-wrap gap-6 pr-2 mt-10">
           {logs.logs
             .sort((a, b) =>
               new Date(a.startedAt) > new Date(b.startedAt) ? -1 : 1,
@@ -123,7 +122,6 @@ export default function LogsTab() {
               />
             ))}
         </div>
-      </ScrollArea>
     </div>
   );
 }

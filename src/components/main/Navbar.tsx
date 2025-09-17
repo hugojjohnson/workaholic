@@ -38,7 +38,7 @@ export default function Navbar() {
           <p className="text-xs">Timer</p>
         </Link>
         <Link
-          className={`flex flex-col items-center gap-1 transition-all duration-100 ease-in-out active:scale-75 ${isActive("/settings")}`}
+          className={`flex flex-col items-center gap-1 transition-all duration-100 ease-in-out active:scale-75 ${isActive("/logs")}`}
           href="/logs"
         >
           <Image src="/icons/logs.png" width={30} height={30} className="dark:invert" alt="logs" />
@@ -52,7 +52,7 @@ export default function Navbar() {
           <p className="text-xs">Reports</p>
         </Link>
         <Link
-          className={`flex flex-col items-center gap-1 transition-all duration-100 ease-in-out active:scale-75 ${isActive("/profile")}`}
+          className={`flex flex-col items-center gap-1 transition-all duration-100 ease-in-out active:scale-75 ${isActive("/settings")}`}
           href="/settings"
         >
           <Image src="/icons/settings.png" width={30} height={30} className="dark:invert" alt="settings" />
