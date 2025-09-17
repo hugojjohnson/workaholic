@@ -7,7 +7,11 @@ const config: Config = {
     // './node_modules/@t3-org/ui/**/*.{js,ts,jsx,tsx}', // if you use shadcn ui from the T3 org package
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        background: "var(--background)",
+      },
+    },
   },
   plugins: [],
 };

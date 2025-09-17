@@ -29,33 +29,33 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Nav */}
-      <div className="fixed bottom-0 flex h-20 w-full items-center justify-around py-3 text-xl md:hidden dark:text-gray-300">
+      <div className="fixed z-10 bottom-0 flex h-20 w-full items-center justify-around py-3 text-xl md:hidden dark:text-gray-300 bg-background border-t-[1px] border-[rgb(50,50,50)]">
         <Link
           className={`flex flex-col items-center gap-1 transition-all duration-100 ease-in-out active:scale-75 ${isActive("/")}`}
           href="/"
         >
-          <Image src="/icons/timer.png" width={8} height={8} className="w-8 invert" alt="timer" />
+          <Image src="/icons/timer.png" width={30} height={30} className="dark:invert" alt="timer" />
           <p className="text-xs">Timer</p>
         </Link>
         <Link
           className={`flex flex-col items-center gap-1 transition-all duration-100 ease-in-out active:scale-75 ${isActive("/settings")}`}
-          href="/settings"
+          href="/logs"
         >
-          <Image src="/icons/settings.png" width={8} height={8} className="w-8 invert" alt="settings" />
+          <Image src="/icons/logs.png" width={30} height={30} className="dark:invert" alt="logs" />
           <p className="text-xs">Logs</p>
         </Link>
         <Link
           className={`flex flex-col items-center gap-1 transition-all duration-100 ease-in-out active:scale-75 ${isActive("/reports")}`}
           href="/reports"
         >
-          <Image src="/icons/reports.png" width={8} height={8} className="w-8 invert" alt="reports" />
+          <Image src="/icons/reports.png" width={30} height={30} className="dark:invert" alt="reports" />
           <p className="text-xs">Reports</p>
         </Link>
         <Link
           className={`flex flex-col items-center gap-1 transition-all duration-100 ease-in-out active:scale-75 ${isActive("/profile")}`}
-          href="/profile"
+          href="/settings"
         >
-          <Image src="/icons/profile.png" width={8} height={8} className="w-8 invert" alt="profile" />
+          <Image src="/icons/settings.png" width={30} height={30} className="dark:invert" alt="settings" />
           <p className="text-xs">Settings</p>
         </Link>
       </div>

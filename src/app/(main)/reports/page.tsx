@@ -211,7 +211,7 @@ export default function Reports() {
       <div className="flex flex-row justify-around text-center">
         {stats.map((idk) => statsHTML(idk))}
       </div>
-      <div className="m-0 mx-auto mt-32 max-w-screen-lg md:m-10 md:mx-auto">
+      <div className="m-0 mx-auto max-w-screen-lg md:m-10 md:mx-auto">
         <div className="flex flex-row justify-end gap-2">
           <Button variant="outline" onClick={() => changeWeek(false)}>
             &lt;
@@ -220,7 +220,7 @@ export default function Reports() {
             &gt;
           </Button>
         </div>
-        <div className="w-[80%]">
+        <div className="md:w-[80%] mx-auto">
           <Bar options={options} data={data} />
         </div>
       </div>

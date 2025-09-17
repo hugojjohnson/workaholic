@@ -21,6 +21,8 @@ import ShowHeatmap from "~/components/settings/ShowHeatmap";
 import { DeleteAccountDialogue } from "~/components/settings/DeleteAccountDialogue";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "~/components/ui/sheet";
+import { Menu, ChevronLeft } from "lucide-react";
 
 // TODO: Update these with the actual colours
 const colourOptions: Record<string, { hex: string }> = {
@@ -44,10 +46,42 @@ export default function Settings() {
 
   return (
     <div className="h-full flex flex-col">
-      <h1 className="mb-6 text-4xl lg:px-32 px-6 pt-10">Settings</h1>
+
+      <div className="mb-6 text-4xl lg:px-32 px-6 pt-10 flex flex-row gap-5 justify-between">
+        <h1 className="">Settings</h1>
+
+        {/* Hamburger menu: mobile */}
+        <div className="md:hidden">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Menu size={25} />
+
+            </SheetTrigger>
+            <SheetContent side="left" className="w-64 space-y-2 p-4">
+              {/* Required for accessibility */}
+              <div className="hidden">
+                <SheetTitle>Navigation Menu</SheetTitle>
+              </div>
+
+              {tabs.map((tab) => (
+                <Button
+                  key={tab.id}
+                  variant={activeTab === tab.id ? "default" : "ghost"}
+                  className="w-full justify-start"
+                  onClick={() => setActiveTab(tab.id)}
+                >
+                  {tab.label}
+                </Button>
+              ))}
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
+
+
       <div className="flex flex-1 border-t">
         {/* Sidebar */}
-        <div className="w-64 border-r p-4 space-y-2">
+        <div className="w-64 border-r p-4 space-y-2 hidden md:block">
           {tabs.map((tab) => (
             <Button
               key={tab.id}
@@ -61,7 +95,7 @@ export default function Settings() {
         </div>
 
         {/* Main content */}
-        <div className="flex-1 p-6">
+        <div className="flex-1 p-6 mb-32 md:mb-0">
           {activeTab === "timer" && <TimerTab />}
           {activeTab === "bugs" && <BugsTab />}
           {activeTab === "profile" && <ProfileTab />}

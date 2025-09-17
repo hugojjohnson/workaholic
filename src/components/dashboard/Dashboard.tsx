@@ -37,7 +37,7 @@ export default function Dashboard() {
 
 
   return (
-    <div className="fixed top-20 mx-auto flex w-screen max-w-screen-sm flex-col items-center justify-center gap-8 pt-28 md:static md:top-0">
+    <div className="fixed top-20 md:top-0 mx-auto flex w-screen max-w-screen-sm flex-col items-center justify-center gap-8 md:pt-28 md:static">
       {/* Project & Duration Selectors */}
       <div className="mx-5 flex flex-row gap-4 lg:mx-0">
         <Select
@@ -89,8 +89,8 @@ export default function Dashboard() {
       </div>
 
       {/* Timer Display & Stop Button */}
-      <div className="relative flex flex-row gap-3">
-        <p className="w-[500px] text-center text-8xl dark:text-white">
+      <div className="relative flex flex-row gap-3 items-center">
+        <p className="w-[400px] md:w-[500px] text-center text-7xl md:text-8xl dark:text-white">
           {timer.isLoading
             ? "--:--"
             : `${timer.minutesLeft}:${timer.secondsLeft.toString().padStart(2, "0")}`}
@@ -101,7 +101,7 @@ export default function Dashboard() {
             ? <Button
               variant="outline"
               size="sm"
-              className="absolute right-10 mt-9 h-10 w-10 rounded-full"
+              className="absolute right-10 h-10 w-10 rounded-full"
               disabled
             >
               X
