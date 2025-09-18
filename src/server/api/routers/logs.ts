@@ -1,5 +1,6 @@
 import z from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { TRPCError } from "@trpc/server";
 
 export const logsRouter = createTRPCRouter({
   getAll: protectedProcedure
@@ -44,7 +45,7 @@ export const logsRouter = createTRPCRouter({
       const existingLog = await ctx.db.log.findFirst({
         where: { userId: input.userId, startedAt: input.startedAt }
       })
-      if (existingLog !== null) {
+      if (existingLog === null) {
         await ctx.db.log.create({
           data: {
             subjectId: input.subjectId,
@@ -56,8 +57,9 @@ export const logsRouter = createTRPCRouter({
             userId: input.userId,
           },
         });
+      } else {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "A log for this time has already been submitted." })
       }
-      // TODO: Return on error on failure
     }),
 
   edit: protectedProcedure
