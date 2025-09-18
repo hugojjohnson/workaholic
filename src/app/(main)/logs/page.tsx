@@ -62,12 +62,11 @@ export default function LogsTab() {
         <Card className="bg-muted w-[300px] md:w-[400px] gap-0 border-2 border-dashed p-4">
           <h1 className="text-xl font-semibold">{subjectName ?? "Unknown"}</h1>
           <p className="text-muted-foreground">
-            {new Date(log.startedAt).toLocaleString().slice(0, 10)} |{" "}
-            {new Date(log.startedAt).toLocaleString().slice(-8, -3)} -{" "}
-            {new Date(log.startedAt.getTime() + log.duration * 60_000)
-              .toLocaleString()
-              .slice(-8, -3)}
+            {new Intl.DateTimeFormat("en-GB").format(new Date(log.startedAt))} |{" "}
+            {new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(log.startedAt))} -{" "}
+            {new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(new Date(log.startedAt).getTime() + log.duration * 60000))}
           </p>
+
           <p className="text-muted-foreground absolute top-2 right-3 italic">
             {log.duration} min
           </p>
@@ -108,20 +107,20 @@ export default function LogsTab() {
           </Button>
         </div>
       </div>
-        <div className="flex flex-row flex-wrap gap-6 pr-2 mt-10">
-          {logs.logs
-            .sort((a, b) =>
-              new Date(a.startedAt) > new Date(b.startedAt) ? -1 : 1,
-            )
-            .slice(LISTSIZE * listView, Math.min(logs.logs.length, LISTSIZE * (listView + 1)))
-            .map((log) => (
-              <LogCard
-                key={log.id}
-                log={log}
-                subjects={user.user?.subjects}
-              />
-            ))}
-        </div>
+      <div className="flex flex-row flex-wrap gap-6 pr-2 mt-10">
+        {logs.logs
+          .sort((a, b) =>
+            new Date(a.startedAt) > new Date(b.startedAt) ? -1 : 1,
+          )
+          .slice(LISTSIZE * listView, Math.min(logs.logs.length, LISTSIZE * (listView + 1)))
+          .map((log) => (
+            <LogCard
+              key={log.id}
+              log={log}
+              subjects={user.user?.subjects}
+            />
+          ))}
+      </div>
     </div>
   );
 }

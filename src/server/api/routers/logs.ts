@@ -41,17 +41,22 @@ export const logsRouter = createTRPCRouter({
         throw new Error("Subject could not be found.");
       }
 
-      await ctx.db.log.create({
-        data: {
-          subjectId: input.subjectId,
-          startedAt: input.startedAt,
-          endedAt: input.endedAt,
-          duration: input.duration,
-          tags: [],
-          description: input.description,
-          userId: input.userId,
-        },
-      });
+      const existingLog = await ctx.db.log.findFirst({
+        where: { userId: input.userId, startedAt: input.startedAt }
+      })
+      if (existingLog !== null) {
+        await ctx.db.log.create({
+          data: {
+            subjectId: input.subjectId,
+            startedAt: input.startedAt,
+            endedAt: input.endedAt,
+            duration: input.duration,
+            tags: [],
+            description: input.description,
+            userId: input.userId,
+          },
+        });
+      }
       // TODO: Return on error on failure
     }),
 
