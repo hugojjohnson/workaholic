@@ -40,6 +40,11 @@ const backgroundColours: Record<ColourType, string> = {
   PINK: "rgba(153, 102, 255, 0.5)",
   PURPLE: "rgba(201, 203, 207, 0.5)",
 };
+const axisLabelFormatter = new Intl.DateTimeFormat("en-GB", {
+  day: "2-digit",
+  month: "2-digit",
+  timeZone: "UTC",
+});
 
 export default function Reports() {
   const { user } = useUser();
@@ -131,9 +136,7 @@ export default function Reports() {
   }
 
   const data = {
-    labels: labels.map((idk) =>
-      idk.toLocaleString().split(",")[0]?.slice(0, -5),
-    ),
+    labels: labels.map((idk) => axisLabelFormatter.format(idk)),
     datasets: my_datasets,
   };
   let totalMinutes = 0;

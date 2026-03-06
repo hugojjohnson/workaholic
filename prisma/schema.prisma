@@ -86,6 +86,7 @@ model Preferences {
   userId        String  @unique
   shareActivity Boolean @default(false)
   goal          Int
+  semester      String
   semesterStart DateTime
   semesterFinish DateTime
   completedIntro DateTime?
@@ -97,6 +98,7 @@ model Subject {
   id        String   @id @default(cuid())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
+  semester  String
   name      String
   colour    String
   order     Int
@@ -105,7 +107,8 @@ model Subject {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([userId, name]) // user can’t have two subjects with same name
+  @@unique([userId, semester, name]) // user can’t have duplicate subject names in the same semester
+  @@index([userId, semester, order])
 }
 
 enum ColourType {
@@ -122,6 +125,7 @@ model Log {
   id          String   @id @default(cuid())
   subject     Subject  @relation(fields: [subjectId], references: [id])
   subjectId   String
+  semester    String
   startedAt   DateTime
   endedAt     DateTime
   tags        String[] // Optional: ["flashcards", "lecture"]
@@ -131,4 +135,5 @@ model Log {
   duration    Int
 
   @@index([subjectId, startedAt])
+  @@index([userId, semester, startedAt])
 }

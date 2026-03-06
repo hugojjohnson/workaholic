@@ -14,9 +14,17 @@ export const settingsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session?.user?.id;
       if (!userId) throw new Error("Unauthorized");
+      const preferences = await ctx.db.preferences.findUnique({
+        where: { userId },
+        select: { semester: true },
+      });
+      if (!preferences) {
+        throw new Error("Preferences could not be found.");
+      }
       await ctx.db.subject.create({
         data: {
           userId,
+          semester: preferences.semester,
           name: input.name,
           colour: input.colour,
           order: input.order ?? 0,

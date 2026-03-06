@@ -23,6 +23,7 @@ import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "~/components/ui/sheet";
 import { Menu, ChevronLeft } from "lucide-react";
+import { api } from "~/trpc/react";
 
 // TODO: Update these with the actual colours
 const colourOptions: Record<string, { hex: string }> = {
@@ -243,6 +244,52 @@ function BugsTab() {
 function ProfileTab() {
   const user = useUser();
   const router = useRouter();
+  const utils = api.useUtils();
+  const todayIso = new Date().toISOString().slice(0, 10);
+  const [semester, setSemester] = useState(
+    user.user?.preferences.semester ?? "",
+  );
+  const [semesterStart, setSemesterStart] = useState(
+    user.user?.preferences.semesterStart.toISOString().slice(0, 10) ?? todayIso,
+  );
+  const [semesterFinish, setSemesterFinish] = useState(
+    user.user?.preferences.semesterFinish.toISOString().slice(0, 10) ?? todayIso,
+  );
+  const [subjectsRaw, setSubjectsRaw] = useState(
+    user.user?.subjects.map((s) => s.name).join(", ") ?? "",
+  );
+
+  const rolloverSemester = api.preferences.rolloverSemester.useMutation({
+    onSuccess: async () => {
+      const userId = user.user?.id;
+      if (!userId) {
+        return;
+      }
+      await Promise.all([
+        utils.user.get.invalidate({ userId }),
+        utils.logs.getAll.invalidate({ userId }),
+        utils.timer.get.invalidate({ userId }),
+      ]);
+    },
+  });
+
+  const handleRollover = () => {
+    const subjects = subjectsRaw
+      .split(",")
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+
+    if (subjects.length === 0) {
+      return;
+    }
+
+    rolloverSemester.mutate({
+      semester: semester.trim(),
+      semesterStart: new Date(semesterStart),
+      semesterFinish: new Date(semesterFinish),
+      subjects,
+    });
+  };
 
   return (
     <div>
@@ -271,6 +318,48 @@ function ProfileTab() {
       >
         Sign out
       </Button>
+
+      <div className="mt-8 w-full max-w-xl">
+        <h3 className="text-xl mb-2">Semester rollover</h3>
+        <p className="text-muted-foreground mb-3 text-sm">
+          Creates a new active semester with a fresh subject list.
+        </p>
+        <div className="space-y-3">
+          <Input
+            placeholder="Semester code (e.g. 2026S1)"
+            value={semester}
+            onChange={(e) => setSemester(e.target.value)}
+          />
+          <Input
+            type="date"
+            value={semesterStart}
+            onChange={(e) => setSemesterStart(e.target.value)}
+          />
+          <Input
+            type="date"
+            value={semesterFinish}
+            onChange={(e) => setSemesterFinish(e.target.value)}
+          />
+          <Input
+            placeholder="Subjects (comma separated)"
+            value={subjectsRaw}
+            onChange={(e) => setSubjectsRaw(e.target.value)}
+          />
+          <Button
+            variant="outline"
+            onClick={handleRollover}
+            disabled={
+              rolloverSemester.isPending ||
+              semester.trim().length === 0 ||
+              semesterStart.length === 0 ||
+              semesterFinish.length === 0 ||
+              subjectsRaw.trim().length === 0
+            }
+          >
+            {rolloverSemester.isPending ? "Rolling over..." : "Roll over semester"}
+          </Button>
+        </div>
+      </div>
 
       <div>
         <h3 className="mt-8 text-2xl">Danger</h3>

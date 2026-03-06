@@ -11,6 +11,14 @@ import LoadingPage from "~/components/welcome/LoadingPage";
 import { AddLogDialogue } from "~/components/logs/AddLogDialogue";
 import { EditLogDialogue } from "~/components/logs/EditLogDialogue";
 
+const dateFormatter = new Intl.DateTimeFormat("en-GB", { timeZone: "UTC" });
+const timeFormatter = new Intl.DateTimeFormat("en-GB", {
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+  timeZone: "UTC",
+});
+
 // TODO: Update these with the actual colours
 export default function LogsTab() {
   const user = useUser();
@@ -62,9 +70,9 @@ export default function LogsTab() {
         <Card className="bg-muted w-[300px] md:w-[400px] gap-0 border-2 border-dashed p-4">
           <h1 className="text-xl font-semibold">{subjectName ?? "Unknown"}</h1>
           <p className="text-muted-foreground">
-            {new Intl.DateTimeFormat("en-GB").format(new Date(log.startedAt))} |{" "}
-            {new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(log.startedAt))} -{" "}
-            {new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(new Date(log.startedAt).getTime() + log.duration * 60000))}
+            {dateFormatter.format(new Date(log.startedAt))} |{" "}
+            {timeFormatter.format(new Date(log.startedAt))} -{" "}
+            {timeFormatter.format(new Date(new Date(log.startedAt).getTime() + log.duration * 60000))}
           </p>
 
           <p className="text-muted-foreground absolute top-2 right-3 italic">

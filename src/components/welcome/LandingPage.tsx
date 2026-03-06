@@ -103,7 +103,7 @@ export default function LandingPage() {
       </Link>
 
       <footer className="text-muted-foreground mt-16 text-center text-sm">
-        &copy; {new Date().getFullYear()} Workaholic
+        &copy; Workaholic
       </footer>
     </main>
   );

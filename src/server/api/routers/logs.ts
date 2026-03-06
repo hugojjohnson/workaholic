@@ -10,8 +10,18 @@ export const logsRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const logs = await ctx.db.log.findMany({
+      if (input.userId !== ctx.session.user.id) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Cannot access logs for another user." });
+      }
+      const preferences = await ctx.db.preferences.findUnique({
         where: { userId: input.userId },
+        select: { semester: true },
+      });
+      if (!preferences) {
+        throw new Error("Preferences could not be found.");
+      }
+      const logs = await ctx.db.log.findMany({
+        where: { userId: input.userId, semester: preferences.semester },
       });
       return logs;
     }),
@@ -29,11 +39,14 @@ export const logsRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      if (input.userId !== ctx.session.user.id) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Cannot add logs for another user." });
+      }
       const user = await ctx.db.user.findFirst({
         where: { id: input.userId },
       });
       const subject = await ctx.db.subject.findFirst({
-        where: { id: input.subjectId },
+        where: { id: input.subjectId, userId: input.userId },
       });
       if (!user) {
         throw new Error("User could not be found.");
@@ -55,6 +68,7 @@ export const logsRouter = createTRPCRouter({
             tags: [],
             description: input.description,
             userId: input.userId,
+            semester: subject.semester,
           },
         });
       } else {
@@ -76,8 +90,11 @@ export const logsRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      if (input.userId !== ctx.session.user.id) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Cannot edit logs for another user." });
+      }
       const log = await ctx.db.log.findFirst({
-        where: { id: input.logId },
+        where: { id: input.logId, userId: input.userId },
       });
       if (!log) {
         throw new Error("Log could not be found.");
@@ -91,18 +108,28 @@ export const logsRouter = createTRPCRouter({
       }
 
       // If subjectId is provided, check if the subject exists
+      let semester: string | undefined;
       if (input.subjectId) {
         const subject = await ctx.db.subject.findFirst({
-          where: { id: input.subjectId },
+          where: { id: input.subjectId, userId: input.userId },
         });
         if (!subject) {
           throw new Error("Subject could not be found.");
         }
+        semester = subject.semester;
       }
 
       // Only include fields that are defined
-      const data: { subjectId?: string, startedAt?: Date, endedAt?: Date, duration?: number, description?: string } = {};
+      const data: {
+        subjectId?: string;
+        semester?: string;
+        startedAt?: Date;
+        endedAt?: Date;
+        duration?: number;
+        description?: string;
+      } = {};
       if (input.subjectId) data.subjectId = input.subjectId;
+      if (semester) data.semester = semester;
       if (input.startedAt) data.startedAt = input.startedAt;
       if (input.endedAt) data.endedAt = input.endedAt;
       if (input.duration) data.duration = input.duration;
@@ -126,6 +153,9 @@ export const logsRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      if (input.userId !== ctx.session.user.id) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Cannot delete logs for another user." });
+      }
       await ctx.db.log.delete({
         where: {
           id: input.logId,

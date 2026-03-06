@@ -6,12 +6,12 @@ import { Tooltip } from "react-tooltip";
 import 'react-calendar-heatmap/dist/styles.css';
 import { formatDateAU } from './Heatmap';
 
-const today = new Date();
+const demoEndDate = new Date("2026-01-01T00:00:00.000Z");
 
 export default function DemoHeatmap() {
   const randomValues = getRange(200).map(index => {
-  const date = shiftDate(today, -index);
-  const count = getRandomInt(1, 3);
+  const date = shiftDate(demoEndDate, -index);
+  const count = getDeterministicInt(index, 1, 3);
   return {
     date,
     count,
@@ -21,8 +21,8 @@ export default function DemoHeatmap() {
   return (
     <div className='md:px-10 mt-20'>
       <CalendarHeatmap
-        startDate={shiftDate(today, -150)}
-        endDate={today}
+        startDate={shiftDate(demoEndDate, -150)}
+        endDate={demoEndDate}
         values={randomValues}
         classForValue={value => {
           if (!value) {
@@ -53,6 +53,6 @@ function getRange(count: number) {
   return Array.from({ length: count }, (_, i) => i);
 }
 
-function getRandomInt(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+function getDeterministicInt(seed: number, min: number, max: number): number {
+  return (seed % (max - min + 1)) + min;
 }

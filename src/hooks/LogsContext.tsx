@@ -18,7 +18,8 @@ const sumMinutes = (arr: Log[]): number => {
 };
 const filterToday = (arr: Log[]) =>
   arr.filter(
-    ({ startedAt }) => startedAt.toDateString() === new Date().toDateString(),
+    ({ startedAt }) =>
+      startedAt.toISOString().slice(0, 10) === new Date().toISOString().slice(0, 10),
   );
 
 const funConversions = [
@@ -31,9 +32,9 @@ const funConversions = [
   { title: "Km walked by Tourtise", hours: 4 },
   { title: "Walking trips from Athens to Sparta", hours: 20 },
 ];
-function getRandomFact(totalMinutes: number) {
-  const funFact =
-    funConversions[Math.floor(Math.random() * funConversions.length)];
+function getDeterministicFact(totalMinutes: number) {
+  const idx = Math.abs(Math.floor(totalMinutes)) % funConversions.length;
+  const funFact = funConversions[idx];
   if (!funFact) {
     throw new Error("Could not find fun fact");
   }
@@ -199,7 +200,7 @@ export const LogsProvider = ({ children }: { children: React.ReactNode }) => {
         logs: logsQuery.data ?? [],
         minutesToday: sumMinutes(filterToday(logsQuery.data ?? [])),
         minutesToDate: sumMinutes(logsQuery.data ?? []),
-        funFact: getRandomFact(sumMinutes(logsQuery.data ?? [])),
+        funFact: getDeterministicFact(sumMinutes(logsQuery.data ?? [])),
       }}
     >
       {children}

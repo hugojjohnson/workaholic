@@ -54,7 +54,7 @@ export default function Dashboard() {
           </SelectTrigger>
 
           <SelectContent>
-            {user.user.subjects.map((s) => (
+            {user.user.subjects.filter(s => s.semester === user.user?.preferences.semester).map((s) => (
               <SelectItem key={s.id} value={s.id}>
                 {s.name}
               </SelectItem>
