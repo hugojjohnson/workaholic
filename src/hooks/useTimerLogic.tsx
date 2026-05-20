@@ -3,7 +3,6 @@ import { useSession } from "next-auth/react";
 import { api } from "~/trpc/react";
 import { useLogs } from "./LogsContext";
 import useSound from "use-sound";
-import { env } from "~/env";
 import type { TimerContextT } from "./TimerContext"; // if you extracted the interface
 import type { AppRouter } from "~/server/api/root";
 import type { inferProcedureOutput } from "@trpc/server";
@@ -125,11 +124,7 @@ export function useTimerLogic(): TimerContextT | undefined {
       case TimerStatus.Unset:
         startedAt = new Date();
         pausedAt = null;
-        deadlineAt = new Date(
-          Date.now() +
-          timer.duration *
-          (env.NEXT_PUBLIC_ENV === "development" ? MINUTE : MINUTE),
-        );
+        deadlineAt = new Date(Date.now() + timer.duration * MINUTE);
         break;
       case TimerStatus.Paused:
         if (!deadlineAt || !pausedAt) return;
