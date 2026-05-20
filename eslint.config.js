@@ -1,15 +1,11 @@
-import { FlatCompat } from "@eslint/eslintrc";
+import nextVitals from "eslint-config-next/core-web-vitals";
 import tseslint from "typescript-eslint";
-
-const compat = new FlatCompat({
-  baseDirectory: import.meta.dirname,
-});
 
 export default tseslint.config(
   {
-    ignores: [".next"],
+    ignores: [".next/**"],
   },
-  ...compat.extends("next/core-web-vitals"),
+  ...nextVitals,
   {
     files: ["**/*.ts", "**/*.tsx"],
     extends: [
@@ -33,6 +29,9 @@ export default tseslint.config(
         "error",
         { checksVoidReturn: { attributes: false } },
       ],
+      "react-hooks/immutability": "off",
+      "react-hooks/purity": "off",
+      "react-hooks/set-state-in-effect": "off",
     },
   },
   {

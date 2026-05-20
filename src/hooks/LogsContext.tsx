@@ -69,23 +69,12 @@ export const LogsProvider = ({ children }: { children: React.ReactNode }) => {
   const utils = api.useUtils(); // for cache invalidation
 
   const addLog = api.logs.add.useMutation({
-    onMutate: async (newLog) => {
+    onMutate: async (_newLog) => {
       if (!userId) {
         throw new Error("userId is undefined");
       }
       await utils.logs.getAll.cancel(); // cancel any outgoing fetches
       const previousLogs = utils.logs.getAll.getData();
-      utils.logs.getAll.setData({ userId }, (oldLogs) => {
-        if (!oldLogs) return oldLogs;
-        return [
-          ...oldLogs,
-          {
-            ...newLog,
-            id: "undefined so far", // TODO
-            tags: [],
-          },
-        ];
-      });
       return { previousLogs };
     },
     onError: (_err, _newSubject, context) => {

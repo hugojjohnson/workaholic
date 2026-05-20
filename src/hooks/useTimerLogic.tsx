@@ -85,7 +85,7 @@ export function useTimerLogic(): TimerContextT | undefined {
       const prev = utils.timer.get.getData({ userId });
 
       utils.timer.get.setData({ userId }, (t) => {
-        if (!t || t.id !== newData.timerId) return t;
+        if (t?.id !== newData.timerId) return t;
 
         return {
           ...t,

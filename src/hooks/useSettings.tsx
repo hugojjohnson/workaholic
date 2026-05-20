@@ -38,6 +38,7 @@ export const useSettings = (): UseSettingsT => {
             {
               id: "temp-id-" + Math.random(),
               userId,
+              semester: oldUser.preferences.semester,
               createdAt: new Date(),
               updatedAt: new Date(),
               name: newSubject.name,
@@ -135,7 +136,10 @@ export const useSettings = (): UseSettingsT => {
         if (!oldUser) return oldUser;
         return {
           ...oldUser,
-          goal: updateGoal.newGoal,
+          preferences: {
+            ...oldUser.preferences,
+            goal: updateGoal.newGoal,
+          },
         };
       });
       return { previousUser };
@@ -184,6 +188,6 @@ export const useSettings = (): UseSettingsT => {
     deleteSubject: onDeleteSubject,
     updateSubject: onUpdateSubject,
     updateGoal: onUpdateGoal,
-    addLog: onAddLog
+    addLog: onAddLog,
   };
 };
