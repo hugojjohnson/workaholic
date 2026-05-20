@@ -2,7 +2,7 @@
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
  * for Docker builds.
  */
-import "./src/env.js";
+import "./src/env/build.js";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
