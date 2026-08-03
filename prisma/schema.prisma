@@ -125,7 +125,6 @@ model Log {
   id          String   @id @default(cuid())
   subject     Subject  @relation(fields: [subjectId], references: [id])
   subjectId   String
-  semester    String
   startedAt   DateTime
   endedAt     DateTime
   tags        String[] // Optional: ["flashcards", "lecture"]
@@ -135,5 +134,5 @@ model Log {
   duration    Int
 
   @@index([subjectId, startedAt])
-  @@index([userId, semester, startedAt])
+  @@index([userId, startedAt])
 }
