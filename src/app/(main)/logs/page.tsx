@@ -11,12 +11,11 @@ import LoadingPage from "~/components/welcome/LoadingPage";
 import { AddLogDialogue } from "~/components/logs/AddLogDialogue";
 import { EditLogDialogue } from "~/components/logs/EditLogDialogue";
 
-const dateFormatter = new Intl.DateTimeFormat("en-GB", { timeZone: "UTC" });
+const dateFormatter = new Intl.DateTimeFormat("en-GB");
 const timeFormatter = new Intl.DateTimeFormat("en-GB", {
   hour: "2-digit",
   minute: "2-digit",
   hour12: false,
-  timeZone: "UTC",
 });
 
 // TODO: Update these with the actual colours
