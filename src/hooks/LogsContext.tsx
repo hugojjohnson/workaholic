@@ -16,11 +16,15 @@ const sumMinutes = (arr: Log[]): number => {
     return total + current.duration;
   }, 0);
 };
-const filterToday = (arr: Log[]) =>
-  arr.filter(
-    ({ startedAt }) =>
-      startedAt.toISOString().slice(0, 10) === new Date().toISOString().slice(0, 10),
-  );
+const isSameLocalDay = (a: Date, b: Date) =>
+  a.getFullYear() === b.getFullYear() &&
+  a.getMonth() === b.getMonth() &&
+  a.getDate() === b.getDate();
+
+const filterToday = (arr: Log[]) => {
+  const today = new Date();
+  return arr.filter(({ startedAt }) => isSameLocalDay(startedAt, today));
+};
 
 const funConversions = [
   { title: "Ikea candles burned", hours: 4 },
