@@ -4,6 +4,7 @@ import React, { createContext, useContext } from "react";
 import { api } from "~/trpc/react";
 import type { Log } from "@prisma/client";
 import { useSession } from "next-auth/react";
+import { isSameLocalDay } from "~/lib/utils";
 
 export interface AddLogT {
   subjectId: string;
@@ -16,11 +17,6 @@ const sumMinutes = (arr: Log[]): number => {
     return total + current.duration;
   }, 0);
 };
-const isSameLocalDay = (a: Date, b: Date) =>
-  a.getFullYear() === b.getFullYear() &&
-  a.getMonth() === b.getMonth() &&
-  a.getDate() === b.getDate();
-
 const filterToday = (arr: Log[]) => {
   const today = new Date();
   return arr.filter(({ startedAt }) => isSameLocalDay(startedAt, today));

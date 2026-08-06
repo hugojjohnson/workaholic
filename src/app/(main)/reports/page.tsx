@@ -20,6 +20,7 @@ import { useLogs } from "~/hooks/LogsContext";
 import type { ColourType } from "@prisma/client";
 import { Button } from "~/components/ui/button";
 import LoadingPage from "~/components/welcome/LoadingPage";
+import { isSameLocalDay } from "~/lib/utils";
 
 // TODO: Purple is actually grey here!!
 const borderColours: Record<ColourType, string> = {
@@ -43,7 +44,6 @@ const backgroundColours: Record<ColourType, string> = {
 const axisLabelFormatter = new Intl.DateTimeFormat("en-GB", {
   day: "2-digit",
   month: "2-digit",
-  timeZone: "UTC",
 });
 
 export default function Reports() {
@@ -101,11 +101,6 @@ export default function Reports() {
     setLabels(tempWindow);
   }
 
-  const isSameDay = (a: Date, b: Date) =>
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate();
-
   // const sortedLogs = user.logs.sort((a, b) => a.timeStarted > b.timeStarted ? 1 : -1)
 
   // Construct datasets
@@ -118,7 +113,7 @@ export default function Reports() {
     const my_data = [];
     for (const myDay of labels) {
       const sameDayLogs = projectLogs.filter((idk) =>
-        isSameDay(new Date(idk.startedAt), new Date(myDay)),
+        isSameLocalDay(new Date(idk.startedAt), new Date(myDay)),
       );
       let x = 0;
       for (const sameDayLog of sameDayLogs) {

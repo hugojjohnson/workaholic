@@ -5,6 +5,7 @@ import { useLogs } from "~/hooks/LogsContext";
 import "react-calendar-heatmap/dist/styles.css";
 import "~/styles/heatmap.css";
 import { useUser } from "~/hooks/UserContext";
+import { localDateKey } from "~/lib/utils";
 
 
 export function formatDateAU(date: Date): string {
@@ -27,7 +28,7 @@ const Heatmap: React.FC = () => {
   const countsByDate: Record<string, number> = {};
 
   logs.forEach(({ startedAt, duration }) => {
-    const date = startedAt.toISOString().slice(0, 10); // quick YYYY-MM-DD from ISO string
+    const date = localDateKey(startedAt);
     countsByDate[date] = (countsByDate[date] ?? 0) + duration;
   });
 
@@ -37,8 +38,8 @@ const Heatmap: React.FC = () => {
 
 
   while (current <= endDate) {
-    const isoDate = current.toISOString().slice(0, 10);
-    const rawCount = countsByDate[isoDate] ?? 0;
+    const date = localDateKey(current);
+    const rawCount = countsByDate[date] ?? 0;
 
     let tooltip = formatDateAU(current);
     if (rawCount > 0) {
@@ -52,7 +53,7 @@ const Heatmap: React.FC = () => {
     }
 
     allDates.push({
-      date: isoDate,
+      date,
       count: Math.min(
         Math.floor(((rawCount / (user?.preferences.goal ?? 1)) * 5) / 60 + 0.5),
         4,
